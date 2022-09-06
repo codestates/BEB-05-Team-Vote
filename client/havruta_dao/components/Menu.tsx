@@ -54,7 +54,7 @@ export default function MenuComponent() {
       style={{
         overflow: 'auto',
         height: '100vh',
-        position: 'fixed',
+        position: 'absolute',
         left: 0,
         top: 0,
         bottom: 0,
@@ -68,7 +68,13 @@ export default function MenuComponent() {
 
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
-        <Button type="primary" icon={<WalletOutlined />} size={'large'} style={{ width: '100%' }}>
+        <Button
+          type="primary"
+          icon={<WalletOutlined />}
+          size={'large'}
+          shape="round"
+          style={{ width: '100%' }}
+        >
           지갑연결
         </Button>
 

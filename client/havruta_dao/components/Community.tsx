@@ -1,4 +1,4 @@
-export default function Community (){
+export default function C (){
     return (
         'sdfsdfsdf'
     )
