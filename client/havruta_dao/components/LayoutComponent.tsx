@@ -1,10 +1,16 @@
-import { Col, Layout, Row } from 'antd';
+
+import { GithubOutlined } from '@ant-design/icons';
+import { Layout, Col, Row, PageHeader } from 'antd';
+
 import React from 'react';
 import MenuComponent from './Menu';
 
 const { Content, Footer } = Layout;
 
 export const LayoutComponent = ({ children }: any) => (
+
+
+
   <Row justify="center">
     <Col span={20} style={{ margin: '0 auto' }}>
       <Layout hasSider>

@@ -11,6 +11,7 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import logoImage from '../assets/images/HAVRUTADAO.png';
 import { useRouter } from 'next/router';
+import { Footer } from 'antd/lib/layout/layout';
 
 const { Sider } = Layout;
 const { Text, Link } = Typography;
@@ -88,7 +89,7 @@ export default function MenuComponent() {
             </Link>
           </Space>
         </DescriptionOfDao>
-      </Space>
+      </Space>      
     </Sider>
   );
 }
