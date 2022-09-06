@@ -1,7 +1,12 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-}
+const withLess = require('next-with-less');
+const path = require('path');
 
-module.exports = nextConfig
+const customTheme = path.resolve('./styles/customTheme.less');
+
+module.exports = withLess({
+  lessLoaderOptions: {
+    lessOptions: {
+      additionalData: (content) => `${content}\n\n@import '${customTheme}';`,
+    },
+  },
+});
