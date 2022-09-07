@@ -6,10 +6,17 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT;
+const articleRouter = require("./router/article");
+const commentRouter = require("./router/comment");
+const likeRouter = require("./router/like");
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+app.use("/article", articleRouter);
+app.use("/comment", commentRouter);
+app.use("/like", likeRouter);
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send("Havruta DAO");
