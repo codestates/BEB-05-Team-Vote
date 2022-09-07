@@ -4,6 +4,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 import PostList from '../components/community/PostList';
 import UploadPost from '../components/community/UploadPost';
+import RcmdCourse from '../components/RcmdCourse';
 
 export interface Post {
   author: string;
@@ -38,7 +39,7 @@ const Home: NextPage = () => {
         </Col>
         <Col span={8}>
           <PageHeader backIcon={<AlignCenterOutlined />} onBack={() => null} title="추천강의" />
-          <div>강의</div>
+          <RcmdCourse />
         </Col>
       </Row>
     </div>
