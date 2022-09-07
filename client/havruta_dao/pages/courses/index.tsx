@@ -1,11 +1,12 @@
 import { PageHeader, Row, Col, Card, Space, Typography, Radio, Tabs } from 'antd';
 import { ThunderboltOutlined } from '@ant-design/icons';
+import Link from 'next/link';
 
 export default function details() {
   const { Title } = Typography;
   return (
     <section>
-      <Space style={{ justifyContent:'space-between', width:'100%'}}>
+      <Space style={{ justifyContent: 'space-between', width: '100%' }}>
         <PageHeader title="강의탐색" backIcon={true} />
         <Radio.Group style={{ marginBottom: 8 }} size={'small'}>
           <Radio.Button value="top">최신</Radio.Button>
