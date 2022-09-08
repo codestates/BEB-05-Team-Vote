@@ -18,35 +18,43 @@ const { Text, Link } = Typography;
 
 const menuItem = [
   {
+    id : '1',
     name: '커뮤니티',
     icon: <AlignCenterOutlined />,
     path: '/',
   },
-  {
+  { id : '2',
     name: '강의탐색',
     icon: <FileSearchOutlined />,
     path: '/courses',
   },
   {
+    id : '3',
     name: '지식공유',
     icon: <BulbOutlined />,
     path: '/upload',
   },
-  {
-    name: '투표',
-    icon: <BulbOutlined />,
-    path: '/poll',
-  },
+  // {
+  //   id : '4',
+  //   name: '투표',
+  //   icon: <BulbOutlined />,
+  //   path: '/poll',
+  // },
 ];
 
-const items: MenuProps['items'] = menuItem.map((item, index) => ({
-  key: item.path,
-  icon: item.icon,
-  label: item.name,
-}));
+
 
 export default function MenuComponent() {
   const router = useRouter();
+
+  const items: MenuProps['items'] = menuItem.map((item, index) => ({
+    key: item.id,
+    path: item.path,  
+    icon: item.icon,
+    label: item.name,
+    onClick : ()=>{router.push(item.path, undefined, {shallow: true })}
+  }));
+
   return (
     <Sider
       width="300px"
@@ -65,9 +73,8 @@ export default function MenuComponent() {
     >
       <Space direction="vertical" size={'large'}>
         <Image src={logoImage} alt="logo image" width={221} height={'100%'} />
-
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
-
+        
         <Button
           type="primary"
           icon={<WalletOutlined />}
@@ -77,7 +84,6 @@ export default function MenuComponent() {
         >
           지갑연결
         </Button>
-
         <DescriptionOfDao>
           <Space direction="vertical">
             <Text>
@@ -89,7 +95,7 @@ export default function MenuComponent() {
             </Link>
           </Space>
         </DescriptionOfDao>
-      </Space>      
+      </Space>
     </Sider>
   );
 }
