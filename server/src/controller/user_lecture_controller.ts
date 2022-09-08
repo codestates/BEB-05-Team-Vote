@@ -3,21 +3,21 @@ const prisma = require("../db/index");
 
 module.exports = {
   postUserLecture: (req: Request, res: Response) => {
-    const { user_address, lecture_title } = req.body;
+    const { user_id, lecture_title } = req.body;
     const postUserLectureHandler = async (
-      user_address: String,
+      user_id: Number,
       lecture_title: String
     ) => {
       const checkUserLecture = await prisma.UserLecture.findMany({
         where: {
-          user_address: user_address,
+          user_id: user_id,
           lecture_title: lecture_title,
         },
       });
       if (checkUserLecture[0] === undefined) {
         await prisma.UserLecture.create({
           data: {
-            user_address: user_address,
+            user_id: user_id,
             lecture_title: lecture_title,
           },
         });
@@ -29,7 +29,7 @@ module.exports = {
         res.status(403).send("userlecture already exists");
       }
     };
-    postUserLectureHandler(user_address, lecture_title).catch(async (e) => {
+    postUserLectureHandler(user_id, lecture_title).catch(async (e) => {
       console.error(e);
       await prisma.$disconnect();
       res.status(500).send("Server Error");
@@ -37,23 +37,24 @@ module.exports = {
   },
 
   getUserLecture: (req: Request, res: Response) => {
-    const user_address: String = req.query.user_address as String;
+    const user_id: String = req.query.user_id as String;
+    const numUser_id = Number(user_id);
     const lecture_title: String = req.query.lecture_title as String;
 
     const getUserLectureHandler = async (
-      user_address: String,
+      numUser_id: Number,
       lecture_title: String
     ) => {
       const result = await prisma.UserLecture.findMany({
         where: {
-          user_address: user_address,
+          user_id: numUser_id,
           lecture_title: lecture_title,
         },
       });
       await prisma.$disconnect();
       res.status(201).json(result);
     };
-    getUserLectureHandler(user_address, lecture_title).catch(async (e) => {
+    getUserLectureHandler(numUser_id, lecture_title).catch(async (e) => {
       console.error(e);
       await prisma.$disconnect();
       res.status(500).send("Server Error");

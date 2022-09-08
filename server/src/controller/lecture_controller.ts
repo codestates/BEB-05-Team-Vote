@@ -4,7 +4,7 @@ const prisma = require("../db/index");
 module.exports = {
   postLecture: (req: Request, res: Response) => {
     const {
-      user_address,
+      user_id,
       lecture_title,
       lecture_summary,
       lecture_introduction,
@@ -15,7 +15,7 @@ module.exports = {
     } = req.body;
 
     const postLectureHandler = async (
-      user_address: String,
+      user_id: Number,
       lecture_title: String,
       lecture_summary: String,
       lecture_introduction: String,
@@ -36,7 +36,7 @@ module.exports = {
       } else {
         await prisma.Lecture.create({
           data: {
-            user_address: user_address,
+            user_id: user_id,
             lecture_title: lecture_title,
             lecture_summary: lecture_summary,
             lecture_introduction: lecture_introduction,
@@ -55,7 +55,7 @@ module.exports = {
     };
 
     postLectureHandler(
-      user_address,
+      user_id,
       lecture_title,
       lecture_summary,
       lecture_introduction,
@@ -77,10 +77,11 @@ module.exports = {
           created_at: "desc",
         },
         select: {
-          user_address: true,
+          user_id: true,
           lecture_title: true,
           lecture_image: true,
           lecture_price: true,
+          user: true,
         },
       });
       console.dir(allLecture, { depth: null });
@@ -99,13 +100,9 @@ module.exports = {
   },
 
   readLectureDetail: (req: Request, res: Response) => {
-    const user_address: String = req.query.user_address as String;
     const lecture_title: String = req.query.lecture_title as String;
 
-    const readLectureDetailHandler = async (
-      user_address: String,
-      lecture_title: String
-    ) => {
+    const readLectureDetailHandler = async (lecture_title: String) => {
       const selectedLecture = await prisma.Lecture.findUnique({
         where: {
           lecture_title: lecture_title,
@@ -115,7 +112,7 @@ module.exports = {
       return selectedLecture;
     };
 
-    readLectureDetailHandler(user_address, lecture_title)
+    readLectureDetailHandler(lecture_title)
       .then(async (result) => {
         await prisma.$disconnect();
         res.status(201).json(result);
@@ -135,6 +132,9 @@ module.exports = {
       const limitedLecture = await prisma.Lecture.findMany({
         orderBy: {
           created_at: "desc",
+        },
+        include: {
+          user: true,
         },
         take: limitNum,
       });
