@@ -9,7 +9,6 @@ const PORT = process.env.PORT;
 const articleRouter = require("./router/article");
 const commentRouter = require("./router/comment");
 const likeRouter = require("./router/like");
-const lectureRouter = require("./router/lecture");
 
 app.use(cors({ origin: "*" }));
 app.use(express.json());
@@ -18,7 +17,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/article", articleRouter);
 app.use("/comment", commentRouter);
 app.use("/like", likeRouter);
-app.use("/lecture", lectureRouter);
 
 app.get("/", (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send("Havruta DAO");
