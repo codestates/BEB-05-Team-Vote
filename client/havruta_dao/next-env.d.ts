@@ -3,6 +3,7 @@
 
 // NOTE: This file should not be edited
 // see https://nextjs.org/docs/basic-features/typescript for more information.
+
 interface Klaytn {
   on: (eventName: string, callback: () => void) => void;
   removeListener: (eventName: string, callback: () => void) => void;
