@@ -1,12 +1,14 @@
-import { AlignCenterOutlined } from '@ant-design/icons';
+import { AlignCenterOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Col, PageHeader, Row, Radio } from 'antd';
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import PostList from '../components/community/PostList';
+import Link from 'next/link';
+import Post from '../components/community/Post';
 import UploadPost from '../components/community/UploadPost';
 import RcmdCourse from '../components/RcmdCourse';
 
-export interface Post {
+export interface PostInterface {
+  id: number;
   author: string;
   content: string;
   like: number;
@@ -22,23 +24,38 @@ const Home: NextPage = () => {
         <meta name="description" content="Havruta DAO" />
       </Head>
       <Row>
-        <Col span={14}>
+        <Col span={16}>
           <PageHeader
             backIcon={<AlignCenterOutlined />}
             onBack={() => null}
             title="하브루타 커뮤니티"
             extra={
-              <Radio.Group defaultValue="a">
+              <Radio.Group defaultValue="a" size={'small'}>
                 <Radio.Button value="a">최신</Radio.Button>
                 <Radio.Button value="b">추천</Radio.Button>
               </Radio.Group>
             }
           />
           <UploadPost />
-          <PostList />
+          {Array(10)
+            .fill(null)
+            .map((_, idx) => (
+              <Post key={idx} />
+            ))}
         </Col>
         <Col span={8}>
-          <PageHeader backIcon={<AlignCenterOutlined />} onBack={() => null} title="추천강의" />
+          <PageHeader
+            backIcon={<AlignCenterOutlined />}
+            onBack={() => null}
+            title="추천강의"
+            extra={
+              <Link href="/courses" key={1}>
+                <div style={{ cursor: 'pointer' }} title="전체 강의 보기">
+                  <ArrowRightOutlined /> 더보기
+                </div>
+              </Link>
+            }
+          />
           <RcmdCourse />
         </Col>
       </Row>

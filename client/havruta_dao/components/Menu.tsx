@@ -18,21 +18,17 @@ const { Text, Link } = Typography;
 
 const menuItem = [
   {
-    id : '1',
+    id: '1',
     name: '커뮤니티',
     icon: <AlignCenterOutlined />,
     path: '/',
   },
-  { id : '2',
-    name: '강의탐색',
-    icon: <FileSearchOutlined />,
-    path: '/courses',
-  },
+  { id: '2', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
   {
-    id : '3',
+    id: '3',
     name: '지식공유',
     icon: <BulbOutlined />,
-    path: '/upload',
+    path: '/courses/upload',
   },
   // {
   //   id : '4',
@@ -42,17 +38,17 @@ const menuItem = [
   // },
 ];
 
-
-
 export default function MenuComponent() {
   const router = useRouter();
 
   const items: MenuProps['items'] = menuItem.map((item, index) => ({
     key: item.id,
-    path: item.path,  
+    path: item.path,
     icon: item.icon,
     label: item.name,
-    onClick : ()=>{router.push(item.path, undefined, {shallow: true })}
+    onClick: () => {
+      router.push(item.path, undefined, { shallow: true });
+    },
   }));
 
   return (
@@ -72,9 +68,11 @@ export default function MenuComponent() {
       }}
     >
       <Space direction="vertical" size={'large'}>
-        <Image src={logoImage} alt="logo image" width={221} height={'100%'} />
+        <Link href="/">
+          <Image src={logoImage} alt="logo image" width={221} height={'100%'} />
+        </Link>
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
-        
+
         <Button
           type="primary"
           icon={<WalletOutlined />}

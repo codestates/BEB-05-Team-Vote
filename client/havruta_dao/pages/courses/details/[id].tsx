@@ -1,9 +1,11 @@
 import { FolderOpenOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { Row, Col, PageHeader, Space, Typography, Divider, Image, Button } from 'antd';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
+import Link from 'next/link';
+const { Title, Paragraph } = Typography;
 
 export default function details() {
-  const { Title, Paragraph } = Typography;
+  const first = false;
+
   return (
     <section>
       <Space style={{ width: '100%' }}>
@@ -12,7 +14,13 @@ export default function details() {
       </Space>
       <Row gutter={48}>
         <Col span={16}>
-          <Image width={'100%'} src="/329248-eng2.png" style={{ marginBottom: '24px' }} preview={false} />
+          <Image
+            width={'100%'}
+            src="/329248-eng2.png"
+            style={{ marginBottom: '24px' }}
+            preview={false}
+            alt="강의 이미지"
+          />
           <Title level={3}>강의 상세 소개</Title>
           <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
             웹 애플리케이션을 개발할 때 필요한 모든 웹 기술을 기초부터 이해하고, 완성할 수 있습니다.
@@ -41,17 +49,25 @@ export default function details() {
             추가 요구사항을 구현합니다. 이 과정에서 Junit5, SQL, JPA, Querydsl 을 사용할 뿐 아니라,
             설계 및 구현 관점에서 다양한 방법의 장단점을 다루게 됩니다.
           </Paragraph>
-         
-          <Space direction="vertical" style={{width:'100%'}}>
+
+          <Space direction="vertical" style={{ width: '100%' }}>
             <Space>
               <ThunderboltOutlined style={{ fontSize: '32px', color: '#9B4DEA' }} />
               <Paragraph style={{ fontSize: '24px', fontWeight: 600, color: '#9B4DEA', margin: 0 }}>
                 0.02
               </Paragraph>
             </Space>
-            <Button type="primary" size={'large'} style={{ width: '100%' }} block>
-              수강신청 하기
-            </Button>
+            {first ? (
+              <Link href={`/courses/class/1`}>
+                <Button type="ghost" size={'large'} style={{ width: '100%' }} block>
+                  계속 수강하기
+                </Button>
+              </Link>
+            ) : (
+              <Button type="primary" size={'large'} style={{ width: '100%' }} block>
+                수강신청 하기
+              </Button>
+            )}
           </Space>
         </Col>
       </Row>
