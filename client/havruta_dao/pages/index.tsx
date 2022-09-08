@@ -24,7 +24,7 @@ const Home: NextPage = () => {
         <meta name="description" content="Havruta DAO" />
       </Head>
       <Row>
-        <Col span={16}>
+        <Col xl={16} xs={24}>
           <PageHeader
             backIcon={<AlignCenterOutlined />}
             onBack={() => null}
@@ -43,7 +43,7 @@ const Home: NextPage = () => {
               <Post key={idx} />
             ))}
         </Col>
-        <Col span={8}>
+        <Col xl={8} xs={0}>
           <PageHeader
             backIcon={<AlignCenterOutlined />}
             onBack={() => null}

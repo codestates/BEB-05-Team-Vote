@@ -1,20 +1,22 @@
-import React from 'react';
-import { Button, Layout, MenuProps, Space, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Button, Divider, Layout, MenuProps, message, Modal, Space, Typography } from 'antd';
 import { Menu } from 'antd';
 import {
   AlignCenterOutlined,
   BulbOutlined,
   FileSearchOutlined,
+  LogoutOutlined,
+  UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import Image from 'next/image';
 import logoImage from '../assets/images/HAVRUTADAO.png';
 import { useRouter } from 'next/router';
-import { Footer } from 'antd/lib/layout/layout';
+import Caver from 'caver-js';
 
 const { Sider } = Layout;
-const { Text, Link } = Typography;
+const { Paragraph, Text, Link } = Typography;
 
 const menuItem = [
   {
@@ -40,8 +42,11 @@ const menuItem = [
 
 export default function MenuComponent() {
   const router = useRouter();
+  const [isConnetedWallet, setIsConnetedWallet] = useState(false);
+  const [userAccountAddress, setUserAccountAddress] = useState('');
+  const [userNickname, setUserNickname] = useState('');
 
-  const items: MenuProps['items'] = menuItem.map((item, index) => ({
+  const items: MenuProps['items'] = menuItem.map((item) => ({
     key: item.id,
     path: item.path,
     icon: item.icon,
@@ -50,6 +55,94 @@ export default function MenuComponent() {
       router.push(item.path, undefined, { shallow: true });
     },
   }));
+
+  const userLoginInfo: MenuProps['items'] = [
+    {
+      key: 'userLoginInfo',
+      icon: <UserOutlined />,
+      label: (
+        <Text
+          editable={{
+            onChange: setUserNickname,
+          }}
+          onClick={() => {
+            navigator.clipboard.writeText(userAccountAddress);
+            message.success('계정 주소가 복사되었습니다!');
+          }}
+        >
+          {userNickname === userAccountAddress
+            ? userNickname.length > 10 && userNickname.substr(0, 8) + '...'
+            : userNickname}
+        </Text>
+      ),
+      // onClick: () => {
+      //   router.push('1', undefined, { shallow: true });
+      // },
+    },
+    {
+      key: 'userLogout',
+      icon: <LogoutOutlined />,
+      label: '로그아웃',
+      // onClick: () => {
+      //   router.push('1', undefined, { shallow: true });
+      // },
+    },
+  ];
+
+  const withoutKaikasWarning = () => {
+    Modal.warning({
+      title: '지갑 연결을 위해 카이카스가 필요합니다.',
+      content: (
+        <Typography>
+          <Paragraph>아래 링크에서 카이카스를 설치해주세요.</Paragraph>
+          <Paragraph>
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href="https://chrome.google.com/webstore/detail/kaikas/jblndlipeogpafnldhgmapagcccfchpi"
+            >
+              카이카스 설치 페이지 바로가기
+            </a>
+          </Paragraph>
+        </Typography>
+      ),
+    });
+  };
+
+  const onConnectWallet = async () => {
+    if (typeof window.klaytn !== 'undefined') {
+      if (window.klaytn.isKaikas) {
+        //로그인/회원가입 진행
+        const accounts = await window.klaytn.enable();
+        const account = accounts[0];
+        console.log(account);
+        if (account) {
+          setIsConnetedWallet(true);
+          setUserAccountAddress(account);
+          setUserNickname(account);
+        }
+
+        const networkVersion = await window.klaytn.networkVersion;
+        console.log(networkVersion);
+      }
+    } else {
+      //카이카스 설치 팝업
+      withoutKaikasWarning();
+    }
+  };
+
+  const handleNetworkChanged = (...args: Array<string>) => {
+    const networkId = args[0];
+    console.log(networkId);
+    window.location.reload();
+  };
+
+  useEffect(() => {
+    window.klaytn?.on('networkChanged', handleNetworkChanged);
+    return () => {
+      window.klaytn?.removeListener('networkChanged', handleNetworkChanged);
+    };
+  });
 
   return (
     <Sider
@@ -73,15 +166,24 @@ export default function MenuComponent() {
         </Link>
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
-        <Button
-          type="primary"
-          icon={<WalletOutlined />}
-          size={'large'}
-          shape="round"
-          style={{ width: '100%' }}
-        >
-          지갑연결
-        </Button>
+        {isConnetedWallet ? (
+          <>
+            <Divider />
+            <Menu theme="light" mode="inline" items={userLoginInfo} />
+          </>
+        ) : (
+          <Button
+            type="primary"
+            icon={<WalletOutlined />}
+            size={'large'}
+            shape="round"
+            style={{ width: '100%' }}
+            onClick={onConnectWallet}
+          >
+            지갑연결
+          </Button>
+        )}
+
         <DescriptionOfDao>
           <Space direction="vertical">
             <Text>
