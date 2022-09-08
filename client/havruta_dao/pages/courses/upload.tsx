@@ -7,7 +7,7 @@ const { TextArea } = Input;
 export default function upload() {
   return (
     <Row>
-      <Col span={16}>
+      <Col xl={16} xs={24}>
         <PageHeader backIcon={<CloudUploadOutlined />} title="강의 만들기" />
         <Form layout="vertical">
           <Form.Item name="courseSummary" label="강의 내용 요약">
@@ -47,7 +47,7 @@ export default function upload() {
           </Form.Item>
         </Form>
       </Col>
-      <Col span={8}></Col>
+      <Col xl={8} xs={0}></Col>
     </Row>
   );
 }
