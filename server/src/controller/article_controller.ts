@@ -3,21 +3,21 @@ const prisma = require("../db/index");
 
 module.exports = {
   postArticle: (req: Request, res: Response) => {
-    const { user_address, article_content } = req.body;
+    const { user_id, article_content } = req.body;
     const postArticleHandler = async (
-      user_address: String,
+      user_id: Number,
       article_content: String
     ) => {
       await prisma.Article.create({
         data: {
-          user_address: user_address,
+          user_id: user_id,
           article_content: article_content,
         },
       });
       const allArticle = await prisma.Article.findMany({});
       console.dir(allArticle, { depth: null });
     };
-    postArticleHandler(user_address, article_content)
+    postArticleHandler(user_id, article_content)
       .then(async () => {
         await prisma.$disconnect();
         res.status(201).send("post article success");
@@ -34,13 +34,15 @@ module.exports = {
         orderBy: {
           created_at: "desc",
         },
+        include: {
+          user: true,
+        },
       });
       console.dir(allRecentArticle, { depth: null });
       return allRecentArticle;
     };
     readRecentArticleHandler()
       .then(async (result) => {
-        console.log(`result= ${result}`);
         await prisma.$disconnect();
         res.status(201).json(result);
       })
@@ -61,13 +63,15 @@ module.exports = {
             created_at: "desc",
           },
         ],
+        include: {
+          user: true,
+        },
       });
       console.dir(allLikeArticle, { depth: null });
       return allLikeArticle;
     };
     readLikeArticleHandler()
       .then(async (result) => {
-        console.log(`result= ${result}`);
         await prisma.$disconnect();
         res.status(201).json(result);
       })
@@ -78,9 +82,9 @@ module.exports = {
       });
   },
   editArticle: (req: Request, res: Response) => {
-    const { user_address, article_id, article_content } = req.body;
+    const { user_id, article_id, article_content } = req.body;
     const editArticleHandler = async (
-      user_address: String,
+      user_id: Number,
       article_id: Number,
       article_content: String
     ) => {
@@ -89,11 +93,11 @@ module.exports = {
           article_id: article_id,
         },
         select: {
-          user_address: true,
+          user_id: true,
         },
       });
 
-      if (result[0].user_address === user_address) {
+      if (result[0].user_id === user_id) {
         await prisma.Article.update({
           where: {
             article_id: article_id,
@@ -114,7 +118,7 @@ module.exports = {
         res.status(403).send("you're not the author");
       }
     };
-    editArticleHandler(user_address, article_id, article_content).catch(
+    editArticleHandler(user_id, article_id, article_content).catch(
       async (e) => {
         console.error(e);
         await prisma.$disconnect();
@@ -123,9 +127,9 @@ module.exports = {
     );
   },
   deleteArticle: (req: Request, res: Response) => {
-    const { user_address, article_id } = req.body;
+    const { user_id, article_id } = req.body;
     const deleteArticleHandler = async (
-      user_address: String,
+      user_id: Number,
       article_id: Number
     ) => {
       const result = await prisma.Article.findMany({
@@ -133,11 +137,11 @@ module.exports = {
           article_id: article_id,
         },
         select: {
-          user_address: true,
+          user_id: true,
         },
       });
 
-      if (result[0].user_address === user_address) {
+      if (result[0].user_id === user_id) {
         await prisma.Article.delete({
           where: {
             article_id: article_id,
@@ -151,7 +155,7 @@ module.exports = {
         res.status(403).send("you're not the author");
       }
     };
-    deleteArticleHandler(user_address, article_id).catch(async (e) => {
+    deleteArticleHandler(user_id, article_id).catch(async (e) => {
       console.error(e);
       await prisma.$disconnect();
       res.status(500).send("Server Error");
