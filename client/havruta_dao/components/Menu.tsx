@@ -183,7 +183,6 @@ export default function MenuComponent() {
             지갑연결
           </Button>
         )}
-
         <DescriptionOfDao>
           <Space direction="vertical">
             <Text>
