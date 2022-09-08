@@ -1,11 +1,14 @@
 import { LikeOutlined, MessageOutlined } from '@ant-design/icons';
 import { Button, Card, Space, Typography } from 'antd';
+import Link from 'next/link';
 import React from 'react';
-import { Post } from '../../pages';
+import styled from 'styled-components';
+import { PostInterface } from '../../pages';
 
 const { Text } = Typography;
 
-const post: Post = {
+const post: PostInterface = {
+  id: 1,
   author: 'SUNGMAN5',
   content:
     '그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다. 끓는 그들은 하는 광야에서 불어 위하여 꽃 없으면, 하는 사막이다.그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다.',
@@ -14,10 +17,10 @@ const post: Post = {
   createdDate: '09-03-2022',
 };
 
-export default function PostList() {
+export default function Post() {
   return (
-    <>
-      <Card style={{ width: '100%', marginTop: '-1px' }}>
+    <Link href={`/community/details/${post.id}`}>
+      <PostCard>
         <Space direction="vertical" size={'large'}>
           <Space>
             <Text strong>{post.author}</Text>
@@ -25,7 +28,14 @@ export default function PostList() {
           </Space>
           {post.content}
           <Space>
-            <Button type="link" icon={<LikeOutlined />} size="small">
+            <Button
+              type="link"
+              icon={<LikeOutlined />}
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
               {' '}
               {post.commentCount}
             </Button>
@@ -35,7 +45,17 @@ export default function PostList() {
             </Button>
           </Space>
         </Space>
-      </Card>
-    </>
+      </PostCard>
+    </Link>
   );
 }
+
+const PostCard = styled(Card)`
+  width: 100%;
+  margin-top: -1px;
+
+  :hover {
+    cursor: pointer;
+    background-color: rgba(200, 200, 200, 0.1);
+  }
+`;
