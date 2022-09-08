@@ -126,29 +126,4 @@ module.exports = {
         res.status(500).send("Server Error");
       });
   },
-
-  readLimitLecture: (req: Request, res: Response) => {
-    const limit: String = req.query.limit as String;
-    const limitNum = Number(limit);
-
-    const readLimitLectureHandler = async (limitNum: Number) => {
-      const limitedLecture = await prisma.Lecture.findMany({
-        orderBy: {
-          created_at: "desc",
-        },
-        take: limitNum,
-      });
-      return limitedLecture;
-    };
-    readLimitLectureHandler(limitNum)
-      .then(async (result) => {
-        await prisma.$disconnect();
-        res.status(201).json(result);
-      })
-      .catch(async (e) => {
-        console.error(e);
-        await prisma.$disconnect();
-        res.status(500).send("Server Error");
-      });
-  },
 };
