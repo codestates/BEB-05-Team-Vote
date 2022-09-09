@@ -8,38 +8,6 @@ import * as gtag from '../lib/gtag';
 import { hotjar } from 'react-hotjar';
 import ChannelService from '../components/ChannelService.js';
 
-interface Klaytn {
-  on: (eventName: string, callback: () => void) => void;
-  removeListener: (eventName: string, callback: () => void) => void;
-  enable: () => Promise<Array<string>>;
-  selectedAddress: string;
-  networkVersion: number;
-  publicConfigStore: Store;
-  isKaikas: boolean;
-  _kaikas: any;
-}
-
-interface State {
-  isEnabled: boolean;
-  isUnlocked: boolean;
-  networkVersion: number;
-  onboardingcomplete: boolean;
-}
-
-interface Store {
-  subscribe: (callback: () => void) => void;
-  getState: () => State;
-}
-
-declare interface Window {
-  klaytn?: Klaytn;
-}
-declare global {
-  interface Window {
-    klaytn: Klaytn;
-    gtag: (param1: string, param2: string, param3: object) => void;
-  }
-}
 function MyApp({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
