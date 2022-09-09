@@ -6,6 +6,7 @@ import { LayoutComponent } from '../components/LayoutComponent';
 import '../styles/customTheme.less';
 import * as gtag from '../lib/gtag';
 import { hotjar } from 'react-hotjar';
+import ChannelService from '../components/ChannelService.js';
 
 interface Klaytn {
   on: (eventName: string, callback: () => void) => void;
@@ -60,7 +61,18 @@ function MyApp({ Component, pageProps }: AppProps) {
     };
   }, [router.events]);
 
-  return (
+  //channal talk 추가
+  useEffect(() => {
+    const channelTalk = new ChannelService();
+    channelTalk.boot({
+      pluginKey: process.env.NEXT_PUBLIC_CHANNEL_IO_KEY,
+    });
+    return () => {
+      channelTalk.shutdown();
+    };
+  }, []);
+
+  https: return (
     <>
       {/*Google Analytics */}
       <Script
