@@ -11,8 +11,8 @@ datasource db {
 }
 
 model User {
-  id      Int       @default(autoincrement())
-  user_address String @id @unique
+  user_id      Int  @id @unique    @default(autoincrement())
+  user_address String 
   user_network String
   user_nickname String
   user_introduction String
@@ -30,8 +30,8 @@ model Article {
   article_content String 
   comment_count Int @default(0)
   like_count Int @default(0)
-  user    User     @relation(fields: [user_address], references: [user_address])
-  user_address String 
+  user    User     @relation(fields: [user_id], references: [user_id])
+  user_id Int 
   comments Comment[]
   likes Like[]
   created_at DateTime @default(now())
@@ -40,8 +40,8 @@ model Article {
 
 model Lecture {
   lecture_id      Int      @id @default(autoincrement())
-  user    User     @relation(fields: [user_address], references: [user_address])
-  user_address String
+  user    User     @relation(fields: [user_id], references: [user_id])
+  user_id Int 
   lecture_title String @unique
   lecture_summary String
   lecture_introduction String
@@ -56,8 +56,8 @@ model Lecture {
 
 model Comment {
   id      Int      @id @default(autoincrement())
-  user    User     @relation(fields: [user_address], references: [user_address])
-  user_address String
+  user    User     @relation(fields: [user_id], references: [user_id])
+  user_id Int 
   article    Article     @relation(fields: [article_id], references: [article_id])
   article_id Int
   comment_content String
@@ -67,8 +67,8 @@ model Comment {
 
 model Like {
   id      Int      @id @default(autoincrement())
-  user    User     @relation(fields: [user_address], references: [user_address])
-  user_address String
+  user    User     @relation(fields: [user_id], references: [user_id])
+  user_id Int 
   article    Article     @relation(fields: [article_id], references: [article_id])
   article_id Int
   created_at DateTime @default(now())
@@ -76,8 +76,8 @@ model Like {
 
 model UserLecture {
   id      Int      @id @default(autoincrement())
-  user    User     @relation(fields: [user_address], references: [user_address])
-  user_address String
+  user    User     @relation(fields: [user_id], references: [user_id])
+  user_id Int 
   lecture    Lecture     @relation(fields: [lecture_title], references: [lecture_title])
   lecture_title String
   created_at DateTime @default(now())

@@ -3,15 +3,15 @@ const prisma = require("../db/index");
 
 module.exports = {
   postComment: (req: Request, res: Response) => {
-    const { user_address, article_id, comment_content } = req.body;
+    const { user_id, article_id, comment_content } = req.body;
     const postCommentHandler = async (
-      user_address: String,
+      user_id: Number,
       article_id: Number,
       comment_content: String
     ) => {
       await prisma.Comment.create({
         data: {
-          user_address: user_address,
+          user_id: user_id,
           article_id: article_id,
           comment_content: comment_content,
         },
@@ -24,7 +24,7 @@ module.exports = {
       const allComment = await prisma.Comment.findMany({});
       console.dir(allComment, { depth: null });
     };
-    postCommentHandler(user_address, article_id, comment_content)
+    postCommentHandler(user_id, article_id, comment_content)
       .then(async () => {
         await prisma.$disconnect();
         res.status(201).send("post comment success");
@@ -45,6 +45,9 @@ module.exports = {
         },
         orderBy: {
           created_at: "desc",
+        },
+        include: {
+          user: true,
         },
       });
       console.dir(allComment, { depth: null });
