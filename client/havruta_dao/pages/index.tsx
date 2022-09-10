@@ -6,7 +6,6 @@ import Link from 'next/link';
 import Post from '../components/community/Post';
 import UploadPost from '../components/community/UploadPost';
 import RcmdCourse from '../components/RcmdCourse';
-
 export interface PostInterface {
   id: number;
   author: string;
