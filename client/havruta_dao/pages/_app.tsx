@@ -7,8 +7,10 @@ import '../styles/customTheme.less';
 import * as gtag from '../lib/gtag';
 import { hotjar } from 'react-hotjar';
 import ChannelService from '../components/ChannelService.js';
+import { SessionProvider } from 'next-auth/react';
+import { RecoilRoot } from 'recoil';
 
-function MyApp({ Component, pageProps }: AppProps) {
+function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
 
   //hotjar
@@ -61,9 +63,13 @@ function MyApp({ Component, pageProps }: AppProps) {
           `,
         }}
       />
-      <LayoutComponent>
-        <Component {...pageProps} />
-      </LayoutComponent>
+      <RecoilRoot>
+        <SessionProvider session={session}>
+          <LayoutComponent>
+            <Component {...pageProps} />
+          </LayoutComponent>
+        </SessionProvider>
+      </RecoilRoot>
     </>
   );
 }
