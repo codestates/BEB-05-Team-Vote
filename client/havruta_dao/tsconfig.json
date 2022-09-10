@@ -15,6 +15,13 @@
     "jsx": "preserve",
     "incremental": true
   },
-  "include": ["global.d.ts", "next-env.d.ts", "**/*.ts", "**/*.tsx", "lib/channal_talk.js"],
+  "include": [
+    "types/global.d.ts",
+    "types/next-auth.d.ts",
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "lib/channal_talk.js"
+  ],
   "exclude": ["node_modules"]
 }

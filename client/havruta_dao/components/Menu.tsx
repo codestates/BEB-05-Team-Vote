@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import { Button, Divider, Layout, MenuProps, message, Modal, Space, Typography } from 'antd';
 import { Menu } from 'antd';
 import {
@@ -13,7 +13,11 @@ import styled from 'styled-components';
 import Image from 'next/image';
 import logoImage from '../assets/images/HAVRUTADAO.png';
 import { useRouter } from 'next/router';
-import Caver from 'caver-js';
+import { signIn, signOut, useSession } from 'next-auth/react';
+import * as Sentry from '@sentry/react';
+import { loginInfoState } from '../states/loginInfoState';
+import { useRecoilState } from 'recoil';
+import { UseReloadSession } from '../lib/hooks/UseReloadSession';
 
 const { Sider } = Layout;
 const { Paragraph, Text, Link } = Typography;
@@ -41,10 +45,9 @@ const menuItem = [
 ];
 
 export default function MenuComponent() {
+  const { data: session, status } = useSession();
   const router = useRouter();
-  const [isConnetedWallet, setIsConnetedWallet] = useState(false);
-  const [userAccountAddress, setUserAccountAddress] = useState('');
-  const [userNickname, setUserNickname] = useState('');
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
   const items: MenuProps['items'] = menuItem.map((item) => ({
     key: item.id,
@@ -63,16 +66,16 @@ export default function MenuComponent() {
       label: (
         <Text
           editable={{
-            onChange: setUserNickname,
+            onChange: (e) => setLoginInfo({ ...loginInfo, user_nickname: e }),
           }}
           onClick={() => {
-            navigator.clipboard.writeText(userAccountAddress);
+            navigator.clipboard.writeText(loginInfo.user_address);
             message.success('계정 주소가 복사되었습니다!');
           }}
         >
-          {userNickname === userAccountAddress
-            ? userNickname.length > 10 && userNickname.substr(0, 8) + '...'
-            : userNickname}
+          {loginInfo.user_nickname === loginInfo.user_address
+            ? loginInfo.user_nickname.length > 10 && loginInfo.user_nickname.substr(0, 8) + '...'
+            : loginInfo.user_nickname}
         </Text>
       ),
       // onClick: () => {
@@ -83,9 +86,7 @@ export default function MenuComponent() {
       key: 'userLogout',
       icon: <LogoutOutlined />,
       label: '로그아웃',
-      // onClick: () => {
-      //   router.push('1', undefined, { shallow: true });
-      // },
+      onClick: () => signOut(),
     },
   ];
 
@@ -111,25 +112,50 @@ export default function MenuComponent() {
 
   const onConnectWallet = async () => {
     if (typeof window.klaytn !== 'undefined') {
-      if (window.klaytn.isKaikas) {
-        //로그인/회원가입 진행
-        const accounts = await window.klaytn.enable();
-        const account = accounts[0];
-        console.log(account);
-        if (account) {
-          setIsConnetedWallet(true);
-          setUserAccountAddress(account);
-          setUserNickname(account);
-        }
+      if (window.klaytn?.isKaikas) {
+        try {
+          if (status === 'unauthenticated') {
+            //로그인/회원가입 진행
+            const accounts = await window.klaytn.enable();
+            const address = accounts[0];
+            const network = await window.klaytn.networkVersion;
+            //next auth
+            const response = await signIn('kaikas-credential', {
+              address,
+              network,
+              redirect: false,
+            });
 
-        const networkVersion = await window.klaytn.networkVersion;
-        console.log(networkVersion);
+            if (response?.ok && response.status === 200) {
+              UseReloadSession();
+            }
+          }
+        } catch (error) {
+          Sentry.captureException(error);
+        }
       }
     } else {
       //카이카스 설치 팝업
       withoutKaikasWarning();
     }
   };
+
+  const setLoginInfomation = useCallback(() => {
+    if (status === 'authenticated') {
+      setLoginInfo({
+        user_id: Number(session?.user.user_id),
+        user_address: String(session?.user.user_address),
+        user_network: Number(session?.user.user_network),
+        user_nickname: String(session?.user.user_nickname),
+        user_introduction: String(session?.user.user_introduction),
+      });
+      console.log(session);
+    }
+  }, [session?.user]);
+
+  useEffect(() => {
+    setLoginInfomation();
+  }, [setLoginInfomation]);
 
   const handleNetworkChanged = (...args: Array<string>) => {
     const networkId = args[0];
@@ -166,7 +192,7 @@ export default function MenuComponent() {
         </Link>
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
-        {isConnetedWallet ? (
+        {status === 'authenticated' ? (
           <>
             <Divider />
             <Menu theme="light" mode="inline" items={userLoginInfo} />
