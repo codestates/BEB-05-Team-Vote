@@ -100,19 +100,19 @@ module.exports = {
   },
 
   readLectureDetail: (req: Request, res: Response) => {
-    const lecture_title: String = req.query.lecture_title as String;
+    const lecture_id: Number = Number(req.query.lecture_id as String);
 
-    const readLectureDetailHandler = async (lecture_title: String) => {
-      const selectedLecture = await prisma.Lecture.findUnique({
+    const readLectureDetailHandler = async (lecture_id: Number) => {
+      const selectedLecture = await prisma.Lecture.findMany({
         where: {
-          lecture_title: lecture_title,
+          lecture_id: lecture_id,
         },
       });
       console.dir(selectedLecture, { depth: null });
       return selectedLecture;
     };
 
-    readLectureDetailHandler(lecture_title)
+    readLectureDetailHandler(lecture_id)
       .then(async (result) => {
         await prisma.$disconnect();
         res.status(201).json(result);

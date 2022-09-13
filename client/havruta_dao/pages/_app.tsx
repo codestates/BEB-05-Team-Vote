@@ -1,7 +1,7 @@
 import type { AppProps } from 'next/app';
 import { useRouter } from 'next/router';
 import Script from 'next/script';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { LayoutComponent } from '../components/LayoutComponent';
 import '../styles/customTheme.less';
 import * as gtag from '../lib/gtag';
@@ -9,9 +9,12 @@ import { hotjar } from 'react-hotjar';
 import ChannelService from '../components/ChannelService.js';
 import { SessionProvider } from 'next-auth/react';
 import { RecoilRoot } from 'recoil';
+import { Space, Spin } from 'antd';
+import Head from 'next/head';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
   //hotjar
   useEffect(() => {
@@ -42,6 +45,26 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
     };
   }, []);
 
+  //페이지 로딩
+  useEffect(() => {
+    const start = () => {
+      console.log('start');
+      setLoading(true);
+    };
+    const end = () => {
+      console.log('finished');
+      setLoading(false);
+    };
+    router.events.on('routeChangeStart', start);
+    router.events.on('routeChangeComplete', end);
+    router.events.on('routeChangeError', end);
+    return () => {
+      router.events.off('routeChangeStart', start);
+      router.events.off('routeChangeComplete', end);
+      router.events.off('routeChangeError', end);
+    };
+  }, []);
+
   https: return (
     <>
       {/*Google Analytics */}
@@ -66,7 +89,17 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       <RecoilRoot>
         <SessionProvider session={session}>
           <LayoutComponent>
-            <Component {...pageProps} />
+            <Head>
+              <title>Havruta DAO</title>
+              <meta name="description" content="Havruta DAO" />
+            </Head>
+            {loading ? (
+              <Space style={{ width: '100%', justifyContent: 'center', height: '100vh' }}>
+                <Spin tip="Loading..." size={'large'} />
+              </Space>
+            ) : (
+              <Component {...pageProps} />
+            )}
           </LayoutComponent>
         </SessionProvider>
       </RecoilRoot>
