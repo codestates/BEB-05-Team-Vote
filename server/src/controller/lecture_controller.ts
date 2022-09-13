@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-const prisma = require("../db/index");
+import { Request, Response } from 'express';
+const prisma = require('../db/index');
 
 module.exports = {
   postLecture: (req: Request, res: Response) => {
@@ -32,7 +32,7 @@ module.exports = {
 
       if (result) {
         await prisma.$disconnect();
-        res.status(403).send("lecture title exists");
+        res.status(403).send('lecture title exists');
       } else {
         await prisma.Lecture.create({
           data: {
@@ -50,7 +50,7 @@ module.exports = {
         console.dir(allLecture, { depth: null });
 
         await prisma.$disconnect();
-        res.status(201).send("post Lecture success");
+        res.status(201).send('post Lecture success');
       }
     };
 
@@ -66,7 +66,7 @@ module.exports = {
     ).catch(async (e) => {
       console.error(e);
       await prisma.$disconnect();
-      res.status(500).send("Server Error");
+      res.status(500).send('Server Error');
     });
   },
 
@@ -74,10 +74,10 @@ module.exports = {
     const readAllLectureHandler = async () => {
       const allLecture = await prisma.Lecture.findMany({
         orderBy: {
-          created_at: "desc",
+          created_at: 'desc',
         },
         select: {
-          user_id: true,
+          lecture_id: true,
           lecture_title: true,
           lecture_image: true,
           lecture_price: true,
@@ -95,7 +95,7 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
 
@@ -120,7 +120,7 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
 
@@ -131,7 +131,7 @@ module.exports = {
     const readLimitLectureHandler = async (limitNum: Number) => {
       const limitedLecture = await prisma.Lecture.findMany({
         orderBy: {
-          created_at: "desc",
+          created_at: 'desc',
         },
         include: {
           user: true,
@@ -148,7 +148,7 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
 };
