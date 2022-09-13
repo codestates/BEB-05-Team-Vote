@@ -1,11 +1,24 @@
-import { FolderOpenOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import { Row, Col, PageHeader, Space, Typography, Divider, Image, Button } from 'antd';
-import axios from 'axios';
-import { InferGetStaticPropsType } from 'next';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import { Courses } from '../';
+import {
+  Row,
+  Col,
+  PageHeader,
+  Space,
+  Typography,
+  Divider,
+  Image,
+  Button,
+  notification,
+} from 'antd';
+import { FolderOpenOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { useRecoilState } from 'recoil';
+import { loginInfoState } from '../../../states/loginInfoState';
+import { useRouter } from 'next/router';
 
 const { Title, Paragraph } = Typography;
 
@@ -19,16 +32,38 @@ interface CourseDetail extends Courses {
   updated_at: string;
 }
 
-export default function details({ course }: { course: CourseDetail }) {
-  const first = false;
+export default function Detail({ course }: { course: CourseDetail }) {
+  const router = useRouter();
+  const [isSubscribe, setIsSubscribe] = useState(false);
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+
+  const onSubscribe = async () => {
+    if (!loginInfo.user_id) {
+      return notification['info']({
+        message: '지갑 연동이 필요합니다.',
+        description: '이 강의를 수강하시려면 먼저 지갑을 연동해주세요.',
+      });
+    }
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture`, {
+        user_id: loginInfo.user_id,
+        lecture_title: course.lecture_title,
+      });
+      if (res.status === 201) {
+        setIsSubscribe(true);
+      }
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+  };
+
   return (
     <section>
       <Head>
         <title>{course.lecture_title}</title>
       </Head>
       <Space style={{ width: '100%' }}>
-        <FolderOpenOutlined style={{ fontSize: '24px' }} />
-        <PageHeader title="강의 상세 내용" style={{ paddingLeft: 0 }} />
+        <PageHeader title="목록으로" style={{ paddingLeft: 0 }} onBack={() => router.back()} />
       </Space>
       <Row gutter={48}>
         <Col span={16}>
@@ -63,14 +98,20 @@ export default function details({ course }: { course: CourseDetail }) {
                 {course.lecture_price}
               </Paragraph>
             </Space>
-            {first ? (
+            {isSubscribe ? (
               <Link href={`/courses/class/1`}>
                 <Button type="ghost" size={'large'} style={{ width: '100%' }} block>
                   계속 수강하기
                 </Button>
               </Link>
             ) : (
-              <Button type="primary" size={'large'} style={{ width: '100%' }} block>
+              <Button
+                onClick={onSubscribe}
+                type="primary"
+                size={'large'}
+                style={{ width: '100%' }}
+                block
+              >
                 수강신청 하기
               </Button>
             )}

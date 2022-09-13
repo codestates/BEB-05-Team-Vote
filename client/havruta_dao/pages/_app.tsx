@@ -48,11 +48,11 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   //페이지 로딩
   useEffect(() => {
     const start = () => {
-      console.log('start');
+      // console.log('start');
       setLoading(true);
     };
     const end = () => {
-      console.log('finished');
+      // console.log('finished');
       setLoading(false);
     };
     router.events.on('routeChangeStart', start);

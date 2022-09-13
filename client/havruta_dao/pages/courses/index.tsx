@@ -5,6 +5,8 @@ import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import Head from 'next/head';
 
+const { Title, Text } = Typography;
+
 export interface Courses {
   lecture_id: number;
   lecture_image: string;
@@ -14,7 +16,6 @@ export interface Courses {
 }
 
 export default function details({ courses }: { courses: Array<Courses> }) {
-  const { Title, Text } = Typography;
   return (
     <section>
       <Head>
