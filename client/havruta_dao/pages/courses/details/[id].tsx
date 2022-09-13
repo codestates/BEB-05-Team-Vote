@@ -35,6 +35,7 @@ interface CourseDetail extends Courses {
 export default function Detail({ course }: { course: CourseDetail }) {
   const router = useRouter();
   const [isSubscribe, setIsSubscribe] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
   const onSubscribe = async () => {
@@ -44,12 +45,14 @@ export default function Detail({ course }: { course: CourseDetail }) {
         description: '이 강의를 수강하시려면 먼저 지갑을 연동해주세요.',
       });
     }
+    setIsLoading(true);
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture`, {
         user_id: loginInfo.user_id,
-        lecture_title: course.lecture_title,
+        lecture_id: course.lecture_id,
       });
       if (res.status === 201) {
+        setIsLoading(false);
         setIsSubscribe(true);
       }
     } catch (error) {
@@ -104,6 +107,10 @@ export default function Detail({ course }: { course: CourseDetail }) {
                   계속 수강하기
                 </Button>
               </Link>
+            ) : isLoading ? (
+              <Button type="primary" size={'large'} style={{ width: '100%' }} block loading>
+                <span>Loading</span>
+              </Button>
             ) : (
               <Button
                 onClick={onSubscribe}
