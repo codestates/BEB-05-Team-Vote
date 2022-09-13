@@ -1,48 +1,95 @@
-import { Button, Image, Row, Col, Space, Typography } from 'antd';
-import { CodepenOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { useEffect, useState } from 'react';
+import { Image, Row, Col, Space, Typography, Skeleton } from 'antd';
+import { CodepenOutlined } from '@ant-design/icons';
 import Link from 'next/link';
-import { DummyCourses } from '../pages/courses';
+import axios from 'axios';
+import * as Sentry from '@sentry/react';
+import React from 'react';
 
 const { Paragraph } = Typography;
 
 export default function RcmdCourse() {
-  const data: DummyCourses = {
-    id: 133,
-    title: 'CS지식의 정석 | CS면접 디자인 패턴 네트워크 운영체제 데이터베이스 자료구조 개발자',
-    author: '니콜라스',
-    price: '2',
-    thumbnailURL: '/329248-eng2.png',
+  const [isLoding, setIsLoding] = useState(true);
+  const [courses, setCourses] = useState([
+    {
+      lecture_id: 0,
+      lecture_title: '',
+      lecture_image: '',
+      lecture_price: 0,
+      user: {
+        user_id: 0,
+        user_address: '',
+        user_network: '',
+        user_nickname: '',
+        user_introduction: '',
+        created_at: '',
+        updated_at: '',
+      },
+    },
+  ]);
+
+  const fetchLectureList = async () => {
+    try {
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/limit?limit=5`);
+      const result = res.data;
+      setCourses(result);
+      setIsLoding(false);
+    } catch (error) {
+      Sentry.captureException(error);
+    }
   };
+  useEffect(() => {
+    fetchLectureList();
+  }, []);
 
   return (
     <Space wrap style={{ padding: '0 20px', width: '100%' }}>
       <Row justify="center" align="top" gutter={[8, 16]}>
-        <Col xxl={12} lg={24} style={{ cursor: 'pointer' }}>
-          <Link href={`/courses/details/${data.id}`}>
-            <Image
-              preview={false}
-              width={'100%'}
-              height={'auto'}
-              alt="thumbnail"
-              src={data.thumbnailURL}
-            />
-          </Link>
-        </Col>
+        {isLoding
+          ? Array(5)
+              .fill(null)
+              .map((_, i) => (
+                <React.Fragment key={i}>
+                  <Col xxl={12} lg={24}>
+                    <Skeleton.Image active style={{ width: '100%', minWidth: '150px' }} />
+                  </Col>
+                  <Col xxl={12} lg={24}>
+                    <Skeleton active style={{ width: '100%' }} />
+                  </Col>
+                </React.Fragment>
+              ))
+          : courses.map((course) => (
+              <React.Fragment key={course.lecture_id}>
+                <Col xxl={12} lg={24} style={{ cursor: 'pointer' }} key={course.lecture_id}>
+                  <Link href={`/courses/details/${course.lecture_id}`}>
+                    <Image
+                      preview={false}
+                      width={'100%'}
+                      height={'auto'}
+                      alt="thumbnail"
+                      src={course.lecture_image}
+                    />
+                  </Link>
+                </Col>
 
-        <Col xxl={12} lg={24} style={{ cursor: 'pointer' }}>
-          <Link href={`/courses/details/${data.id}`}>
-            <div>
-              <Paragraph style={{ color: 'grey', fontSize: '14px' }}> {data.author}</Paragraph>
-              <Paragraph style={{ maxWidth: '100%' }} ellipsis={{ rows: 2 }}>
-                {data.title}
-              </Paragraph>
-              <Paragraph>
-                <CodepenOutlined />
-                &nbsp;{data.price}
-              </Paragraph>
-            </div>
-          </Link>
-        </Col>
+                <Col xxl={12} lg={24} style={{ cursor: 'pointer' }}>
+                  <Link href={`/courses/details/1`}>
+                    <div>
+                      <Paragraph style={{ color: 'grey', fontSize: '14px' }}>
+                        {course.user?.user_nickname}
+                      </Paragraph>
+                      <Paragraph style={{ maxWidth: '100%' }} ellipsis={{ rows: 2 }}>
+                        {course.lecture_title}
+                      </Paragraph>
+                      <Paragraph>
+                        <CodepenOutlined />
+                        &nbsp;{course.lecture_price}
+                      </Paragraph>
+                    </div>
+                  </Link>
+                </Col>
+              </React.Fragment>
+            ))}
       </Row>
     </Space>
   );

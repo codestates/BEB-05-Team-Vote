@@ -1,11 +1,6 @@
-import {
-  AlignCenterOutlined,
-  ArrowRightOutlined,
-} from '@ant-design/icons';
-import { Col, PageHeader, Row, Radio, Space, Typography, Button, Card, Result } from 'antd';
-import axios from 'axios';
-import type { GetServerSideProps, NextPage } from 'next';
-import Head from 'next/head';
+import { AlignCenterOutlined, ArrowRightOutlined } from '@ant-design/icons';
+import { Col, PageHeader, Row, Radio } from 'antd';
+import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import Post from '../components/community/Post';
@@ -73,10 +68,6 @@ const Home: NextPage = ({post}:any) => {
 
   return (
     <div>
-      <Head>
-        <title>Havruta DAO</title>
-        <meta name="description" content="Havruta DAO" />
-      </Head>
       <Row>
         <Col xl={16} xs={24}>
           <PageHeader

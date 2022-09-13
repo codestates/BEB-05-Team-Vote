@@ -1,5 +1,15 @@
 import React, { useEffect, useCallback } from 'react';
-import { Button, Divider, Layout, MenuProps, message, Modal, Space, Typography } from 'antd';
+import {
+  Button,
+  Divider,
+  Layout,
+  MenuProps,
+  message,
+  Modal,
+  notification,
+  Space,
+  Typography,
+} from 'antd';
 import { Menu } from 'antd';
 import {
   AlignCenterOutlined,
@@ -18,6 +28,7 @@ import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
 import { UseReloadSession } from '../lib/hooks/UseReloadSession';
+import axios from 'axios';
 
 const { Sider } = Layout;
 const { Paragraph, Text, Link } = Typography;
@@ -55,9 +66,36 @@ export default function MenuComponent() {
     icon: item.icon,
     label: item.name,
     onClick: () => {
-      router.push(item.path, undefined, { shallow: true });
+      if (item.id === '3') {
+        if (!loginInfo.user_id) {
+          return notification['info']({
+            message: '지갑 연동이 필요합니다.',
+            description: '지식 공유를 하려면 먼저 지갑을 연동해주세요.',
+          });
+        } else {
+          router.push(item.path, undefined, { shallow: true });
+        }
+      } else {
+        router.push(item.path, undefined, { shallow: true });
+      }
     },
   }));
+
+  const onEditProfile = (e: any) => {
+    setLoginInfo((prevState) => ({ ...prevState, user_nickname: e }));
+  };
+
+  useEffect(() => {
+    try {
+      axios.put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
+        user_address: loginInfo.user_address,
+        user_nickname: loginInfo.user_nickname,
+        user_introduction: loginInfo.user_introduction,
+      });
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+  }, [loginInfo.user_nickname, loginInfo.user_introduction, loginInfo.user_address]);
 
   const userLoginInfo: MenuProps['items'] = [
     {
@@ -66,7 +104,7 @@ export default function MenuComponent() {
       label: (
         <Text
           editable={{
-            onChange: (e) => setLoginInfo({ ...loginInfo, user_nickname: e }),
+            onChange: onEditProfile,
           }}
           onClick={() => {
             navigator.clipboard.writeText(loginInfo.user_address);
@@ -149,7 +187,6 @@ export default function MenuComponent() {
         user_nickname: String(session?.user.user_nickname),
         user_introduction: String(session?.user.user_introduction),
       });
-      console.log(session);
     }
   }, [session?.user]);
 
