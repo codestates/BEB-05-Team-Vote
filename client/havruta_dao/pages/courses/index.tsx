@@ -3,19 +3,23 @@ import { SearchOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
+import Head from 'next/head';
 
 export interface Courses {
   lecture_id: number;
   lecture_image: string;
   lecture_price: string;
   lecture_title: string;
-  user: any;
+  user?: any;
 }
 
 export default function details({ courses }: { courses: Array<Courses> }) {
   const { Title, Text } = Typography;
   return (
     <section>
+      <Head>
+        <title>강의탐색</title>
+      </Head>
       <Space style={{ justifyContent: 'space-between', width: '100%' }}>
         <Space>
           <SearchOutlined style={{ fontSize: '24px' }} />
@@ -27,40 +31,50 @@ export default function details({ courses }: { courses: Array<Courses> }) {
         </Radio.Group> */}
       </Space>
 
-      <Row gutter={[20, 24]} style={{ cursor: 'pointer' }}>
+      <Row gutter={[20, 24]}>
         {courses.map((course) => (
           <Col span={8} key={course.lecture_id}>
             <Link href={`/courses/details/${course.lecture_id}`}>
-              <>
-                <Image
-                  width={'100%'}
-                  height={'auto'}
-                  style={{ objectFit: 'cover', marginBottom: '8px', borderRadius: '8px' }}
-                  src={`${course.lecture_image}`}
-                  alt={course.lecture_title}
-                  preview={false}
-                />
-                <Title ellipsis={{ rows: 2 }} level={4} style={{ lineHeight: '150%' }}>
-                  {course.lecture_title}
-                </Title>
-                <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
-                  <Text style={{ fontSize: '16px' }} type="secondary">
-                    {course.user.user_nickname}
-                  </Text>
-                  <Space>
-                    <ThunderboltOutlined
-                      style={{ fontSize: '16px', paddingTop: '6px', color: '#9b4dea' }}
-                    />
-                    <Text
-                      style={{ fontSize: '16px', color: '#9b4dea', fontWeight: 500 }}
-                      type="secondary"
-                    >
-                      {course.lecture_price}
-                    </Text>
-                  </Space>
-                </Space>
-              </>
+              <Image
+                width={'100%'}
+                height={'auto'}
+                style={{
+                  objectFit: 'cover',
+                  marginBottom: '8px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                }}
+                src={`${course.lecture_image}`}
+                alt={course.lecture_title}
+                preview={false}
+              />
             </Link>
+
+            <Link href={`/courses/details/${course.lecture_id}`}>
+              <Title
+                ellipsis={{ rows: 2 }}
+                level={4}
+                style={{ lineHeight: '150%', cursor: 'pointer' }}
+              >
+                {course.lecture_title}
+              </Title>
+            </Link>
+            <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
+              <Text style={{ fontSize: '16px' }} type="secondary">
+                {course.user.user_nickname}
+              </Text>
+              <Space>
+                <ThunderboltOutlined
+                  style={{ fontSize: '16px', paddingTop: '6px', color: '#9b4dea' }}
+                />
+                <Text
+                  style={{ fontSize: '16px', color: '#9b4dea', fontWeight: 500 }}
+                  type="secondary"
+                >
+                  {course.lecture_price}
+                </Text>
+              </Space>
+            </Space>
           </Col>
         ))}
       </Row>
