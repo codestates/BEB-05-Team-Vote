@@ -1,32 +1,35 @@
 import { LikeOutlined, MessageOutlined } from '@ant-design/icons';
 import { Button, Card, Space, Typography } from 'antd';
 import Link from 'next/link';
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled from 'styled-components';
 import { PostInterface } from '../../pages';
 
 const { Text } = Typography;
 
-const post: PostInterface = {
-  id: 1,
-  author: 'SUNGMAN5',
-  content:
-    '그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다. 끓는 그들은 하는 광야에서 불어 위하여 꽃 없으면, 하는 사막이다.그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다.',
-  like: 22,
-  commentCount: 22,
-  createdDate: '09-03-2022',
-};
-
-export default function Post() {
+export default function Post({article}: {article:PostInterface}) { 
+  console.log(article)   
+  
+  // console.log('포스트리스트?', postList[0].article_id)
+  // const post: PostInterface = {
+  //   id: `${postList.article_id}`,
+  //   author: '',
+  //   content: '',
+  //   like: 0,
+  //   commentCount: 0,
+  //   createdDate: '',
+  // };  
   return (
-    <Link href={`/community/details/${post.id}`}>
+
+    
+    <Link href={`/community/details/${article.article_id}`}>
       <PostCard>
         <Space direction="vertical" size={'large'}>
           <Space>
-            <Text strong>{post.author}</Text>
-            <Text type="secondary">{post.createdDate}</Text>
+            <Text strong>{article.user.user_nickname}</Text>
+            <Text type="secondary">{article.created_at}</Text>
           </Space>
-          {post.content}
+          {article.article_content}
           <Space>
             <Button
               type="link"
@@ -37,11 +40,11 @@ export default function Post() {
               }}
             >
               {' '}
-              {post.commentCount}
+              {article.like_count}
             </Button>
             <Button type="link" icon={<MessageOutlined />} size="small">
               {' '}
-              {post.commentCount}
+              {article.comment_count}
             </Button>
           </Space>
         </Space>
