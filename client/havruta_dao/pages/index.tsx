@@ -1,5 +1,5 @@
 import { AlignCenterOutlined, ArrowRightOutlined } from '@ant-design/icons';
-import { Col, PageHeader, Row, Radio } from 'antd';
+import { Col, PageHeader, Row, Radio, Typography, Card } from 'antd';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -9,6 +9,7 @@ import RcmdCourse from '../components/RcmdCourse';
 import * as Sentry from '@sentry/react';
 import { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import axios from 'axios';
 
 export interface PostInterface {
   article_id: number;
