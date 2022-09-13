@@ -42,7 +42,7 @@ model Lecture {
   lecture_id      Int      @id @default(autoincrement())
   user    User     @relation(fields: [user_id], references: [user_id])
   user_id Int 
-  lecture_title String @unique
+  lecture_title String
   lecture_summary String
   lecture_introduction String
   instructor_introduction String
@@ -78,8 +78,8 @@ model UserLecture {
   id      Int      @id @default(autoincrement())
   user    User     @relation(fields: [user_id], references: [user_id])
   user_id Int 
-  lecture    Lecture     @relation(fields: [lecture_title], references: [lecture_title])
-  lecture_title String
+  lecture    Lecture     @relation(fields: [lecture_id], references: [lecture_id])
+  lecture_id Int
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 }

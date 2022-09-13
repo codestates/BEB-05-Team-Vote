@@ -3,6 +3,7 @@ const prisma = require("../db/index");
 
 module.exports = {
   postLecture: (req: Request, res: Response) => {
+    console.log(req.body);
     const {
       user_id,
       lecture_title,
@@ -12,7 +13,7 @@ module.exports = {
       lecture_url,
       lecture_image,
       lecture_price,
-    } = req.body;
+    } = req.body.course;
 
     const postLectureHandler = async (
       user_id: Number,
@@ -22,36 +23,25 @@ module.exports = {
       instructor_introduction: String,
       lecture_url: String,
       lecture_image: String,
-      lecture_price: Number
+      lecture_price: String
     ) => {
-      const result = await prisma.Lecture.findUnique({
-        where: {
+      await prisma.Lecture.create({
+        data: {
+          user_id: user_id,
           lecture_title: lecture_title,
+          lecture_summary: lecture_summary,
+          lecture_introduction: lecture_introduction,
+          instructor_introduction: instructor_introduction,
+          lecture_url: lecture_url,
+          lecture_image: lecture_image,
+          lecture_price: Number(lecture_price),
         },
       });
+      const allLecture = await prisma.Lecture.findMany({});
+      console.dir(allLecture, { depth: null });
 
-      if (result) {
-        await prisma.$disconnect();
-        res.status(403).send("lecture title exists");
-      } else {
-        await prisma.Lecture.create({
-          data: {
-            user_id: user_id,
-            lecture_title: lecture_title,
-            lecture_summary: lecture_summary,
-            lecture_introduction: lecture_introduction,
-            instructor_introduction: instructor_introduction,
-            lecture_url: lecture_url,
-            lecture_image: lecture_image,
-            lecture_price: lecture_price,
-          },
-        });
-        const allLecture = await prisma.Lecture.findMany({});
-        console.dir(allLecture, { depth: null });
-
-        await prisma.$disconnect();
-        res.status(201).send("post Lecture success");
-      }
+      await prisma.$disconnect();
+      res.status(201).send("post Lecture success");
     };
 
     postLectureHandler(
@@ -77,13 +67,14 @@ module.exports = {
           created_at: "desc",
         },
         select: {
-          user_id: true,
+          lecture_id: true,
           lecture_title: true,
           lecture_image: true,
           lecture_price: true,
           user: true,
         },
       });
+
       console.dir(allLecture, { depth: null });
       return allLecture;
     };
@@ -100,19 +91,19 @@ module.exports = {
   },
 
   readLectureDetail: (req: Request, res: Response) => {
-    const lecture_title: String = req.query.lecture_title as String;
+    const lecture_id: Number = Number(req.query.lecture_id as String);
 
-    const readLectureDetailHandler = async (lecture_title: String) => {
-      const selectedLecture = await prisma.Lecture.findUnique({
+    const readLectureDetailHandler = async (lecture_id: Number) => {
+      const selectedLecture = await prisma.Lecture.findMany({
         where: {
-          lecture_title: lecture_title,
+          lecture_id: lecture_id,
         },
       });
       console.dir(selectedLecture, { depth: null });
       return selectedLecture;
     };
 
-    readLectureDetailHandler(lecture_title)
+    readLectureDetailHandler(lecture_id)
       .then(async (result) => {
         await prisma.$disconnect();
         res.status(201).json(result);
