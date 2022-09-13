@@ -10,16 +10,13 @@ export default NextAuth({
       id: 'kaikas-credential',
       name: 'kaikas',
       type: 'credentials',
-      credentials: {
-        address: { label: 'address', type: 'text', placeholder: 'jsmith' },
-        network: { label: 'network', type: 'number' },
-      },
+      credentials: {},
       async authorize(credentials: any, req) {
         let { address, network } = credentials;
         if (!address || !network) throw new Error('Missing address or network');
         return (
           axios
-            .post(`http://localhost:8000/user/login`, {
+            .post(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/login`, {
               user_address: address,
               user_network: network,
             })
