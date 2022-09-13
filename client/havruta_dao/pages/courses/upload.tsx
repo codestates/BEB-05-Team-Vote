@@ -1,6 +1,6 @@
 import { CloudUploadOutlined, CodepenOutlined } from '@ant-design/icons';
 import { PageHeader, Input, Button, Form, Row, Col, Space } from 'antd';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import { useRecoilState } from 'recoil';
@@ -30,29 +30,37 @@ export default function upload() {
     lecture_image: '',
     lecture_price: 0,
   });
+
+  useEffect(() => {
+    console.log(course);
+    if (course.lecture_title) {
+      axios
+        .post(`http://localhost:8000/lecture`, { course })
+        .then((res) => {
+          console.log('RESPONSE', res);
+        })
+        .catch((err) => {
+          Sentry.captureException(err);
+        });
+    }
+  }, [course]);
+
   const changeValue = (values: UploadCourse) => {
-    setCourse((values) => {
-      ...values,
-      lecture_title: values.lecture_title,
-      lecture_summary: values.lecture_summary,
-      lecture_introduction: values.lecture_introduction,
-      instructor_introduction: values.instructor_introduction,
-      lecture_url: values.lecture_url,
-      lecture_image: values.lecture_image,
-      lecture_price: values.lecture_price,
+    setCourse((course) => {
+      return {
+        ...course,
+        lecture_title: values.lecture_title,
+        lecture_summary: values.lecture_summary,
+        lecture_introduction: values.lecture_introduction,
+        instructor_introduction: values.instructor_introduction,
+        lecture_url: values.lecture_url,
+        lecture_image: values.lecture_image,
+        lecture_price: values.lecture_price,
+      };
     });
   };
   const onFinish = (values: UploadCourse) => {
-    console.log(course);
-    console.log(values);
-    // axios
-    //   .post(`https://localhost:8000/lecture`, {values})
-    //   .then((res) => {
-    //     console.log('RESPONSE', res);
-    //   })
-    //   .catch((err) => {
-    //     Sentry.captureException(err);
-    //   });
+    changeValue(values);
   };
   return (
     <Row>
@@ -108,4 +116,3 @@ export default function upload() {
     </Row>
   );
 }
-
