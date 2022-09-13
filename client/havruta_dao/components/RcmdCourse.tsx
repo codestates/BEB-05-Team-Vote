@@ -4,6 +4,7 @@ import { CodepenOutlined } from '@ant-design/icons';
 import Link from 'next/link';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
+import React from 'react';
 
 const { Paragraph } = Typography;
 
@@ -47,18 +48,18 @@ export default function RcmdCourse() {
         {isLoding
           ? Array(5)
               .fill(null)
-              .map((_) => (
-                <>
+              .map((_, i) => (
+                <React.Fragment key={i}>
                   <Col xxl={12} lg={24}>
                     <Skeleton.Image active style={{ width: '100%', minWidth: '150px' }} />
                   </Col>
                   <Col xxl={12} lg={24}>
                     <Skeleton active style={{ width: '100%' }} />
                   </Col>
-                </>
+                </React.Fragment>
               ))
           : courses.map((course) => (
-              <>
+              <React.Fragment key={course.lecture_id}>
                 <Col xxl={12} lg={24} style={{ cursor: 'pointer' }} key={course.lecture_id}>
                   <Link href={`/courses/details/${course.lecture_id}`}>
                     <Image
@@ -87,7 +88,7 @@ export default function RcmdCourse() {
                     </div>
                   </Link>
                 </Col>
-              </>
+              </React.Fragment>
             ))}
       </Row>
     </Space>
