@@ -1,5 +1,15 @@
 import React, { useEffect, useCallback } from 'react';
-import { Button, Divider, Layout, MenuProps, message, Modal, Space, Typography } from 'antd';
+import {
+  Button,
+  Divider,
+  Layout,
+  MenuProps,
+  message,
+  Modal,
+  notification,
+  Space,
+  Typography,
+} from 'antd';
 import { Menu } from 'antd';
 import {
   AlignCenterOutlined,
@@ -56,7 +66,18 @@ export default function MenuComponent() {
     icon: item.icon,
     label: item.name,
     onClick: () => {
-      router.push(item.path, undefined, { shallow: true });
+      if (item.id === '3') {
+        if (!loginInfo.user_id) {
+          return notification['info']({
+            message: '지갑 연동이 필요합니다.',
+            description: '지식 공유를 하려면 먼저 지갑을 연동해주세요.',
+          });
+        } else {
+          router.push(item.path, undefined, { shallow: true });
+        }
+      } else {
+        router.push(item.path, undefined, { shallow: true });
+      }
     },
   }));
 
