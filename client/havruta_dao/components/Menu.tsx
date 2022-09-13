@@ -166,7 +166,6 @@ export default function MenuComponent() {
         user_nickname: String(session?.user.user_nickname),
         user_introduction: String(session?.user.user_introduction),
       });
-      console.log(session);
     }
   }, [session?.user]);
 

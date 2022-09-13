@@ -1,7 +1,6 @@
 import { AlignCenterOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Col, PageHeader, Row, Radio } from 'antd';
 import type { NextPage } from 'next';
-import Head from 'next/head';
 import Link from 'next/link';
 import Post from '../components/community/Post';
 import UploadPost from '../components/community/UploadPost';
@@ -18,10 +17,6 @@ export interface PostInterface {
 const Home: NextPage = () => {
   return (
     <div>
-      <Head>
-        <title>Havruta DAO</title>
-        <meta name="description" content="Havruta DAO" />
-      </Head>
       <Row>
         <Col xl={16} xs={24}>
           <PageHeader
