@@ -1,7 +1,7 @@
 import { AlignCenterOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import { Col, PageHeader, Row, Radio } from 'antd';
 import type { NextPage } from 'next';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Post from '../components/community/Post';
 import UploadPost from '../components/community/UploadPost';
 import RcmdCourse from '../components/RcmdCourse';
@@ -15,6 +15,7 @@ export interface PostInterface {
 }
 
 const Home: NextPage = () => {
+  const router = useRouter();
   return (
     <div>
       <Row>
@@ -43,11 +44,14 @@ const Home: NextPage = () => {
             onBack={() => null}
             title="추천강의"
             extra={
-              <Link href="/courses" key={1}>
-                <div style={{ cursor: 'pointer' }} title="전체 강의 보기">
-                  <ArrowRightOutlined /> 더보기
-                </div>
-              </Link>
+              <div
+                style={{ cursor: 'pointer' }}
+                title="전체 강의 보기"
+                onClick={() => router.push('/courses')}
+                key={1}
+              >
+                <ArrowRightOutlined /> 더보기
+              </div>
             }
           />
           <RcmdCourse />
