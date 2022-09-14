@@ -129,10 +129,11 @@ const PostCard = styled(Card)`
 
 
 
-export async function getServerSideProps(){
+export async function getServerSideProps(res:any){
   try {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);        
-    const post = res.data;    
+    
+    const abc = await axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);        
+    const post = abc.data;    
     console.log(res)
     return {      
       props: {
