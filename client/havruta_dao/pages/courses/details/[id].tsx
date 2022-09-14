@@ -21,6 +21,7 @@ import { loginInfoState } from '../../../states/loginInfoState';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
 import { User } from '../../../types/next-auth';
+import { GetServerSideProps } from 'next';
 
 const { Title, Paragraph } = Typography;
 
@@ -65,6 +66,18 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
     }
   };
 
+  const onClick = () => {
+    router.push({
+      pathname: `/courses/class/${course.lecture_id}`,
+      query: {
+        lecture_id: course.lecture_id,
+        lecture_title: course.lecture_title,
+        lecture_summary: course.lecture_summary,
+        lecture_url: course.lecture_url,
+      },
+    });
+  };
+
   return (
     <section>
       <Head>
@@ -107,14 +120,12 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
               </Paragraph>
             </Space>
             {isSubscribe ? (
-              <Link href={`/courses/class/1`}>
-                <Button type="ghost" size={'large'} style={{ width: '100%' }} block>
-                  계속 수강하기
-                </Button>
-              </Link>
+              <Button onClick={onClick} type="ghost" size={'large'} style={{ width: '100%' }} block>
+                계속 수강하기
+              </Button>
             ) : isLoading ? (
               <Button type="primary" size={'large'} style={{ width: '100%' }} block loading>
-                <span>Loading</span>
+                <span>수강 신청 중..</span>
               </Button>
             ) : (
               <Button
@@ -133,10 +144,10 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
     </section>
   );
 }
-export async function getServerSideProps(ctx: any) {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     const resCourse = await axios.get(
-      `${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/detail?lecture_id=${ctx.params.id}`
+      `${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/detail?lecture_id=${ctx.params?.id}`
     );
     const course = resCourse.data[0];
 
@@ -144,7 +155,7 @@ export async function getServerSideProps(ctx: any) {
 
     if (session) {
       const resSubscribe = await axios.get(
-        `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session.user.user_id}&lecture_id=${ctx.params.id}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session.user.user_id}&lecture_id=${ctx.params?.id}`
       );
       const subscribe = resSubscribe.data.length !== 0;
 
@@ -165,4 +176,4 @@ export async function getServerSideProps(ctx: any) {
     Sentry.captureException(error);
     return { props: {} };
   }
-}
+};
