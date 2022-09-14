@@ -189,7 +189,7 @@ export default function upload() {
               <Form.Item name="submitButton">
                 {isLoding ? (
                   <Button type="primary" block size={'large'} style={{ width: '100%' }} loading>
-                    <span>Loading</span>
+                    <span>강의 업로드 중..</span>
                   </Button>
                 ) : (
                   <Button

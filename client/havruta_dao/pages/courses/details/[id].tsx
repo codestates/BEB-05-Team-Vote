@@ -94,6 +94,7 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
             style={{ marginBottom: '24px' }}
             preview={false}
             alt="강의 이미지"
+            fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
           />
           <Title level={3}>강의 상세 소개</Title>
           <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
