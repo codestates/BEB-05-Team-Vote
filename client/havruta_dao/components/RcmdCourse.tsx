@@ -68,6 +68,7 @@ export default function RcmdCourse() {
                       height={'auto'}
                       alt="thumbnail"
                       src={course.lecture_image}
+                      fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
                     />
                   </Link>
                 </Col>
