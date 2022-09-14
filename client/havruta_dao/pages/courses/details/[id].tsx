@@ -15,10 +15,12 @@ import {
   Button,
   notification,
 } from 'antd';
-import { FolderOpenOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { ThunderboltOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { useRouter } from 'next/router';
+import { getSession } from 'next-auth/react';
+import { User } from '../../../types/next-auth';
 
 const { Title, Paragraph } = Typography;
 
@@ -32,9 +34,9 @@ interface CourseDetail extends Courses {
   updated_at: string;
 }
 
-export default function Detail({ course }: { course: CourseDetail }) {
+export default function Detail({ course, subscribe }: { course: CourseDetail; subscribe: User }) {
   const router = useRouter();
-  const [isSubscribe, setIsSubscribe] = useState(false);
+  const [isSubscribe, setIsSubscribe] = useState(subscribe || false);
   const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
@@ -53,6 +55,9 @@ export default function Detail({ course }: { course: CourseDetail }) {
       });
       if (res.status === 201) {
         setIsLoading(false);
+        notification['success']({
+          message: '강의 수강 등록이 완료되었습니다!',
+        });
         setIsSubscribe(true);
       }
     } catch (error) {
@@ -128,12 +133,29 @@ export default function Detail({ course }: { course: CourseDetail }) {
     </section>
   );
 }
-export async function getServerSideProps({ params: { id } }: { params: { id: number } }) {
+export async function getServerSideProps(ctx: any) {
   try {
-    const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/detail?lecture_id=${id}`
+    const resCourse = await axios.get(
+      `${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/detail?lecture_id=${ctx.params.id}`
     );
-    const course = res.data[0];
+    const course = resCourse.data[0];
+
+    const session = await getSession(ctx);
+
+    if (session) {
+      const resSubscribe = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session.user.user_id}&lecture_id=${ctx.params.id}`
+      );
+      const subscribe = resSubscribe.data.length !== 0;
+
+      return {
+        props: {
+          course,
+          subscribe,
+        },
+      };
+    }
+
     return {
       props: {
         course,
