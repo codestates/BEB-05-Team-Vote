@@ -165,7 +165,7 @@ export default function MenuComponent() {
             });
 
             if (response?.ok && response.status === 200) {
-              UseReloadSession();
+              router.reload();
             }
           }
         } catch (error) {
