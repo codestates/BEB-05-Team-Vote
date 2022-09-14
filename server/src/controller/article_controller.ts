@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-const prisma = require("../db/index");
+import { Request, Response } from 'express';
+const prisma = require('../db/index');
 
 module.exports = {
   postArticle: (req: Request, res: Response) => {
@@ -20,19 +20,19 @@ module.exports = {
     postArticleHandler(user_id, article_content)
       .then(async () => {
         await prisma.$disconnect();
-        res.status(201).send("post article success");
+        res.status(201).send('post article success');
       })
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
   readRecentArticle: (req: Request, res: Response) => {
     const readRecentArticleHandler = async () => {
       const allRecentArticle = await prisma.Article.findMany({
         orderBy: {
-          created_at: "desc",
+          created_at: 'desc',
         },
         include: {
           user: true,
@@ -49,7 +49,7 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
   readLikeArticle: (req: Request, res: Response) => {
@@ -57,10 +57,10 @@ module.exports = {
       const allLikeArticle = await prisma.Article.findMany({
         orderBy: [
           {
-            like_count: "desc",
+            like_count: 'desc',
           },
           {
-            created_at: "desc",
+            created_at: 'desc',
           },
         ],
         include: {
@@ -78,8 +78,37 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
+  },
+  readSelectedArticle: (req: Request, res: Response) => {
+    const article_id: Number = Number(req.query.article_id as String);
+
+    const readSelectedArticleHandler = async (article_id: Number) => {
+      const result = await prisma.Article.findMany({
+        where: {
+          article_id: article_id,
+        },
+        include: {
+          user: true,
+          comments: {
+            orderBy: {
+              created_at: 'desc',
+            },
+            include: {
+              user: true,
+            },
+          },
+        },
+      });
+      await prisma.$disconnect();
+      res.status(201).json(result);
+    };
+    readSelectedArticleHandler(article_id).catch(async (e) => {
+      console.error(e);
+      await prisma.$disconnect();
+      res.status(500).send('Server Error');
+    });
   },
   editArticle: (req: Request, res: Response) => {
     const { user_id, article_id, article_content } = req.body;
@@ -112,7 +141,7 @@ module.exports = {
         console.dir(editedArticle, { depth: null });
 
         await prisma.$disconnect();
-        res.status(201).send("edit article success");
+        res.status(201).send('edit article success');
       } else {
         await prisma.$disconnect();
         res.status(403).send("you're not the author");
@@ -122,7 +151,7 @@ module.exports = {
       async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       }
     );
   },
@@ -149,7 +178,7 @@ module.exports = {
         });
 
         await prisma.$disconnect();
-        res.status(201).send("delete article success");
+        res.status(201).send('delete article success');
       } else {
         await prisma.$disconnect();
         res.status(403).send("you're not the author");
@@ -158,7 +187,7 @@ module.exports = {
     deleteArticleHandler(user_id, article_id).catch(async (e) => {
       console.error(e);
       await prisma.$disconnect();
-      res.status(500).send("Server Error");
+      res.status(500).send('Server Error');
     });
   },
 };
