@@ -30,7 +30,7 @@ interface UploadCourse {
 }
 const { TextArea } = Input;
 
-export default function upload() {
+export default function Upload() {
   const router = useRouter();
   const [isLoding, setIsLoding] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
@@ -80,6 +80,8 @@ export default function upload() {
       };
     });
   };
+
+
   const onFinish = (values: UploadCourse) => {
     setIsLoding(true);
     changeValue(values);

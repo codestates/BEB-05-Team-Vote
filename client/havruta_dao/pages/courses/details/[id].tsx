@@ -35,7 +35,7 @@ interface CourseDetail extends Courses {
   updated_at: string;
 }
 
-export default function Detail({ course, subscribe }: { course: CourseDetail; subscribe: User }) {
+export default function Detail({ course, subscribe }: { course: CourseDetail; subscribe: boolean }) {
   const router = useRouter();
   const [isSubscribe, setIsSubscribe] = useState(subscribe || false);
   const [isLoading, setIsLoading] = useState(false);
