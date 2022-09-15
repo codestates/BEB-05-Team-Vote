@@ -228,6 +228,7 @@ export default function MenuComponent() {
           src={logoImage}
           alt="logo image"
           width={221}
+          style={{ cursor: 'pointer' }}
           height={'100%'}
           onClick={() => router.push('/')}
         />
@@ -257,7 +258,12 @@ export default function MenuComponent() {
               HAVRUTADAO는 경제적, 사회적 배경에 상관 없이, 누구나 잠재력을 발휘할 수 있는 세상을
               만들어가는 탈중앙 비영리조직입니다.
             </Text>
-            <Text onClick={() => router.push('https://ant.design')} style={{ color: '#9b4dea' }}>
+            <Text
+              onClick={() =>
+                window.open(`https://www.notion.so/DAO-fe7e07833a734cfea95dc6ff610d3ded`)
+              }
+              style={{ color: '#9b4dea', cursor: 'pointer' }}
+            >
               → 자세히 알아보기
             </Text>
           </Space>
