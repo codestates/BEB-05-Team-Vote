@@ -1,6 +1,6 @@
 import { PageHeader, Row, Col, Space, Typography, Radio, Image } from 'antd';
 import { SearchOutlined, ThunderboltOutlined } from '@ant-design/icons';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import Head from 'next/head';
@@ -16,6 +16,7 @@ export interface Courses {
 }
 
 export default function details({ courses }: { courses: Array<Courses> }) {
+  const router = useRouter();
   return (
     <section>
       <Head>
@@ -35,32 +36,31 @@ export default function details({ courses }: { courses: Array<Courses> }) {
       <Row gutter={[20, 24]}>
         {courses.map((course) => (
           <Col span={8} key={course.lecture_id}>
-            <Link href={`/courses/details/${course.lecture_id}`}>
-              <Image
-                width={'100%'}
-                height={'auto'}
-                style={{
-                  objectFit: 'cover',
-                  marginBottom: '8px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                }}
-                src={`${course.lecture_image}`}
-                alt={course.lecture_title}
-                preview={false}
-                fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
-              />
-            </Link>
+            <Image
+              width={'100%'}
+              height={'auto'}
+              style={{
+                objectFit: 'cover',
+                marginBottom: '8px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+              }}
+              onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
+              src={`${course.lecture_image}`}
+              alt={course.lecture_title}
+              preview={false}
+              fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
+            />
 
-            <Link href={`/courses/details/${course.lecture_id}`}>
-              <Title
-                ellipsis={{ rows: 2 }}
-                level={4}
-                style={{ lineHeight: '150%', cursor: 'pointer' }}
-              >
-                {course.lecture_title}
-              </Title>
-            </Link>
+            <Title
+              ellipsis={{ rows: 2 }}
+              level={4}
+              style={{ lineHeight: '150%', cursor: 'pointer' }}
+              onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
+            >
+              {course.lecture_title}
+            </Title>
+
             <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
               <Text style={{ fontSize: '16px' }} type="secondary">
                 {course.user.user_nickname}

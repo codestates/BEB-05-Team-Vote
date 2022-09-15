@@ -1,6 +1,6 @@
 import { LikeOutlined, MessageOutlined } from '@ant-design/icons';
 import { Button, Card, Space, Typography } from 'antd';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import React from 'react';
 import styled from 'styled-components';
 import { PostInterface } from '../../pages';
@@ -18,35 +18,34 @@ const post: PostInterface = {
 };
 
 export default function Post() {
+  const router = useRouter();
   return (
-    <Link href={`/community/details/${post.id}`}>
-      <PostCard>
-        <Space direction="vertical" size={'large'}>
-          <Space>
-            <Text strong>{post.author}</Text>
-            <Text type="secondary">{post.createdDate}</Text>
-          </Space>
-          {post.content}
-          <Space>
-            <Button
-              type="link"
-              icon={<LikeOutlined />}
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
-              {' '}
-              {post.commentCount}
-            </Button>
-            <Button type="link" icon={<MessageOutlined />} size="small">
-              {' '}
-              {post.commentCount}
-            </Button>
-          </Space>
+    <PostCard onClick={() => router.push(`/community/details/${post.id}`)}>
+      <Space direction="vertical" size={'large'}>
+        <Space>
+          <Text strong>{post.author}</Text>
+          <Text type="secondary">{post.createdDate}</Text>
         </Space>
-      </PostCard>
-    </Link>
+        {post.content}
+        <Space>
+          <Button
+            type="link"
+            icon={<LikeOutlined />}
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+          >
+            {' '}
+            {post.commentCount}
+          </Button>
+          <Button type="link" icon={<MessageOutlined />} size="small">
+            {' '}
+            {post.commentCount}
+          </Button>
+        </Space>
+      </Space>
+    </PostCard>
   );
 }
 
