@@ -82,7 +82,7 @@ export default function RcmdCourse() {
                   xxl={12}
                   lg={24}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => router.push(`/courses/details/1`)}
+                  onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
                 >
                   <Paragraph style={{ color: 'grey', fontSize: '14px' }}>
                     {course.user?.user_nickname}
