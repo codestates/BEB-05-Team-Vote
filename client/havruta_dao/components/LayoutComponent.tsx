@@ -14,7 +14,7 @@ export const LayoutComponent = ({ children }: any) => (
         </div>
         <Layout style={{ marginLeft: 300 }}>
           <Content style={{ margin: '0px 16px 0', overflow: 'initial' }}>{children}</Content>
-          <Footer style={{ textAlign: 'center' }}>&copy; Create by Team Vote</Footer>
+          <Footer style={{ textAlign: 'center' }}>&copy; Created by Team Vote</Footer>
         </Layout>
       </Layout>
     </Col>

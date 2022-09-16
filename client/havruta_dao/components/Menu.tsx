@@ -31,7 +31,7 @@ import { UseReloadSession } from '../lib/hooks/UseReloadSession';
 import axios from 'axios';
 
 const { Sider } = Layout;
-const { Paragraph, Text, Link } = Typography;
+const { Paragraph, Text } = Typography;
 
 const menuItem = [
   {
@@ -224,9 +224,15 @@ export default function MenuComponent() {
       }}
     >
       <Space direction="vertical" size={'large'}>
-        <Link href="/">
-          <Image src={logoImage} alt="logo image" width={221} height={'100%'} />
-        </Link>
+        <Image
+          src={logoImage}
+          alt="logo image"
+          width={221}
+          style={{ cursor: 'pointer' }}
+          height={'100%'}
+          onClick={() => router.push('/')}
+        />
+
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
         {status === 'authenticated' ? (
@@ -252,9 +258,14 @@ export default function MenuComponent() {
               HAVRUTADAO는 경제적, 사회적 배경에 상관 없이, 누구나 잠재력을 발휘할 수 있는 세상을
               만들어가는 탈중앙 비영리조직입니다.
             </Text>
-            <Link href="https://ant.design" target="_blank">
+            <Text
+              onClick={() =>
+                window.open(`https://www.notion.so/DAO-fe7e07833a734cfea95dc6ff610d3ded`)
+              }
+              style={{ color: '#9b4dea', cursor: 'pointer' }}
+            >
               → 자세히 알아보기
-            </Link>
+            </Text>
           </Space>
         </DescriptionOfDao>
       </Space>
