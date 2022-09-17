@@ -92,6 +92,9 @@ module.exports = {
         include: {
           user: true,
           comments: {
+            orderBy: {
+              created_at: 'desc',
+            },
             include: {
               user: true,
             },

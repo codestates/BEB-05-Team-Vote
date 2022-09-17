@@ -206,11 +206,14 @@ const Home: NextPage = ({ post }: any) => {
             onBack={() => null}
             title="추천강의"
             extra={
-              <Link href="/courses" key={1}>
-                <div style={{ cursor: 'pointer' }} title="전체 강의 보기">
-                  <ArrowRightOutlined /> 더보기
-                </div>
-              </Link>
+              <div
+                style={{ cursor: 'pointer' }}
+                title="전체 강의 보기"
+                onClick={() => router.push('/courses')}
+                key={1}
+              >
+                <ArrowRightOutlined /> 더보기
+              </div>
             }
           />
           <RcmdCourse />

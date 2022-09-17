@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Image, Row, Col, Space, Typography, Skeleton } from 'antd';
 import { CodepenOutlined } from '@ant-design/icons';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import React from 'react';
@@ -9,6 +9,7 @@ import React from 'react';
 const { Paragraph } = Typography;
 
 export default function RcmdCourse() {
+  const router = useRouter();
   const [isLoding, setIsLoding] = useState(true);
   const [courses, setCourses] = useState([
     {
@@ -60,34 +61,39 @@ export default function RcmdCourse() {
               ))
           : courses.map((course) => (
               <React.Fragment key={course.lecture_id}>
-                <Col xxl={12} lg={24} style={{ cursor: 'pointer' }} key={course.lecture_id}>
-                  <Link href={`/courses/details/${course.lecture_id}`}>
-                    <Image
-                      preview={false}
-                      width={'100%'}
-                      height={'auto'}
-                      alt="thumbnail"
-                      src={course.lecture_image}
-                      fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
-                    />
-                  </Link>
+                <Col
+                  xxl={12}
+                  lg={24}
+                  style={{ cursor: 'pointer' }}
+                  key={course.lecture_id}
+                  onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
+                >
+                  <Image
+                    preview={false}
+                    width={'100%'}
+                    height={'auto'}
+                    alt="thumbnail"
+                    src={course.lecture_image}
+                    fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
+                  />
                 </Col>
 
-                <Col xxl={12} lg={24} style={{ cursor: 'pointer' }}>
-                  <Link href={`/courses/details/1`}>
-                    <div>
-                      <Paragraph style={{ color: 'grey', fontSize: '14px' }}>
-                        {course.user?.user_nickname}
-                      </Paragraph>
-                      <Paragraph style={{ maxWidth: '100%' }} ellipsis={{ rows: 2 }}>
-                        {course.lecture_title}
-                      </Paragraph>
-                      <Paragraph>
-                        <CodepenOutlined />
-                        &nbsp;{course.lecture_price}
-                      </Paragraph>
-                    </div>
-                  </Link>
+                <Col
+                  xxl={12}
+                  lg={24}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
+                >
+                  <Paragraph style={{ color: 'grey', fontSize: '14px' }}>
+                    {course.user?.user_nickname}
+                  </Paragraph>
+                  <Paragraph style={{ maxWidth: '100%' }} ellipsis={{ rows: 2 }}>
+                    {course.lecture_title}
+                  </Paragraph>
+                  <Paragraph>
+                    <CodepenOutlined />
+                    &nbsp;{course.lecture_price}
+                  </Paragraph>
                 </Col>
               </React.Fragment>
             ))}
