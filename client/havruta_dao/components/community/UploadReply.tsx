@@ -1,35 +1,80 @@
 import { Button, Card, Input, Space, Typography } from 'antd';
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { PostInterface } from '../../pages';
+import { loginInfoState } from '../../states/loginInfoState';
+import * as Sentry from '@sentry/react';
+import { now } from 'next-auth/client/_utils';
+import useDidMoundEffect from '../../states/useDidMountEffect';
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
 
-const post: PostInterface = {
-  id: 1,
-  author: 'SUNGMAN5',
-  content:
-    '그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다. 끓는 그들은 하는 광야에서 불어 위하여 꽃 없으면, 하는 사막이다.그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다.',
-  like: 22,
-  commentCount: 22,
-  createdDate: '09-03-2022',
-};
+export default function UploadReply({
+  eachArticle,
+  setCommentList,
+  commentList,
+}: {
+  eachArticle: PostInterface;
+  setCommentList: Function;
+  commentList: any;
+}) {
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const [isComment, setIsComment] = useState('');
 
-export default function UploadReply() {
+  useDidMoundEffect(() => {
+    console.log('입력!', commentList);
+    try{
+      axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
+      user_id: loginInfo.user_id,
+      article_id: eachArticle.article_id,
+      comment_content: `${isComment}`,
+    })
+    .then((res)=>{
+      console.log('데이터 입력 완료!')
+    });
+    }
+    catch (error) {
+      Sentry.captureException(error);      
+    }    
+  }, [commentList]);
+
+  function send_comment() {
+    console.log('실행!');    
+    const newComment = {
+      comment_content: `${isComment}`,
+      created_at: now(),
+      user_id: loginInfo.user_id,
+      user:{
+        user_nickname: loginInfo.user_nickname},
+    };
+    setCommentList((commentList = [...commentList, newComment]));
+  }
+
   return (
     <UploadCard style={{ width: '100%' }}>
       <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
         <Space>
-          <Text strong>댓글</Text>
+          <Text strong>
+            <span style={{ color: '#9b4dea' }}>{loginInfo.user_nickname}</span>님의 댓글
+          </Text>
         </Space>
         <TextArea
           rows={5}
           bordered={false}
           placeholder="내용을 입력하세요."
           style={{ padding: 0 }}
+          value={isComment}
+          onChange={(e) => setIsComment(e.target.value)}
         />
-        <Button type="primary" shape={'round'} style={{ float: 'right' }}>
+        <Button
+          onClick={() => send_comment()}
+          type="primary"
+          shape={'round'}
+          style={{ float: 'right' }}
+        >
           댓글달기
         </Button>
       </Space>
