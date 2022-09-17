@@ -7,7 +7,7 @@ import {
 import { Col, PageHeader, Row, Radio, Typography, Card, Space, Button } from 'antd';
 import type { NextPage } from 'next';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
+import Router, { useRouter } from 'next/router';
 import UploadPost from '../components/community/UploadPost';
 import RcmdCourse from '../components/RcmdCourse';
 import * as Sentry from '@sentry/react';
@@ -39,21 +39,6 @@ export interface PostInterface {
 
 const { Text } = Typography;
 
-{
-  /*
-
-1. 최근 글 서버 요청 후, 모든 데이터를 state에 할당
-2. 클릭시 state 전체에서 해당 값만 딱 변경. (모든 데이터 유지)
-3. state 변경시 useEffect 활용하여 업데이트
-4. useEffect 업데이트와 함께 DB 업데이트
-
-axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`,{
-    user_id :user_id,
-    article_id : article_id,
-  })
-
-*/
-}
 
 const Home: NextPage = ({ post }: any) => {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
@@ -209,7 +194,7 @@ const Home: NextPage = ({ post }: any) => {
               <div
                 style={{ cursor: 'pointer' }}
                 title="전체 강의 보기"
-                onClick={() => router.push('/courses')}
+                onClick={() => Router.push('/courses')}
                 key={1}
               >
                 <ArrowRightOutlined /> 더보기
