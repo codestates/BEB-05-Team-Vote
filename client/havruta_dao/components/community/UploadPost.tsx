@@ -1,56 +1,41 @@
-import { Button, Card, Input, Space, Typography, Form } from 'antd';
+import { Button, Card, Input, Typography, Form, notification } from 'antd';
 import axios from 'axios';
 import React, { useState } from 'react';
 import styled from 'styled-components';
-import { PostInterface } from '../../pages';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../../states/loginInfoState';
 import { useRecoilState } from 'recoil';
-import useDidMoundEffect from '../../states/useDidMountEffect';
-import { now } from 'next-auth/client/_utils';
+import { useSWRConfig } from 'swr';
 
 const { TextArea } = Input;
 const { Text } = Typography;
 
-//데이터 전송 후 200토스트
-// export function completeToast() {
-//   window.location.reload(); // 글 전송 후 페이지 새로 고침
-//   return alert('전송이 완료되었습니다!');
-// }
-
-export default function UploadPost({isUpload, setIsUpload}:{isUpload:any, setIsUpload:any}) {
+export default function UploadPost() {
   const [form] = Form.useForm();
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
-  const [isValue, setIsValue] = useState('');
+  const [value, setValue] = useState('');
+  const { mutate } = useSWRConfig();
 
-  console.log('입력한 내용===', isValue);
-
-  useDidMoundEffect(() => {
-    console.log('입력!', isUpload);
-    try{
-      axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/article`, {
-      user_id: loginInfo.user_id,      
-      article_content: `${isValue}`,
-    })
-    .then((res)=>{
-      console.log('데이터 입력 완료!')
-    });
+  async function submitPost() {
+    if (value.length === 0) {
+      return notification['warning']({
+        message: '내용을 입력해주세요!',
+      });
     }
-    catch (error) {
-      Sentry.captureException(error);      
-    }    
-  }, [isUpload]);
 
-  function publish() {    
-    const newPost = {
-      article_content: `${isValue}`,
-      created_at: now(),
-      user_id: loginInfo.user_id,
-      user:{
-        user_nickname: loginInfo.user_nickname
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/article`, {
+        user_id: loginInfo.user_id,
+        article_content: value,
+      });
+
+      if (res.status === 201) {
+        mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+        setValue('');
       }
-    };
-    setIsUpload([...isUpload, newPost]);
+    } catch (error) {
+      Sentry.captureException(error);
+    }
   }
 
   return (
@@ -62,16 +47,16 @@ export default function UploadPost({isUpload, setIsUpload}:{isUpload:any, setIsU
             className="article_body"
             rows={5}
             bordered={false}
-            placeholder="내용을 입력하세요."
+            placeholder="자유롭게 이야기를 나눠보세요."
             style={{ padding: 0 }}
-            value={isValue} // TextArea 값
-            onChange={(e) => setIsValue(e.target.value)} // 입력된 값으로 isValue 값 변경
+            value={value} // TextArea 값
+            onChange={(e) => setValue(e.target.value)} // 입력된 값으로 isValue 값 변경
           ></TextArea>
         </Form.Item>
         <Form.Item>
           <Button
             htmlType="submit"
-            onClick={() => publish()}
+            onClick={() => submitPost()}
             type="primary"
             shape={'round'}
             style={{ float: 'right' }}

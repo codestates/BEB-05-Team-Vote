@@ -1,56 +1,46 @@
-import { Button, Card, Input, Space, Typography } from 'antd';
+import { Button, Card, Input, notification, Space, Typography } from 'antd';
 import axios from 'axios';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
-import { PostInterface } from '../../pages';
 import { loginInfoState } from '../../states/loginInfoState';
 import * as Sentry from '@sentry/react';
-import { now } from 'next-auth/client/_utils';
-import useDidMoundEffect from '../../states/useDidMountEffect';
+import { useSWRConfig } from 'swr';
+import { useRouter } from 'next/router';
 
 const { TextArea } = Input;
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
-export default function UploadReply({
-  eachArticle,
-  setCommentList,
-  commentList,
-}: {
-  eachArticle: PostInterface;
-  setCommentList: Function;
-  commentList: any;
-}) {
+export default function UploadReply() {
+  const { mutate } = useSWRConfig();
+  const router = useRouter();
+
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
-  const [isComment, setIsComment] = useState('');
+  const [value, setValue] = useState('');
 
-  useDidMoundEffect(() => {
-    console.log('입력!', commentList);
-    try{
-      axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
-      user_id: loginInfo.user_id,
-      article_id: eachArticle.article_id,
-      comment_content: `${isComment}`,
-    })
-    .then((res)=>{
-      console.log('데이터 입력 완료!')
-    });
+  async function submitComment() {
+    if (value.length === 0) {
+      return notification['warning']({
+        message: '댓글을 입력해주세요!',
+      });
     }
-    catch (error) {
-      Sentry.captureException(error);      
-    }    
-  }, [commentList]);
 
-  function send_comment() {
-    console.log('실행!');    
-    const newComment = {
-      comment_content: `${isComment}`,
-      created_at: now(),
-      user_id: loginInfo.user_id,
-      user:{
-        user_nickname: loginInfo.user_nickname},
-    };
-    setCommentList((commentList = [...commentList, newComment]));
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
+        user_id: loginInfo.user_id,
+        article_id: Number(router.query.post_id),
+        comment_content: value,
+      });
+
+      if (res.status === 201) {
+        mutate(
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
+        );
+        setValue('');
+      }
+    } catch (error) {
+      Sentry.captureException(error);
+    }
   }
 
   return (
@@ -64,13 +54,13 @@ export default function UploadReply({
         <TextArea
           rows={5}
           bordered={false}
-          placeholder="내용을 입력하세요."
+          placeholder="댓글을 남겨보세요."
           style={{ padding: 0 }}
-          value={isComment}
-          onChange={(e) => setIsComment(e.target.value)}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
         />
         <Button
-          onClick={() => send_comment()}
+          onClick={() => submitComment()}
           type="primary"
           shape={'round'}
           style={{ float: 'right' }}
