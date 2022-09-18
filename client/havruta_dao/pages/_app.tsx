@@ -11,6 +11,9 @@ import { SessionProvider } from 'next-auth/react';
 import { RecoilRoot } from 'recoil';
 import { Space, Spin } from 'antd';
 import Head from 'next/head';
+import { SWRConfig } from 'swr';
+import axios from 'axios';
+import * as Sentry from '@sentry/react';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
@@ -88,19 +91,28 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
       />
       <RecoilRoot>
         <SessionProvider session={session}>
-          <LayoutComponent>
-            <Head>
-              <title>Havruta DAO</title>
-              <meta name="description" content="Havruta DAO" />
-            </Head>
-            {loading ? (
-              <Space style={{ width: '100%', justifyContent: 'center', height: '100vh' }}>
-                <Spin tip="Loading..." size={'large'} />
-              </Space>
-            ) : (
-              <Component {...pageProps} />
-            )}
-          </LayoutComponent>
+          <SWRConfig
+            value={{
+              fetcher: (url: string) => axios.get(url).then((res) => res.data),
+              onError: (error) => {
+                Sentry.captureException(error);
+              },
+            }}
+          >
+            <LayoutComponent>
+              <Head>
+                <title>Havruta DAO</title>
+                <meta name="description" content="Havruta DAO" />
+              </Head>
+              {loading ? (
+                <Space style={{ width: '100%', justifyContent: 'center', height: '100vh' }}>
+                  <Spin tip="Loading..." size={'large'} />
+                </Space>
+              ) : (
+                <Component {...pageProps} />
+              )}
+            </LayoutComponent>
+          </SWRConfig>
         </SessionProvider>
       </RecoilRoot>
     </>
