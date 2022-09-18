@@ -12,8 +12,9 @@ import {
 } from 'antd';
 import { Menu } from 'antd';
 import {
-  AlignCenterOutlined,
+  AuditOutlined,
   BulbOutlined,
+  CommentOutlined,
   FileSearchOutlined,
   LogoutOutlined,
   UserOutlined,
@@ -27,7 +28,6 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
-import { UseReloadSession } from '../lib/hooks/UseReloadSession';
 import axios from 'axios';
 
 const { Sider } = Layout;
@@ -37,22 +37,28 @@ const menuItem = [
   {
     id: '1',
     name: '커뮤니티',
-    icon: <AlignCenterOutlined />,
+    icon: <CommentOutlined />,
     path: '/',
   },
-  { id: '2', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
+  // {
+  //   id: '2',
+  //   name: '질의응답',
+  //   icon: <QuestionCircleOutlined />,
+  //   path: '/ama',
+  // },
+  { id: '3', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
   {
-    id: '3',
+    id: '4',
     name: '지식공유',
     icon: <BulbOutlined />,
     path: '/courses/upload',
   },
-  // {
-  //   id : '4',
-  //   name: '투표',
-  //   icon: <BulbOutlined />,
-  //   path: '/poll',
-  // },
+  {
+    id: '5',
+    name: 'DAO투표',
+    icon: <AuditOutlined />,
+    path: 'https://demo.snapshot.org/#/havruta.eth',
+  },
 ];
 
 export default function MenuComponent() {
@@ -66,7 +72,7 @@ export default function MenuComponent() {
     icon: item.icon,
     label: item.name,
     onClick: () => {
-      if (item.id === '3') {
+      if (item.name === '지식공유') {
         if (!loginInfo.user_id) {
           return notification['info']({
             message: '지갑 연동이 필요합니다.',
@@ -75,15 +81,17 @@ export default function MenuComponent() {
         } else {
           router.push(item.path, undefined, { shallow: true });
         }
+      } else if (item.name === '투표(Snapshot)') {
+        window.open(item.path);
       } else {
         router.push(item.path, undefined, { shallow: true });
       }
     },
   }));
 
-  const onEditProfile = (e: any) => {
-    setLoginInfo((prevState) => ({ ...prevState, user_nickname: e }));
-  };
+  // const onEditProfile = (e: any) => {
+  //   setLoginInfo((prevState) => ({ ...prevState, user_nickname: e }));
+  // };
 
   useEffect(() => {
     try {
@@ -103,9 +111,9 @@ export default function MenuComponent() {
       icon: <UserOutlined />,
       label: (
         <Text
-          editable={{
-            onChange: onEditProfile,
-          }}
+          // editable={{
+          //   onChange: onEditProfile,
+          // }}
           onClick={() => {
             navigator.clipboard.writeText(loginInfo.user_address);
             message.success('계정 주소가 복사되었습니다!');
