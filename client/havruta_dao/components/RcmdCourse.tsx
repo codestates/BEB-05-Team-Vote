@@ -47,10 +47,8 @@ export default function RcmdCourse() {
     <Space wrap style={{ padding: '0 20px', width: '100%' }}>
       <Row justify="center" align="top" gutter={[8, 16]}>
         {isLoding
-          ? Array(5)
-              .fill(null)
-              .map((_, i) => (
-                <React.Fragment key={i}>
+          ? 
+                <React.Fragment>
                   <Col xxl={12} lg={24}>
                     <Skeleton.Image active style={{ width: '100%', minWidth: '150px' }} />
                   </Col>
@@ -58,7 +56,6 @@ export default function RcmdCourse() {
                     <Skeleton active style={{ width: '100%' }} />
                   </Col>
                 </React.Fragment>
-              ))
           : courses.map((course) => (
               <React.Fragment key={course.lecture_id}>
                 <Col
