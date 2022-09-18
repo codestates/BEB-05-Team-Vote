@@ -1,5 +1,4 @@
 import { PageHeader, Space, Typography } from 'antd';
-import { EditOutlined, RollbackOutlined } from '@ant-design/icons';
 import { GetServerSideProps } from 'next';
 import ReactPlayer from 'react-player/lazy';
 import styled from 'styled-components';
