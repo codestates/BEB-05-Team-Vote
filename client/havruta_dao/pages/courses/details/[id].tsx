@@ -14,7 +14,7 @@ import {
   Button,
   notification,
 } from 'antd';
-import { ThunderboltOutlined } from '@ant-design/icons';
+import { CodepenOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { useRouter } from 'next/router';
@@ -34,7 +34,13 @@ interface CourseDetail extends Courses {
   updated_at: string;
 }
 
-export default function Detail({ course, subscribe }: { course: CourseDetail; subscribe: boolean }) {
+export default function Detail({
+  course,
+  subscribe,
+}: {
+  course: CourseDetail;
+  subscribe: boolean;
+}) {
   const router = useRouter();
   const [isSubscribe, setIsSubscribe] = useState(subscribe || false);
   const [isLoading, setIsLoading] = useState(false);
@@ -83,7 +89,11 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
         <title>{course.lecture_title}</title>
       </Head>
       <Space style={{ width: '100%' }}>
-        <PageHeader title="목록으로" style={{ paddingLeft: 0 }} onBack={() => router.back()} />
+        <PageHeader
+          title="목록으로"
+          style={{ paddingLeft: 0 }}
+          onBack={() => router.push('/courses')}
+        />
       </Space>
       <Row gutter={48}>
         <Col span={16}>
@@ -114,14 +124,14 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
 
           <Space direction="vertical" style={{ width: '100%' }}>
             <Space>
-              <ThunderboltOutlined style={{ fontSize: '32px', color: '#9B4DEA' }} />
+              <CodepenOutlined style={{ fontSize: '24px', color: '#9b4dea' }} />
               <Paragraph style={{ fontSize: '24px', fontWeight: 600, color: '#9B4DEA', margin: 0 }}>
                 {course.lecture_price}
               </Paragraph>
             </Space>
             {isSubscribe ? (
               <Button onClick={onClick} type="ghost" size={'large'} style={{ width: '100%' }} block>
-                계속 수강하기
+                강의실로 이동하기
               </Button>
             ) : isLoading ? (
               <Button type="primary" size={'large'} style={{ width: '100%' }} block loading>
