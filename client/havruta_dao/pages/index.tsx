@@ -42,6 +42,8 @@ const { Text } = Typography;
 
 const Home: NextPage = ({ post }: any) => {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+
+  const router = useRouter();
   
   //좋아요 데이터 state
   const likeData = [...post]
@@ -148,9 +150,8 @@ const Home: NextPage = ({ post }: any) => {
           } 
 
           {isUpload.map((element: PostInterface) => {
-            return (
-              <Link href={`/community/details/${element.article_id}`}>
-                <div key={element.article_id}>
+            return (              
+                <div key={element.article_id} onClick={()=> router.push(`/community/details/${element.article_id}`)}>
                   <PostCard>
                     <Space direction="vertical" size={'large'}>
                       <Space>
@@ -180,8 +181,7 @@ const Home: NextPage = ({ post }: any) => {
                       </Space>
                     </Space>
                   </PostCard>
-                </div>
-              </Link>
+                </div>              
             );
           })}
         </Col>

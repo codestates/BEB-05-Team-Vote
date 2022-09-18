@@ -11,6 +11,7 @@ import { SessionProvider } from 'next-auth/react';
 import { RecoilRoot } from 'recoil';
 import { Space, Spin } from 'antd';
 import Head from 'next/head';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
@@ -85,7 +86,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             });
           `,
         }}
-      />
+      />      
       <RecoilRoot>
         <SessionProvider session={session}>
           <LayoutComponent>
