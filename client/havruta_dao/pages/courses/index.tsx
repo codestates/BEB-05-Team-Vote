@@ -69,7 +69,8 @@ export default function Details() {
 
               <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
                 <Text style={{ fontSize: '16px' }} type="secondary">
-                  {course.user.user_nickname}
+                  {course.user.user_nickname.length > 10 &&
+                    course.user.user_nickname.substr(0, 30) + '...'}
                 </Text>
                 <Space>
                   <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />

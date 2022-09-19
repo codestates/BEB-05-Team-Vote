@@ -1,14 +1,40 @@
-import { EnterOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, message, Popconfirm, Space, Typography } from 'antd';
+import { DeleteOutlined, EnterOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
+import { Button, Card, message, notification, Popconfirm, Space, Typography } from 'antd';
+import axios from 'axios';
 import React from 'react';
+import { useRecoilState } from 'recoil';
 import { timeForToday } from '../../lib/date';
+import { loginInfoState } from '../../states/loginInfoState';
+import { useSWRConfig } from 'swr';
+import { useRouter } from 'next/router';
 
 const { Text, Paragraph } = Typography;
 
 export default function Reply({ comments }: { comments: any }) {
+  const router = useRouter();
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const { mutate } = useSWRConfig();
+
+  const onCommentDelete = async (comment_id: number) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
+      data: {
+        user_id: loginInfo.user_id,
+        comment_id: comment_id,
+      },
+    });
+    if (res.status === 201) {
+      notification['success']({
+        message: '댓글이 성공적으로 삭제되었습니다.',
+      });
+      mutate(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
+      );
+    }
+  };
+
   return (
     <Card style={{ width: '100%', marginTop: '-1px' }}>
-      <Space direction="vertical" size={'large'}>
+      <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
         <Space>
           <EnterOutlined style={{ transform: 'scaleX(-1)' }} />
           <Popconfirm
@@ -43,6 +69,21 @@ export default function Reply({ comments }: { comments: any }) {
           <Text type="secondary">{timeForToday(comments.created_at)}</Text>
         </Space>
         {comments.comment_content}
+        <Space style={{ width: '100%', justifyContent: 'end' }}>
+          {comments.user_id === loginInfo.user_id && (
+            <div onClick={(e) => e.stopPropagation()}>
+              <Popconfirm
+                title="정말 댓글을 삭제하시겠습니까?"
+                onConfirm={() => onCommentDelete(comments.id)}
+                okText="삭제"
+                cancelText="취소"
+              >
+                <DeleteOutlined style={{ color: '#ff7875' }} />
+              </Popconfirm>
+            </div>
+          )}
+        </Space>
+
         {/* <Space>
           <Button type="link" icon={<MessageOutlined />} size="small">
             {' '}

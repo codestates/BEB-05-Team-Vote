@@ -30,7 +30,10 @@ export default function PostDetail() {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
   const { data: post } = useSWR(
-    `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`,
+    {
+      refreshInterval: 10000,
+    }
   );
 
   const fetchLike = async (article_id: number) => {

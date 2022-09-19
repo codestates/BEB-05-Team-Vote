@@ -13,14 +13,15 @@ import {
   Image,
   Button,
   notification,
+  Popconfirm,
 } from 'antd';
-import { CodepenOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { CodepenOutlined, QuestionCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { useRouter } from 'next/router';
 import { getSession } from 'next-auth/react';
-import { User } from '../../../types/next-auth';
 import { GetServerSideProps } from 'next';
+import { useSWRConfig } from 'swr';
 
 const { Title, Paragraph } = Typography;
 
@@ -42,6 +43,8 @@ export default function Detail({
   subscribe: boolean;
 }) {
   const router = useRouter();
+  const { mutate } = useSWRConfig();
+
   const [isSubscribe, setIsSubscribe] = useState(subscribe || false);
   const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
@@ -68,6 +71,22 @@ export default function Detail({
       }
     } catch (error) {
       Sentry.captureException(error);
+    }
+  };
+
+  const onDelete = async (lecture_id: number) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`, {
+      data: {
+        user_id: loginInfo.user_id,
+        lecture_id: lecture_id,
+      },
+    });
+    if (res.status === 201) {
+      notification['success']({
+        message: '강의가 성공적으로 삭제되었습니다.',
+      });
+      router.push('/courses');
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`);
     }
   };
 
@@ -147,6 +166,22 @@ export default function Detail({
               >
                 수강신청 하기
               </Button>
+            )}
+            {loginInfo.user_id === course.user_id ? (
+              <Popconfirm
+                placement="bottom"
+                title={'정말 강의를 삭제하시겠습니까?'}
+                onConfirm={() => onDelete(course.lecture_id)}
+                okText={'삭제'}
+                cancelText="취소"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+              >
+                <Button type={'text'} danger size={'large'} style={{ width: '100%' }} block>
+                  강의 삭제하기
+                </Button>
+              </Popconfirm>
+            ) : (
+              <></>
             )}
           </Space>
         </Col>

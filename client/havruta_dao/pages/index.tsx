@@ -97,16 +97,16 @@ const Home: NextPage = () => {
             onBack={() => router.push('/')}
             title="하브루타 커뮤니티"
             subTitle={'어떤 이야기든 자유롭게 이야기를 나눠보세요.'}
-            extra={
-              <Radio.Group defaultValue="a" size={'small'}>
-                <Radio.Button onClick={() => {}} value="a">
-                  최신
-                </Radio.Button>
-                <Radio.Button onClick={() => {}} value="b">
-                  추천
-                </Radio.Button>
-              </Radio.Group>
-            }
+            // extra={
+            //   <Radio.Group defaultValue="a" size={'small'}>
+            //     <Radio.Button onClick={() => {}} value="a">
+            //       최신
+            //     </Radio.Button>
+            //     <Radio.Button onClick={() => {}} value="b">
+            //       추천
+            //     </Radio.Button>
+            //   </Radio.Group>
+            // }
           />
           {loginInfo.user_id ? (
             <UploadPost />
