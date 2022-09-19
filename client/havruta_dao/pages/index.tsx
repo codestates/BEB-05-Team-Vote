@@ -5,6 +5,7 @@ import {
   FireOutlined,
   LikeOutlined,
   MessageOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
 import {
   Col,
@@ -18,6 +19,7 @@ import {
   Skeleton,
   Popconfirm,
   notification,
+  message,
 } from 'antd';
 import type { NextPage } from 'next';
 import UploadPost from '../components/community/UploadPost';
@@ -57,7 +59,9 @@ const Home: NextPage = () => {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const { mutate } = useSWRConfig();
 
-  const { data: postList } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+  const { data: postList } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`, {
+    refreshInterval: 10000,
+  });
 
   const fetchLike = async (article_id: number) => {
     const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
@@ -119,7 +123,7 @@ const Home: NextPage = () => {
               <Text style={{ fontSize: '20px' }}>
                 지금 지갑을 연결하고
                 <br />
-                커뮤니티 활동을 시작하세요
+                커뮤니티 활동을 시작해보세요.
               </Text>
             </Space>
           )}
@@ -134,7 +138,30 @@ const Home: NextPage = () => {
                   <PostCard>
                     <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                       <Space>
-                        <Text strong>{post.user.user_nickname}</Text>
+                        <Popconfirm
+                          title={
+                            <>
+                              <Paragraph>{post.user.user_nickname}</Paragraph>
+                              <Paragraph>{post.user.user_introduction}</Paragraph>
+                              <Paragraph>{post.user.user_address}</Paragraph>
+                            </>
+                          }
+                          icon={<UserOutlined style={{ color: '#bfbfbf' }} />}
+                          okText="지갑 주소 복사"
+                          cancelText="닫기"
+                          onConfirm={(e) => {
+                            e?.stopPropagation();
+                            navigator.clipboard.writeText(post.user.user_address);
+                            message.success('지갑 주소가 복사되었습니다!');
+                          }}
+                          onCancel={(e) => {
+                            e?.stopPropagation();
+                          }}
+                        >
+                          <Text type="secondary" strong onClick={(e) => e?.stopPropagation()}>
+                            {post.user.user_nickname}
+                          </Text>
+                        </Popconfirm>
                         <Text type="secondary">{timeForToday(post.created_at)}</Text>
                       </Space>
                       <Paragraph ellipsis={{ rows: 4, expandable: true, symbol: 'more' }}>
@@ -179,7 +206,7 @@ const Home: NextPage = () => {
               );
             })
           ) : (
-            <Skeleton />
+            <></>
           )}
         </Col>
         <Col xl={8} xs={0}>

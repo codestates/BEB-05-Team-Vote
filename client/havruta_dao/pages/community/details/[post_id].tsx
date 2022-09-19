@@ -1,4 +1,4 @@
-import { DeleteOutlined, LikeOutlined, MessageOutlined } from '@ant-design/icons';
+import { DeleteOutlined, LikeOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
 import {
   Card,
   Space,
@@ -10,6 +10,7 @@ import {
   Skeleton,
   Popconfirm,
   notification,
+  message,
 } from 'antd';
 import { useRouter } from 'next/router';
 import Reply from '../../../components/community/Reply';
@@ -21,7 +22,7 @@ import { loginInfoState } from '../../../states/loginInfoState';
 import { useSWRConfig } from 'swr';
 import { timeForToday } from '../../../lib/date';
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 export default function PostDetail() {
   const router = useRouter();
@@ -74,7 +75,35 @@ export default function PostDetail() {
               <Card style={{ width: '100%', marginTop: '-1px' }}>
                 <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                   <Space>
-                    <Text strong>{post[0].user.user_nickname}</Text>
+                    <Popconfirm
+                      title={
+                        <>
+                          <Paragraph>{post[0].user.user_nickname}</Paragraph>
+                          <Paragraph>{post[0].user.user_introduction}</Paragraph>
+                          <Paragraph>{post[0].user.user_address}</Paragraph>
+                        </>
+                      }
+                      icon={<UserOutlined style={{ color: '#bfbfbf' }} />}
+                      okText="지갑 주소 복사"
+                      cancelText="닫기"
+                      onConfirm={(e) => {
+                        e?.stopPropagation();
+                        navigator.clipboard.writeText(post[0].user.user_address);
+                        message.success('지갑 주소가 복사되었습니다!');
+                      }}
+                      onCancel={(e) => {
+                        e?.stopPropagation();
+                      }}
+                    >
+                      <Text
+                        type="secondary"
+                        strong
+                        onClick={(e) => e?.stopPropagation()}
+                        style={{ cursor: 'pointer' }}
+                      >
+                        {post[0].user.user_nickname}
+                      </Text>
+                    </Popconfirm>
                     <Text type="secondary">{timeForToday(post[0].created_at)}</Text>
                   </Space>
                   {post[0].article_content}
@@ -109,7 +138,7 @@ export default function PostDetail() {
                   </Space>
                 </Space>
               </Card>
-              <UploadReply />
+              {loginInfo.user_id ? <UploadReply /> : <></>}
 
               {post[0].comments.length === 0 ? (
                 <div style={{ textAlign: `center`, paddingTop: '32px' }}>
@@ -122,7 +151,7 @@ export default function PostDetail() {
               )}
             </>
           ) : (
-            <Skeleton />
+            <></>
           )}
         </Col>
       </Row>

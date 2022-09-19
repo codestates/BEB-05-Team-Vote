@@ -25,11 +25,10 @@ export default function Details() {
       </Head>
       <Space style={{ justifyContent: 'space-between', width: '100%' }}>
         <Space>
-          <SearchOutlined style={{ fontSize: '24px' }} />
           <PageHeader
-            style={{ paddingLeft: 0 }}
+            backIcon={<SearchOutlined />}
+            onBack={() => router.push('/courses')}
             title="강의탐색"
-            backIcon={true}
             subTitle={'함께 배우고, 나누고, 성장하세요.'}
           />
         </Space>
@@ -73,9 +72,9 @@ export default function Details() {
                   {course.user.user_nickname}
                 </Text>
                 <Space>
-                  <CodepenOutlined style={{ fontSize: '24px', color: '#9b4dea' }} />
+                  <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
                   <Text
-                    style={{ fontSize: '16px', color: '#9b4dea', fontWeight: 500 }}
+                    style={{ fontSize: '16px', color: '#bae637', fontWeight: 500 }}
                     type="secondary"
                   >
                     {course.lecture_price}
