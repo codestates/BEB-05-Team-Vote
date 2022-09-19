@@ -13,10 +13,12 @@ import {
 import { Menu } from 'antd';
 import {
   AuditOutlined,
+  BankOutlined,
   BulbOutlined,
   CommentOutlined,
   FileSearchOutlined,
   LogoutOutlined,
+  QuestionCircleOutlined,
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
@@ -35,6 +37,12 @@ const { Sider } = Layout;
 const { Paragraph, Text, Link } = Typography;
 
 const menuItem = [
+  {
+    id: '0',
+    name: 'DAO소개',
+    icon: <BankOutlined />,
+    path: '/about',
+  },
   {
     id: '1',
     name: '커뮤니티',
