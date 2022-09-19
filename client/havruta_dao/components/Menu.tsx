@@ -17,19 +17,19 @@ import {
   CommentOutlined,
   FileSearchOutlined,
   LogoutOutlined,
-  QuestionCircleOutlined,
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import Image from 'next/image';
-import logoImage from '../assets/images/HAVRUTADAO.png';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
 import axios from 'axios';
+// import logoImage from '../assets/images/HAVRUTADAO.png';
+import logoImage from '../assets/images/svglogo4.svg';
 
 const { Sider } = Layout;
 const { Paragraph, Text, Link } = Typography;
@@ -238,10 +238,18 @@ export default function MenuComponent() {
           src={logoImage}
           alt="logo image"
           width={221}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', transform: 'scale(2.5)' }}
           height={'100%'}
           onClick={() => router.push('/')}
         />
+        {/* <Image
+          src={logoImage}
+          alt="logo image"
+          width={221}
+          style={{ cursor: 'pointer' }}
+          height={'100%'}
+          onClick={() => router.push('/')}
+        /> */}
 
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
