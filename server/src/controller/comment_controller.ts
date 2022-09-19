@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-const prisma = require("../db/index");
+import { Request, Response } from 'express';
+const prisma = require('../db/index');
 
 module.exports = {
   postComment: (req: Request, res: Response) => {
@@ -27,12 +27,12 @@ module.exports = {
     postCommentHandler(user_id, article_id, comment_content)
       .then(async () => {
         await prisma.$disconnect();
-        res.status(201).send("post comment success");
+        res.status(201).send('post comment success');
       })
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
   readComment: (req: Request, res: Response) => {
@@ -44,7 +44,7 @@ module.exports = {
           article_id: numArticleId,
         },
         orderBy: {
-          created_at: "desc",
+          created_at: 'desc',
         },
         include: {
           user: true,
@@ -61,7 +61,53 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
+  },
+  deleteComment: (req: Request, res: Response) => {
+    const { user_id, comment_id } = req.body;
+    const deleteCommentHandler = async (
+      user_id: Number,
+      comment_id: Number
+    ) => {
+      const result = await prisma.Comment.findMany({
+        where: {
+          id: comment_id,
+        },
+        select: {
+          id: true,
+          user_id: true,
+          article_id: true,
+        },
+      });
+
+      if (result[0].user_id === user_id) {
+        await prisma.Comment.delete({
+          where: {
+            id: comment_id,
+          },
+        });
+
+        await prisma.Article.update({
+          where: {
+            article_id: result[0].article_id,
+          },
+          data: {
+            comment_count: { increment: -1 },
+          },
+        });
+
+        await prisma.$disconnect();
+        res.status(201).send('delete comment success');
+      } else {
+        await prisma.$disconnect();
+        res.status(403).send("you're not the author");
+      }
+    };
+    deleteCommentHandler(user_id, comment_id).catch(async (e) => {
+      console.error(e);
+      await prisma.$disconnect();
+      res.status(500).send('Server Error');
+    });
   },
 };
