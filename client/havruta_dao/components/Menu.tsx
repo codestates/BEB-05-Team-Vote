@@ -17,6 +17,7 @@ import {
   CommentOutlined,
   FileSearchOutlined,
   LogoutOutlined,
+  QuestionCircleOutlined,
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
@@ -40,13 +41,14 @@ const menuItem = [
     icon: <CommentOutlined />,
     path: '/',
   },
-  // {
-  //   id: '2',
-  //   name: '질의응답',
-  //   icon: <QuestionCircleOutlined />,
-  //   path: '/ama',
-  // },
-  { id: '3', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
+
+  { id: '2', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
+  {
+    id: '3',
+    name: '질의응답',
+    icon: <QuestionCircleOutlined />,
+    path: '/ama',
+  },
   {
     id: '4',
     name: '지식공유',

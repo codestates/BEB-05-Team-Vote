@@ -1,11 +1,24 @@
 import {
   ArrowRightOutlined,
   CommentOutlined,
+  DeleteOutlined,
   FireOutlined,
   LikeOutlined,
   MessageOutlined,
 } from '@ant-design/icons';
-import { Col, PageHeader, Row, Radio, Typography, Card, Space, Button, Skeleton } from 'antd';
+import {
+  Col,
+  PageHeader,
+  Row,
+  Radio,
+  Typography,
+  Card,
+  Space,
+  Button,
+  Skeleton,
+  Popconfirm,
+  notification,
+} from 'antd';
 import type { NextPage } from 'next';
 import UploadPost from '../components/community/UploadPost';
 import RcmdCourse from '../components/RcmdCourse';
@@ -14,6 +27,9 @@ import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
+import axios from 'axios';
+import { useSWRConfig } from 'swr';
+import { timeForToday } from '../lib/date';
 
 export interface PostInterface {
   article_id: number;
@@ -34,13 +50,39 @@ export interface PostInterface {
   };
 }
 
-const { Text } = Typography;
+const { Text, Paragraph } = Typography;
 
 const Home: NextPage = () => {
   const router = useRouter();
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const { mutate } = useSWRConfig();
 
   const { data: postList } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+
+  const fetchLike = async (article_id: number) => {
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
+      user_id: loginInfo.user_id,
+      article_id: article_id,
+    });
+    if (res.status === 201) {
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+    }
+  };
+
+  const onPostDelete = async (article_id: number) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/article`, {
+      data: {
+        user_id: loginInfo.user_id,
+        article_id: article_id,
+      },
+    });
+    if (res.status === 201) {
+      notification['success']({
+        message: '게시글이 성공적으로 삭제되었습니다.',
+      });
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+    }
+  };
 
   return (
     <div>
@@ -50,6 +92,7 @@ const Home: NextPage = () => {
             backIcon={<CommentOutlined />}
             onBack={() => router.push('/')}
             title="하브루타 커뮤니티"
+            subTitle={'어떤 이야기든 자유롭게 이야기를 나눠보세요.'}
             extra={
               <Radio.Group defaultValue="a" size={'small'}>
                 <Radio.Button onClick={() => {}} value="a">
@@ -89,28 +132,46 @@ const Home: NextPage = () => {
                   onClick={() => router.push(`/community/details/${post.article_id}`)}
                 >
                   <PostCard>
-                    <Space direction="vertical" size={'large'}>
+                    <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                       <Space>
                         <Text strong>{post.user.user_nickname}</Text>
-                        <Text type="secondary">{post.created_at}</Text>
+                        <Text type="secondary">{timeForToday(post.created_at)}</Text>
                       </Space>
-                      {post.article_content}
-                      <Space>
-                        <Button
-                          type="link"
-                          icon={<LikeOutlined />}
-                          size="small"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                        >
-                          {' '}
-                          {post.like_count}
-                        </Button>
-                        <Button type="link" icon={<MessageOutlined />} size="small">
-                          {' '}
-                          {post.comment_count}
-                        </Button>
+                      <Paragraph ellipsis={{ rows: 4, expandable: true, symbol: 'more' }}>
+                        {' '}
+                        {post.article_content}
+                      </Paragraph>
+                      <Space style={{ justifyContent: 'space-between', width: '100%' }}>
+                        <Space size={'large'}>
+                          <Button
+                            type="link"
+                            icon={<LikeOutlined />}
+                            size="small"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              fetchLike(post.article_id);
+                            }}
+                          >
+                            {' '}
+                            {post.like_count}
+                          </Button>
+                          <Button type="link" icon={<MessageOutlined />} size="small">
+                            {' '}
+                            {post.comment_count}
+                          </Button>
+                        </Space>
+                        {post.user_id === loginInfo.user_id && (
+                          <div onClick={(e) => e.stopPropagation()}>
+                            <Popconfirm
+                              title="정말 게시글을 삭제하시겠습니까?"
+                              onConfirm={() => onPostDelete(post.article_id)}
+                              okText="삭제"
+                              cancelText="취소"
+                            >
+                              <DeleteOutlined style={{ color: '#ff7875' }} />
+                            </Popconfirm>
+                          </div>
+                        )}
                       </Space>
                     </Space>
                   </PostCard>
