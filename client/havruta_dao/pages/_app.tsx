@@ -14,6 +14,7 @@ import Head from 'next/head';
 import { SWRConfig } from 'swr';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
+import Background from '../components/backgoround';
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
   const router = useRouter();
@@ -109,7 +110,10 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
                   <Spin tip="Loading..." size={'large'} />
                 </Space>
               ) : (
-                <Component {...pageProps} />
+                <>
+                  <Background />
+                  <Component {...pageProps} />
+                </>
               )}
             </LayoutComponent>
           </SWRConfig>
