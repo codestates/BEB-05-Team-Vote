@@ -124,8 +124,8 @@ export default function Detail({
 
           <Space direction="vertical" style={{ width: '100%' }}>
             <Space>
-              <CodepenOutlined style={{ fontSize: '24px', color: '#9b4dea' }} />
-              <Paragraph style={{ fontSize: '24px', fontWeight: 600, color: '#9B4DEA', margin: 0 }}>
+              <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
+              <Paragraph style={{ fontSize: '24px', fontWeight: 600, color: '#bae637', margin: 0 }}>
                 {course.lecture_price}
               </Paragraph>
             </Space>
