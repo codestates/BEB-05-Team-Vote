@@ -1,5 +1,5 @@
-import { PageHeader, Row, Col, Space, Typography, Radio, Image, Skeleton } from 'antd';
-import { SearchOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { PageHeader, Row, Col, Space, Typography, Image, Skeleton } from 'antd';
+import { CodepenOutlined, SearchOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import useSWR from 'swr';
@@ -25,8 +25,12 @@ export default function Details() {
       </Head>
       <Space style={{ justifyContent: 'space-between', width: '100%' }}>
         <Space>
-          <SearchOutlined style={{ fontSize: '24px' }} />
-          <PageHeader style={{ paddingLeft: 0 }} title="강의탐색" backIcon={true} />
+          <PageHeader
+            backIcon={<SearchOutlined />}
+            onBack={() => router.push('/courses')}
+            title="강의탐색"
+            subTitle={'함께 배우고, 나누고, 성장하세요.'}
+          />
         </Space>
         {/* <Radio.Group style={{ marginBottom: 8 }} defaultValue="a" size={'small'}>
           <Radio.Button value="a">최신</Radio.Button>
@@ -65,14 +69,13 @@ export default function Details() {
 
               <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
                 <Text style={{ fontSize: '16px' }} type="secondary">
-                  {course.user.user_nickname}
+                  {course.user.user_nickname.length > 10 &&
+                    course.user.user_nickname.substr(0, 30) + '...'}
                 </Text>
                 <Space>
-                  <ThunderboltOutlined
-                    style={{ fontSize: '16px', paddingTop: '6px', color: '#9b4dea' }}
-                  />
+                  <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
                   <Text
-                    style={{ fontSize: '16px', color: '#9b4dea', fontWeight: 500 }}
+                    style={{ fontSize: '16px', color: '#bae637', fontWeight: 500 }}
                     type="secondary"
                   >
                     {course.lecture_price}

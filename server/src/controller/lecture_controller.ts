@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-const prisma = require("../db/index");
+import { Request, Response } from 'express';
+const prisma = require('../db/index');
 
 module.exports = {
   postLecture: (req: Request, res: Response) => {
@@ -41,7 +41,7 @@ module.exports = {
       console.dir(allLecture, { depth: null });
 
       await prisma.$disconnect();
-      res.status(201).send("post Lecture success");
+      res.status(201).send('post Lecture success');
     };
 
     postLectureHandler(
@@ -56,7 +56,7 @@ module.exports = {
     ).catch(async (e) => {
       console.error(e);
       await prisma.$disconnect();
-      res.status(500).send("Server Error");
+      res.status(500).send('Server Error');
     });
   },
 
@@ -64,7 +64,7 @@ module.exports = {
     const readAllLectureHandler = async () => {
       const allLecture = await prisma.Lecture.findMany({
         orderBy: {
-          created_at: "desc",
+          created_at: 'desc',
         },
         select: {
           lecture_id: true,
@@ -86,7 +86,7 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
 
@@ -111,7 +111,7 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
   },
 
@@ -122,7 +122,7 @@ module.exports = {
     const readLimitLectureHandler = async (limitNum: Number) => {
       const limitedLecture = await prisma.Lecture.findMany({
         orderBy: {
-          created_at: "desc",
+          created_at: 'desc',
         },
         include: {
           user: true,
@@ -139,7 +139,47 @@ module.exports = {
       .catch(async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
+        res.status(500).send('Server Error');
       });
+  },
+  deleteLecture: (req: Request, res: Response) => {
+    const { user_id, lecture_id } = req.body;
+
+    const deleteLectureHandler = async (
+      user_id: Number,
+      lecture_id: Number
+    ) => {
+      const result = await prisma.Lecture.findMany({
+        where: {
+          lecture_id: lecture_id,
+        },
+        select: {
+          lecture_id: true,
+          user_id: true,
+        },
+      });
+      if (result[0].user_id === user_id) {
+        await prisma.UserLecture.deleteMany({
+          where: {
+            lecture_id: lecture_id,
+          },
+        });
+        await prisma.Lecture.deleteMany({
+          where: {
+            lecture_id: lecture_id,
+          },
+        });
+        await prisma.$disconnect();
+        res.status(201).send('delete lecture success');
+      } else {
+        await prisma.$disconnect();
+        res.status(403).send("you're not the author");
+      }
+    };
+    deleteLectureHandler(user_id, lecture_id).catch(async (e) => {
+      console.error(e);
+      await prisma.$disconnect();
+      res.status(500).send('Server Error');
+    });
   },
 };

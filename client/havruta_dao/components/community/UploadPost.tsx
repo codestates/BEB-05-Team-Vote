@@ -1,7 +1,6 @@
 import { Button, Card, Input, Typography, Form, notification } from 'antd';
 import axios from 'axios';
 import React, { useState } from 'react';
-import styled from 'styled-components';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../../states/loginInfoState';
 import { useRecoilState } from 'recoil';
@@ -39,7 +38,7 @@ export default function UploadPost() {
   }
 
   return (
-    <UploadCard style={{ width: '100%' }}>
+    <Card style={{ width: '100%' }}>
       <Text strong>{loginInfo.user_nickname}</Text>
       <Form form={form} name="content">
         <Form.Item name="article_content">
@@ -65,10 +64,6 @@ export default function UploadPost() {
           </Button>
         </Form.Item>
       </Form>
-    </UploadCard>
+    </Card>
   );
 }
-
-const UploadCard = styled(Card)`
-  background-color: #f9f9f9;
-`;

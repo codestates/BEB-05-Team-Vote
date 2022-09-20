@@ -81,7 +81,6 @@ export default function Upload() {
     });
   };
 
-
   const onFinish = (values: UploadCourse) => {
     setIsLoding(true);
     changeValue(values);
@@ -92,8 +91,7 @@ export default function Upload() {
         <Row>
           <Col span={12}>
             <Space>
-              <CloudUploadOutlined style={{ fontSize: '24px' }} />
-              <PageHeader style={{ paddingLeft: 0 }} title="지식 공유" />
+              <PageHeader onBack={() => {}} backIcon={<CloudUploadOutlined />} title="지식 공유" />
             </Space>
 
             <Form layout="vertical" onFinish={onFinish}>
@@ -160,7 +158,7 @@ export default function Upload() {
                   placeholder="강의 가격을 입력해주세요.."
                   value={0}
                   min={0}
-                  addonBefore={<CodepenOutlined style={{ fontSize: '24px', color: '#9b4dea' }} />}
+                  addonBefore={<CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />}
                 />
               </Form.Item>
 

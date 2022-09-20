@@ -2,7 +2,6 @@ import { Button, Card, Input, notification, Space, Typography } from 'antd';
 import axios from 'axios';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import styled from 'styled-components';
 import { loginInfoState } from '../../states/loginInfoState';
 import * as Sentry from '@sentry/react';
 import { useSWRConfig } from 'swr';
@@ -44,11 +43,11 @@ export default function UploadReply() {
   }
 
   return (
-    <UploadCard style={{ width: '100%' }}>
+    <Card style={{ width: '100%' }}>
       <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
         <Space>
           <Text strong>
-            <span style={{ color: '#9b4dea' }}>{loginInfo.user_nickname}</span>님의 댓글
+            <span style={{ color: '#bae637' }}>{loginInfo.user_nickname}</span>님의 댓글
           </Text>
         </Space>
         <TextArea
@@ -68,10 +67,6 @@ export default function UploadReply() {
           댓글달기
         </Button>
       </Space>
-    </UploadCard>
+    </Card>
   );
 }
-
-const UploadCard = styled(Card)`
-  background-color: #f9f9f9;
-`;

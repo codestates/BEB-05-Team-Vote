@@ -13,40 +13,50 @@ import {
 import { Menu } from 'antd';
 import {
   AuditOutlined,
+  BankOutlined,
   BulbOutlined,
   CommentOutlined,
   FileSearchOutlined,
   LogoutOutlined,
+  QuestionCircleOutlined,
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import Image from 'next/image';
-import logoImage from '../assets/images/HAVRUTADAO.png';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
 import axios from 'axios';
+// import logoImage from '../assets/images/HAVRUTADAO.png';
+import logoImage from '../assets/images/svglogo4.svg';
 
 const { Sider } = Layout;
-const { Paragraph, Text } = Typography;
+const { Paragraph, Text, Link } = Typography;
 
 const menuItem = [
+  {
+    id: '0',
+    name: 'DAO소개',
+    icon: <BankOutlined />,
+    path: '/about',
+  },
   {
     id: '1',
     name: '커뮤니티',
     icon: <CommentOutlined />,
     path: '/',
   },
+
+  { id: '2', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
   // {
-  //   id: '2',
+  //   id: '3',
   //   name: '질의응답',
   //   icon: <QuestionCircleOutlined />,
   //   path: '/ama',
   // },
-  { id: '3', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
   {
     id: '4',
     name: '지식공유',
@@ -116,7 +126,7 @@ export default function MenuComponent() {
           // }}
           onClick={() => {
             navigator.clipboard.writeText(loginInfo.user_address);
-            message.success('계정 주소가 복사되었습니다!');
+            message.success('지갑 주소가 복사되었습니다!');
           }}
         >
           {loginInfo.user_nickname === loginInfo.user_address
@@ -172,9 +182,9 @@ export default function MenuComponent() {
               redirect: false,
             });
 
-            if (response?.ok && response.status === 200) {
-              router.reload();
-            }
+            // if (response?.ok && response.status === 200) {
+            //   router.reload();
+            // }
           }
         } catch (error) {
           Sentry.captureException(error);
@@ -236,10 +246,18 @@ export default function MenuComponent() {
           src={logoImage}
           alt="logo image"
           width={221}
-          style={{ cursor: 'pointer' }}
+          style={{ cursor: 'pointer', transform: 'scale(2.5)' }}
           height={'100%'}
           onClick={() => router.push('/')}
         />
+        {/* <Image
+          src={logoImage}
+          alt="logo image"
+          width={221}
+          style={{ cursor: 'pointer' }}
+          height={'100%'}
+          onClick={() => router.push('/')}
+        /> */}
 
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
@@ -266,14 +284,13 @@ export default function MenuComponent() {
               HAVRUTADAO는 경제적, 사회적 배경에 상관 없이, 누구나 잠재력을 발휘할 수 있는 세상을
               만들어가는 탈중앙 비영리조직입니다.
             </Text>
-            <Text
+            <Link
               onClick={() =>
                 window.open(`https://www.notion.so/DAO-fe7e07833a734cfea95dc6ff610d3ded`)
               }
-              style={{ color: '#9b4dea', cursor: 'pointer' }}
             >
               → 자세히 알아보기
-            </Text>
+            </Link>
           </Space>
         </DescriptionOfDao>
       </Space>
@@ -284,6 +301,6 @@ export default function MenuComponent() {
 const DescriptionOfDao = styled.div`
   padding: 16px;
   border-radius: 4px;
-  background-color: #f9f9f9;
+  /* background-color: #f9f9f9; */
   width: 221px;
 `;
