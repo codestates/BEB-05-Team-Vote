@@ -1,8 +1,8 @@
 // Threejs example: threejs.org/examples/?q=asc#webgl_effects_ascii
 
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { Text, OrbitControls, useCursor } from '@react-three/drei';
+import { Text } from '@react-three/drei';
 import { AsciiEffect } from 'three-stdlib';
 import { Col, Row } from 'antd';
 import Image from 'next/image';
@@ -38,8 +38,8 @@ export default function App() {
   );
 }
 
-function Torusknot(props: any) {
-  const ref = useRef<any>();
+function Torusknot(props) {
+  const ref = useRef();
   //   useCursor(hovered);
   useFrame((state, delta) => (ref.current.rotation.y += delta / 1));
   return (
@@ -83,4 +83,5 @@ function AsciiRenderer({ renderIndex = 1, characters = '   .:-+*=%@# ', ...optio
   }, renderIndex);
 
   // This component returns nothing, it has no view, it is a purely logical
+  return <></>;
 }
