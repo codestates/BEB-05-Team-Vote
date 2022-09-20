@@ -23,10 +23,10 @@ export default function Background() {
 
 function Stars(props: any) {
   const ref = useRef<any>();
-  const [sphere] = useState(() => inSphere(new Float32Array(1000), { radius: 1.5 }));
+  const [sphere] = useState(() => inSphere(new Float32Array(4000), { radius: 1.5 }));
   useFrame((state, delta) => {
-    ref.current.rotation.x -= delta / 40;
-    ref.current.rotation.y -= delta / 60;
+    ref.current.rotation.x -= delta / 60;
+    ref.current.rotation.y -= delta / 80;
   });
   return (
     <group rotation={[0, 0, Math.PI / 4]}>
