@@ -6,24 +6,32 @@
     "start": "node dist/app.js",
     "build": "tsc -p .",
     "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "test": "yarn mocha ./test/test.ts -r ts-node/register"
   },
   "license": "MIT",
   "devDependencies": {
+    "@types/chai": "^4.3.3",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
+    "@types/mocha": "^9.1.1",
     "@types/node": "^18.7.14",
+    "chai": "^4.3.6",
     "express": "^4.18.1",
     "nodemon": "^2.0.19",
     "prisma": "^4.3.1",
+    "ts-mocha": "^10.0.0",
     "ts-node": "^10.9.1",
     "typescript": "^4.8.2"
   },
   "dependencies": {
     "@prisma/client": "^4.3.1",
     "@types/express-session": "^1.17.5",
+    "axios": "^0.27.2",
+    "caver-js": "^1.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
-    "express-session": "^1.17.3"
+    "express-session": "^1.17.3",
+    "mocha": "^10.0.0"
   }
 }
