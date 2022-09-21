@@ -16,6 +16,7 @@ model User {
   user_network String
   user_nickname String
   user_introduction String
+  user_point Int @default(0)
   articles Article[]
   lectures Lecture[]
   comments Comment[]

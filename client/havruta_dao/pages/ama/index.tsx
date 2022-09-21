@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import { Col, PageHeader, Row, Space, Table } from 'antd';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import type { ColumnsType } from 'antd/es/table';
-import AdsBanner from '../components/ama/AdsBanner';
 interface DataType {
   key: number;
   no: number;
