@@ -7,12 +7,12 @@ export default function MyComments() {
   const router = useRouter();
 
   return (
-    <Space direction="vertical"  style={{width:'100%'}}>
+    <Space direction="vertical" style={{ width: '100%' }}>
       <PageHeader
         className="site-page-header"
         onBack={() => router.push('/mypage')}
-        title="내가 쓴 댓글"
-        subTitle="내가 쓴 댓글의 전체 목록입니다."
+        title="내가 작성한 댓글"
+        subTitle="내가 작성한 댓글의 전체 목록입니다."
         style={{ paddingLeft: 0 }}
       />
       <MyCommentComponent />

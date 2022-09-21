@@ -1,13 +1,37 @@
-import { PageHeader, Space, Row, Col, Button, Input, Typography, Divider, Form } from 'antd';
+import { PageHeader, Space, Row, Col, Button, Input, Typography, Divider, Modal } from 'antd';
 import { SettingOutlined, CodepenOutlined } from '@ant-design/icons';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import useSWR from 'swr';
+import MyInfoComponent from '../../components/mypage/MyInfoComponent';
+import MyCommentComponent from '../../components/mypage/MyCommentComponent';
+import MyPostComponent from '../../components/mypage/MyPostComponent';
+import MyLectureComponent from '../../components/mypage/MyLectureComponent';
+import { useRecoilState } from 'recoil';
+import { loginInfoState } from '../../states/loginInfoState';
+import axios from 'axios';
 
 export default function Mypage() {
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+
   const router = useRouter();
   const { TextArea } = Input;
-  const { Text, Title } = Typography;
+  const { Title } = Typography;
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  console.log(loginInfo);
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleOk = () => {
+    // axios.put(``)
+    setIsModalVisible(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalVisible(false);
+  };
   return (
     <section>
       <Head>
@@ -27,24 +51,32 @@ export default function Mypage() {
         <Col span={12}>
           <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
             <Title level={5}>내정보</Title>
-            <Button>수정</Button>
+            <Button onClick={showModal}>수정</Button>
+            <Modal
+              title="내 프로필 수정하기"
+              visible={isModalVisible}
+              onOk={handleOk}
+              onCancel={handleCancel}
+              okText="저장"
+              cancelText="취소"
+            >
+              <Space
+                direction="vertical"
+                style={{
+                  width: '100%',
+                  border: '1px solid grey',
+                  padding: '16px',
+                  borderRadius: '8px',
+                }}
+              >
+                <label htmlFor="nickname">닉네임</label>
+                <Input id="nickname" placeholder={loginInfo.user_nickname} />
+                <label htmlFor="introduction">소개글</label>
+                <TextArea id="introduction" rows={3} placeholder={loginInfo.user_introduction} />
+              </Space>
+            </Modal>
           </Space>
-          <Space
-            direction="vertical"
-            style={{
-              width: '100%',
-              border: '1px solid grey',
-              padding: '16px',
-              borderRadius: '8px',
-            }}
-          >
-            <label htmlFor="nickname">닉네임</label>
-            <Input id="nickname" value={''} disabled />
-            <label htmlFor="address">지갑주소</label>
-            <Input id="address" value={''} disabled />
-            <label htmlFor="introduction">소개글</label>
-            <TextArea id="introduction" rows={3} placeholder="소개글을 입력하세요." />
-          </Space>
+          <MyInfoComponent />
         </Col>
 
         <Col span={12}>
@@ -75,12 +107,43 @@ export default function Mypage() {
         </Col>
       </Row>
       <Divider />
-      <Row>
-        <Col span={12}></Col>
-        <Col span={12}></Col>
+
+      <Row gutter={[20, 24]}>
+        <Col span={12}>
+          <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
+            <Title level={5}>내가 작성한 게시글</Title>
+            <Button onClick={() => router.push('/mypage/myposts')}>모두 보기</Button>
+          </Space>
+          <MyPostComponent />
+        </Col>
+        <Col span={12}>
+          <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
+            <Title level={5}>내가 작성한 댓글</Title>
+            <Button onClick={() => router.push('/mypage/mycomments')}>모두 보기</Button>
+          </Space>
+          <MyCommentComponent />
+        </Col>
       </Row>
-      <Row>
-        <Col span={24}></Col>
+      <Divider />
+
+      <Row gutter={[20, 24]}>
+        <Col span={24}>
+          <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
+            <Title level={5}>내가 생성한 강의</Title>
+            <Button onClick={() => router.push('/mypage/myuploadlectures')}>모두 보기</Button>
+          </Space>
+          <MyLectureComponent />
+        </Col>
+      </Row>
+      <Divider />
+      <Row gutter={[20, 24]}>
+        <Col span={24}>
+          <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
+            <Title level={5}>내가 수강 중인 강의</Title>
+            <Button onClick={() => router.push('/mypage/mylectures')}>모두 보기</Button>
+          </Space>
+          <MyLectureComponent />
+        </Col>
       </Row>
     </section>
   );

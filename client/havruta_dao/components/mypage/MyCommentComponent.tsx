@@ -9,14 +9,14 @@ export default function MyCommentComponent() {
 
   const data = [
     {
-    //   actions: [<span key="comment-list-reply-to-0">Reply to</span>],
+      //   actions: [<span key="comment-list-reply-to-0">Reply to</span>],
       author: 'Han Solo',
-    //   avatar: 'https://joeschmoe.io/api/v1/random',
+      //   avatar: 'https://joeschmoe.io/api/v1/random',
       content: (
         <p>
           We supply a series of design principles, practical patterns and high quality design
-          resources (Sketch and Axure), to help people create their product prototypes beautifully and
-          efficiently.
+          resources (Sketch and Axure), to help people create their product prototypes beautifully
+          and efficiently.
         </p>
       ),
       datetime: (
@@ -26,14 +26,14 @@ export default function MyCommentComponent() {
       ),
     },
     {
-    //   actions: [<span key="comment-list-reply-to-0">Reply to</span>],
+      //   actions: [<span key="comment-list-reply-to-0">Reply to</span>],
       author: 'Han Solo',
-    //   avatar: 'https://joeschmoe.io/api/v1/random',
+      //   avatar: 'https://joeschmoe.io/api/v1/random',
       content: (
         <p>
           We supply a series of design principles, practical patterns and high quality design
-          resources (Sketch and Axure), to help people create their product prototypes beautifully and
-          efficiently.
+          resources (Sketch and Axure), to help people create their product prototypes beautifully
+          and efficiently.
         </p>
       ),
       datetime: (
@@ -45,23 +45,33 @@ export default function MyCommentComponent() {
   ];
 
   return (
-    <List
-    className="comment-list"
-    header={`${data.length} replies`}
-    itemLayout="horizontal"
-    dataSource={data}
-    renderItem={item => (
-      <li>
-        <Comment
-        //   actions={item.actions}
-          author={item.author}
-        //   avatar={item.avatar}
-          content={item.content}
-          datetime={item.datetime}
-          style={{borderBottom: '1px solid #434343'}}
-        />
-      </li>
-    )}
-  />
+    <Space
+      direction="vertical"
+      style={{
+        width: '100%',
+        border: '1px solid grey',
+        padding: '16px',
+        borderRadius: '8px',
+      }}
+    >
+      <List
+        className="comment-list"
+        header={`${data.length} replies`}
+        itemLayout="horizontal"
+        dataSource={data}
+        renderItem={(item) => (
+          <li>
+            <Comment
+              //   actions={item.actions}
+              author={item.author}
+              //   avatar={item.avatar}
+              content={item.content}
+              datetime={item.datetime}
+              style={{ borderBottom: '1px solid #434343' }}
+            />
+          </li>
+        )}
+      />
+    </Space>
   );
 }
