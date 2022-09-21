@@ -21,14 +21,14 @@ export default function Mypage() {
   const { TextArea } = Input;
   const { Title } = Typography;
   const [isModalVisible, setIsModalVisible] = useState(false);
-  console.log(loginInfo);
+  // console.log(loginInfo);
   const showModal = () => {
     setIsModalVisible(true);
   };
 
   const handleOk = () => {
-    console.log(isNickname);
-    console.log(isIntro);
+    console.log('닉네임데이터?===', isNickname);
+    console.log('소개글 데이터?', isIntro);
     axios
       .put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
         user_address: loginInfo.user_address,
@@ -36,8 +36,9 @@ export default function Mypage() {
         user_introduction: isIntro,
       })
       .then((res) => {
-        console.log(res.data);
+        console.log('응답데이터?', res);
       });
+      
     setIsModalVisible(false);
   };
 
@@ -93,7 +94,7 @@ export default function Mypage() {
                   id="introduction"
                   rows={3}
                   placeholder={loginInfo.user_introduction}
-                  value={loginInfo.user_introduction}
+                  value={isIntro}
                   onChange={(e) => setIsIntro(e.target.value)}
                 />
               </Space>
