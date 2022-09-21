@@ -3,6 +3,10 @@ import dotenv from 'dotenv';
 import cors from 'cors';
 import session from 'express-session';
 
+const Caver = require('caver-js');
+const caver = new Caver('https://api.baobab.klaytn.net:8651/%27');
+
+
 dotenv.config();
 
 const app = express();
@@ -34,8 +38,20 @@ app.use('/userlecture', userLectureRouter);
 app.use('/user', userRouter);
 app.use('/profile', profileRouter);
 
+
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send('Havruta DAO');
+});
+
+app.post('/getbalance', async (req, res) => {
+  // const balance = await caver.klay.getBalance(req.body.address);
+  // const convert = caver.utils.convertFromPeb(balance, 'KLAY');
+  const token = new caver.klay.KIP7(
+    '0x0ef92ccf7313a4677e0d15fdf01fbb1b5a0a4f05'
+  );
+  const balance = await token.balanceOf(req.body.address);
+  res.status(201).json(balance);
+
 });
 
 app.listen(PORT, () => {

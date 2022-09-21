@@ -21,6 +21,14 @@ module.exports = {
         where: { article_id: article_id },
         data: { comment_count: { increment: 1 } },
       });
+      await prisma.User.update({
+        where: {
+          user_id: user_id,
+        },
+        data: {
+          user_point: { increment: 3 },
+        },
+      });
       const allComment = await prisma.Comment.findMany({});
       console.dir(allComment, { depth: null });
     };
