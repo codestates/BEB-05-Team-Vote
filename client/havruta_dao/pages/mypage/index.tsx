@@ -14,6 +14,8 @@ import axios from 'axios';
 
 export default function Mypage() {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const [isNickname, setIsNickname] = useState('');
+  const [isIntro, setIsIntro] = useState('');
 
   const router = useRouter();
   const { TextArea } = Input;
@@ -25,7 +27,17 @@ export default function Mypage() {
   };
 
   const handleOk = () => {
-    // axios.put(``)
+    console.log(isNickname);
+    console.log(isIntro);
+    axios
+      .put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
+        user_address: loginInfo.user_address,
+        user_nickname: isNickname,
+        user_introduction: isIntro,
+      })
+      .then((res) => {
+        console.log(res.data);
+      });
     setIsModalVisible(false);
   };
 
@@ -70,9 +82,20 @@ export default function Mypage() {
                 }}
               >
                 <label htmlFor="nickname">닉네임</label>
-                <Input id="nickname" placeholder={loginInfo.user_nickname} />
+                <Input
+                  id="nickname"
+                  placeholder={loginInfo.user_nickname}
+                  value={isNickname}
+                  onChange={(e) => setIsNickname(e.target.value)}
+                />
                 <label htmlFor="introduction">소개글</label>
-                <TextArea id="introduction" rows={3} placeholder={loginInfo.user_introduction} />
+                <TextArea
+                  id="introduction"
+                  rows={3}
+                  placeholder={loginInfo.user_introduction}
+                  value={loginInfo.user_introduction}
+                  onChange={(e) => setIsIntro(e.target.value)}
+                />
               </Space>
             </Modal>
           </Space>
