@@ -15,6 +15,13 @@ const userLectureRouter = require("./router/user_lecture");
 const userRouter = require("./router/users");
 const profileRouter = require("./router/profile");
 
+var dd_options = {
+  'response_code':true,
+  'tags': ['app:my_app']
+    }
+
+var connect_datadog = require('connect-datadog')(dd_options);
+
 app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -25,6 +32,9 @@ app.use(
     saveUninitialized: true,
   })
 );
+
+// Add the datadog-middleware before your router
+app.use(connect_datadog);
 
 app.use("/article", articleRouter);
 app.use("/comment", commentRouter);
