@@ -16,6 +16,14 @@ module.exports = {
       });
       const allArticle = await prisma.Article.findMany({});
       console.dir(allArticle, { depth: null });
+      await prisma.User.update({
+        where: {
+          user_id: user_id,
+        },
+        data: {
+          user_point: { increment: 5 },
+        },
+      });
     };
     postArticleHandler(user_id, article_content)
       .then(async () => {
