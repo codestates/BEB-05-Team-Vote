@@ -89,7 +89,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
             });
           `,
         }}
-      />
+      />      
       <RecoilRoot>
         <SessionProvider session={session}>
           <SWRConfig
