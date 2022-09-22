@@ -57,6 +57,55 @@ export default function Detail({
       });
     }
     setIsLoading(true);
+
+    const data = window.caver.klay.abi.encodeFunctionCall(
+      {
+        name: 'transfer',
+        type: 'function',
+        inputs: [
+          {
+            type: 'address',
+            name: 'recipient',
+          },
+          {
+            type: 'uint256',
+            name: 'amount',
+          },
+        ],
+      },
+      [
+        course.user.user_address,
+        window.caver.utils
+          .toBN(course.lecture_price)
+          .mul(window.caver.utils.toBN(Number(`1e18`)))
+          .toString(),
+      ]
+    );
+
+    window.caver.klay
+      .sendTransaction({
+        type: 'SMART_CONTRACT_EXECUTION',
+        from: window.klaytn?.selectedAddress,
+        to: process.env.NEXT_PUBLIC_HADATOKEN,
+        data,
+        gas: '3000000',
+      })
+      .on('transactionHash', (transactionHash: any) => {
+        console.log('txHash', transactionHash);
+      })
+      .on('receipt', (receipt: any) => {
+        console.log('receipt', receipt);
+        saveSubscribeToDB();
+      })
+      .on('error', (error: any) => {
+        setIsLoading(false);
+        console.log('error', error.message);
+        Sentry.captureException(error.message);
+        cancelSubscribeOnWallet();
+      });
+  };
+
+  const saveSubscribeToDB = async () => {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture`, {
         user_id: loginInfo.user_id,
@@ -65,13 +114,19 @@ export default function Detail({
       if (res.status === 201) {
         setIsLoading(false);
         notification['success']({
-          message: '강의 수강 등록이 완료되었습니다!',
+          message: '수강 신청이 완료되었습니다!',
         });
         setIsSubscribe(true);
       }
     } catch (error) {
       Sentry.captureException(error);
     }
+  };
+
+  const cancelSubscribeOnWallet = () => {
+    notification['error']({
+      message: '수강 신청이 실패되었습니다.',
+    });
   };
 
   const onDelete = async (lecture_id: number) => {
@@ -164,7 +219,7 @@ export default function Detail({
                 style={{ width: '100%' }}
                 block
               >
-                수강신청 하기
+                수강 신청 하기
               </Button>
             )}
             {loginInfo.user_id === course.user_id ? (
