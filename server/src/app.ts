@@ -6,6 +6,7 @@ import session from 'express-session';
 const Caver = require('caver-js');
 const caver = new Caver('https://api.baobab.klaytn.net:8651/%27');
 
+
 dotenv.config();
 
 const app = express();
@@ -37,6 +38,7 @@ app.use('/userlecture', userLectureRouter);
 app.use('/user', userRouter);
 app.use('/profile', profileRouter);
 
+
 app.get('/', (req: Request, res: Response, next: NextFunction) => {
   res.status(200).send('Havruta DAO');
 });
@@ -49,6 +51,7 @@ app.post('/getbalance', async (req, res) => {
   );
   const balance = await token.balanceOf(req.body.address);
   res.status(201).json(balance);
+
 });
 
 app.listen(PORT, () => {
