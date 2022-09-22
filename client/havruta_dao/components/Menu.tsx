@@ -91,14 +91,13 @@ export default function MenuComponent() {
         } else {
           router.push(item.path, undefined, { shallow: true });
         }
-      } else if (item.name === '투표(Snapshot)') {
+      } else if (item.name === 'DAO투표') {
         window.open(item.path);
       } else {
         router.push(item.path, undefined, { shallow: true });
       }
     },
   }));
-
 
   const userLoginInfo: MenuProps['items'] = [
     {
@@ -270,13 +269,7 @@ export default function MenuComponent() {
               HAVRUTADAO는 경제적, 사회적 배경에 상관 없이, 누구나 잠재력을 발휘할 수 있는 세상을
               만들어가는 탈중앙 비영리조직입니다.
             </Text>
-            <Link
-              onClick={() =>
-                window.open(`https://www.notion.so/DAO-fe7e07833a734cfea95dc6ff610d3ded`)
-              }
-            >
-              → 자세히 알아보기
-            </Link>
+            <Link onClick={() => router.push('/about')}>→ 자세히 알아보기</Link>
           </Space>
         </DescriptionOfDao>
       </Space>

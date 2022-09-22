@@ -23,7 +23,7 @@ import { getSession } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
 import { useSWRConfig } from 'swr';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 interface CourseDetail extends Courses {
   user_id: number;
@@ -58,51 +58,55 @@ export default function Detail({
     }
     setIsLoading(true);
 
-    const data = window.caver.klay.abi.encodeFunctionCall(
-      {
-        name: 'transfer',
-        type: 'function',
-        inputs: [
-          {
-            type: 'address',
-            name: 'recipient',
-          },
-          {
-            type: 'uint256',
-            name: 'amount',
-          },
-        ],
-      },
-      [
-        course.user.user_address,
-        window.caver.utils
-          .toBN(course.lecture_price)
-          .mul(window.caver.utils.toBN(Number(`1e18`)))
-          .toString(),
-      ]
-    );
+    if (course.lecture_price === 0) {
+      saveSubscribeToDB();
+    } else {
+      const data = window.caver.klay.abi.encodeFunctionCall(
+        {
+          name: 'transfer',
+          type: 'function',
+          inputs: [
+            {
+              type: 'address',
+              name: 'recipient',
+            },
+            {
+              type: 'uint256',
+              name: 'amount',
+            },
+          ],
+        },
+        [
+          course.user.user_address,
+          window.caver.utils
+            .toBN(course.lecture_price)
+            .mul(window.caver.utils.toBN(Number(`1e18`)))
+            .toString(),
+        ]
+      );
 
-    window.caver.klay
-      .sendTransaction({
-        type: 'SMART_CONTRACT_EXECUTION',
-        from: window.klaytn?.selectedAddress,
-        to: process.env.NEXT_PUBLIC_HADATOKEN,
-        data,
-        gas: '3000000',
-      })
-      .on('transactionHash', (transactionHash: any) => {
-        console.log('txHash', transactionHash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('receipt', receipt);
-        saveSubscribeToDB();
-      })
-      .on('error', (error: any) => {
-        setIsLoading(false);
-        console.log('error', error.message);
-        Sentry.captureException(error.message);
-        cancelSubscribeOnWallet();
-      });
+      window.caver.klay
+        .sendTransaction({
+          type: 'SMART_CONTRACT_EXECUTION',
+          from: window.klaytn?.selectedAddress,
+          to: process.env.NEXT_PUBLIC_HADATOKEN,
+          data,
+          gas: '3000000',
+        })
+        .on('transactionHash', (transactionHash: any) => {
+          console.log('txHash', transactionHash);
+        })
+        .on('receipt', (receipt: any) => {
+          console.log('receipt', receipt);
+          saveSubscribeToDB();
+        })
+        .on('error', (error: any) => {
+          setIsLoading(false);
+          console.log('error', error.message);
+          Sentry.captureException(error.message);
+          cancelSubscribeOnWallet();
+        });
+    }
   };
 
   const saveSubscribeToDB = async () => {
@@ -198,10 +202,16 @@ export default function Detail({
 
           <Space direction="vertical" style={{ width: '100%' }}>
             <Space>
-              <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
-              <Paragraph style={{ fontSize: '24px', fontWeight: 600, color: '#bae637', margin: 0 }}>
-                {course.lecture_price}
-              </Paragraph>
+              {course.lecture_price === 0 ? (
+                <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>무료</Text>
+              ) : (
+                <>
+                  <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
+                  <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>
+                    {course.lecture_price}
+                  </Text>
+                </>
+              )}
             </Space>
             {isSubscribe ? (
               <Button onClick={onClick} type="ghost" size={'large'} style={{ width: '100%' }} block>

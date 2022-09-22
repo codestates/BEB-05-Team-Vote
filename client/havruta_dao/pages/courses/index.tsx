@@ -9,7 +9,7 @@ const { Title, Text } = Typography;
 export interface Courses {
   lecture_id: number;
   lecture_image: string;
-  lecture_price: string;
+  lecture_price: number;
   lecture_title: string;
   user?: any;
 }
@@ -69,17 +69,29 @@ export default function Details() {
 
               <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
                 <Text style={{ fontSize: '16px' }} type="secondary">
-                  {course.user.user_nickname.length > 10 &&
-                    course.user.user_nickname.substr(0, 30) + '...'}
+                  {course.user.user_nickname.length > 10
+                    ? course.user.user_nickname.substr(0, 30) + '...'
+                    : course.user.user_nickname}
                 </Text>
                 <Space>
-                  <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
-                  <Text
-                    style={{ fontSize: '16px', color: '#bae637', fontWeight: 500 }}
-                    type="secondary"
-                  >
-                    {course.lecture_price}
-                  </Text>
+                  {course.lecture_price === 0 ? (
+                    <Text
+                      style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}
+                      type="secondary"
+                    >
+                      무료
+                    </Text>
+                  ) : (
+                    <>
+                      <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
+                      <Text
+                        style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}
+                        type="secondary"
+                      >
+                        {course.lecture_price}
+                      </Text>
+                    </>
+                  )}
                 </Space>
               </Space>
             </Col>
