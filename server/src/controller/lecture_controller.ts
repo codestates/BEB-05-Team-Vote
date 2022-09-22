@@ -98,6 +98,9 @@ module.exports = {
         where: {
           lecture_id: lecture_id,
         },
+        include: {
+          user: true,
+        },
       });
       console.dir(selectedLecture, { depth: null });
       return selectedLecture;
@@ -145,10 +148,7 @@ module.exports = {
   deleteLecture: (req: Request, res: Response) => {
     const { user_id, lecture_id } = req.body;
 
-    const deleteLectureHandler = async (
-      user_id: Number,
-      lecture_id: Number
-    ) => {
+    const deleteLectureHandler = async (user_id: Number, lecture_id: Number) => {
       const result = await prisma.Lecture.findMany({
         where: {
           lecture_id: lecture_id,
