@@ -99,21 +99,6 @@ export default function MenuComponent() {
     },
   }));
 
-  // const onEditProfile = (e: any) => {
-  //   setLoginInfo((prevState) => ({ ...prevState, user_nickname: e }));
-  // };
-
-  useEffect(() => {
-    try {
-      axios.put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
-        user_address: loginInfo.user_address,
-        user_nickname: loginInfo.user_nickname,
-        user_introduction: loginInfo.user_introduction,
-      });
-    } catch (error) {
-      Sentry.captureException(error);
-    }
-  }, [loginInfo.user_nickname, loginInfo.user_introduction, loginInfo.user_address]);
 
   const userLoginInfo: MenuProps['items'] = [
     {

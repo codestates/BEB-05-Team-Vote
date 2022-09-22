@@ -1,5 +1,5 @@
-import { Request, Response } from "express";
-const prisma = require("../db/index");
+import { Request, Response } from 'express';
+const prisma = require('../db/index');
 
 module.exports = {
   editProfile: (req: Request, res: Response) => {
@@ -18,16 +18,26 @@ module.exports = {
           user_introduction: user_introduction,
         },
       });
+
+      const userinfo = await prisma.User.findFirst({
+        where: {
+          user_address: user_address,
+        },
+        select: {
+          user_nickname: true,
+          user_introduction: true,
+        },
+      });
+
+      await prisma.$disconnect();
+      res.status(201).json(userinfo);
     };
-    editProfileHandler(user_address, user_nickname, user_introduction)
-      .then(async () => {
-        await prisma.$disconnect();
-        res.status(201).send("edit profile success");
-      })
-      .catch(async (e) => {
+    editProfileHandler(user_address, user_nickname, user_introduction).catch(
+      async (e) => {
         console.error(e);
         await prisma.$disconnect();
-        res.status(500).send("Server Error");
-      });
+        res.status(500).send('Server Error');
+      }
+    );
   },
 };

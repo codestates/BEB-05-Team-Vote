@@ -1,8 +1,8 @@
 import { PageHeader, Space } from 'antd';
-import MyLectureComponent from '../../components/mypage/MyLectureComponent';
+import MyUploadLectureComponent from '../../components/mypage/MyLectureComponent';
 import { useRouter } from 'next/router';
 
-export default function MyLectures() {
+export default function MyUploadLectures() {
   const router = useRouter();
 
   return (
@@ -11,11 +11,11 @@ export default function MyLectures() {
         className="site-page-header"
         // onBack={() => ('/mypage')}
         onBack={() => router.push('/mypage')}
-        title="내가 수강 중인 강의"
-        subTitle="내가 수강 중인 강의 목록입니다."
+        title="내가 생성한 강의"
+        subTitle="내가 생성한 강의 목록입니다."
         style={{ paddingLeft: 0 }}
       />
-      <MyLectureComponent />
+      <MyUploadLectureComponent />
     </Space>
   );
 }

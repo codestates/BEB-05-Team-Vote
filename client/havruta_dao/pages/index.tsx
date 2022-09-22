@@ -39,8 +39,9 @@ export interface PostInterface {
   article_content: string;
   like_count: number;
   comment_count: number;
-  comments: [];
+  comment_content: string;
   created_at: string;
+  id:number;
   user: {
     user_id: number;
     user_address: string;
