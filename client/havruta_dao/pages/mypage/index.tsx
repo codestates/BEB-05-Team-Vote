@@ -1,9 +1,31 @@
-import { PageHeader, Space, Row, Col, Button, Input, Typography, Divider, Modal } from 'antd';
-import { SettingOutlined, CodepenOutlined } from '@ant-design/icons';
-import React, { useState } from 'react';
+import {
+  PageHeader,
+  Space,
+  Row,
+  Col,
+  Button,
+  Input,
+  Typography,
+  Divider,
+  Modal,
+  Popconfirm,
+  message,
+  Card,
+  notification,
+} from 'antd';
+import {
+  SettingOutlined,
+  CodepenOutlined,
+  DeleteOutlined,
+  UserOutlined,
+  LikeOutlined,
+  MessageOutlined,
+  EnterOutlined,
+} from '@ant-design/icons';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import useSWR from 'swr';
+import useSWR, { mutate, useSWRConfig } from 'swr';
 import MyInfoComponent from '../../components/mypage/MyInfoComponent';
 import MyCommentComponent from '../../components/mypage/MyCommentComponent';
 import MyPostComponent from '../../components/mypage/MyPostComponent';
@@ -11,6 +33,9 @@ import MyLectureComponent from '../../components/mypage/MyLectureComponent';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../states/loginInfoState';
 import axios from 'axios';
+import { useSession } from 'next-auth/react';
+import { PostInterface } from '..';
+import { timeForToday } from '../../lib/date';
 
 export default function Mypage() {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
@@ -19,16 +44,71 @@ export default function Mypage() {
 
   const router = useRouter();
   const { TextArea } = Input;
-  const { Title } = Typography;
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  // console.log(loginInfo);
+  const { Title, Text, Paragraph } = Typography;
+  const [isModalVisible, setIsModalVisible] = useState(false);  
   const showModal = () => {
     setIsModalVisible(true);
   };
 
+  // 내가 쓴 글
+  const fetcher = async (url: string) => {
+    const res = await axios.get(url);
+    return res.data;
+  };
+  const { data: isArticle } = useSWR(
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`,
+    fetcher
+  );
+  
+  // 내가 쓴 댓글  
+  const { data: commentData } = useSWR(
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`,
+    fetcher
+  );
+  console.log('??S>sss', commentData)
+
+  const fetchLike = async (article_id: number) => {
+    const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
+      user_id: loginInfo.user_id,
+      article_id: article_id,
+    });
+    if (res.status === 201) {
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`);
+    }
+  };
+
+  const onPostDelete = async (article_id: number) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/article`, {
+      data: {
+        user_id: loginInfo.user_id,
+        article_id: article_id,
+      },
+    });
+    if (res.status === 201) {
+      notification['success']({
+        message: '게시글이 성공적으로 삭제되었습니다.',
+      });
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`);
+    }
+  };
+  const onCommentDelete = async (id: number) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
+      data: {
+        user_id: loginInfo.user_id,
+        comment_id: id,
+      },
+    });
+    if (res.status === 201) {
+      notification['success']({
+        message: '게시글이 성공적으로 삭제되었습니다.',
+      });
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`);
+    }
+  };
+
+  
+
   const handleOk = () => {
-    console.log('닉네임데이터?===', isNickname);
-    console.log('소개글 데이터?', isIntro);
     axios
       .put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
         user_address: loginInfo.user_address,
@@ -36,15 +116,16 @@ export default function Mypage() {
         user_introduction: isIntro,
       })
       .then((res) => {
-        console.log('응답데이터?', res);
+        console.log('응답데이터?', res.data);
       });
-      
+
     setIsModalVisible(false);
   };
 
   const handleCancel = () => {
     setIsModalVisible(false);
   };
+
   return (
     <section>
       <Head>
@@ -138,14 +219,179 @@ export default function Mypage() {
             <Title level={5}>내가 작성한 게시글</Title>
             <Button onClick={() => router.push('/mypage/myposts')}>모두 보기</Button>
           </Space>
-          <MyPostComponent />
+          <Space
+            direction="vertical"
+            style={{
+              width: '100%',
+              border: '1px solid grey',
+              padding: '16px',
+              borderRadius: '8px',
+            }}
+          >
+            {isArticle ? (
+              isArticle.map((element: PostInterface, index: number) => {
+                if (index < 2) {
+                  return (
+                    <Card style={{ width: '100%', marginTop: '-1px' }}>
+                      <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
+                        <Space>
+                          <Popconfirm
+                            title={
+                              <>
+                                <Paragraph>{loginInfo.user_nickname}</Paragraph>
+                                <Paragraph>{loginInfo.user_introduction}</Paragraph>
+                                <Paragraph>{loginInfo.user_address}</Paragraph>
+                              </>
+                            }
+                            icon={<UserOutlined style={{ color: '#bfbfbf' }} />}
+                            okText="지갑 주소 복사"
+                            cancelText="닫기"
+                            onConfirm={(e) => {
+                              e?.stopPropagation();
+                              navigator.clipboard.writeText(loginInfo.user_address);
+                              message.success('지갑 주소가 복사되었습니다!');
+                            }}
+                            onCancel={(e) => {
+                              e?.stopPropagation();
+                            }}
+                          >
+                            <Text
+                              type="secondary"
+                              strong
+                              onClick={(e) => e?.stopPropagation()}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              {loginInfo.user_nickname}
+                            </Text>
+                          </Popconfirm>
+                          <Text type="secondary">{timeForToday(element.created_at)}</Text>
+                        </Space>
+                        {element.article_content}
+                        <Space style={{ justifyContent: 'space-between', width: '100%' }}>
+                          <Space size={'large'}>
+                            <Button
+                              type="link"
+                              icon={<LikeOutlined />}
+                              size="small"
+                              onClick={() => fetchLike(element.article_id)}
+                            >
+                              {' '}
+                              {element.like_count}
+                            </Button>
+                            <Button type="link" icon={<MessageOutlined />} size="small">
+                              {' '}
+                              {element.comment_count}
+                            </Button>
+                          </Space>
+                          {
+                            element.user_id === loginInfo.user_id && (
+                      <div onClick={(e) => e.stopPropagation()}>
+                          <Popconfirm
+                            title="정말 게시글을 삭제하시겠습니까?"
+                              onConfirm={() => onPostDelete(element.article_id)}
+                            okText="삭제"
+                            cancelText="취소"
+                          >
+                            <DeleteOutlined style={{ color: '#ff7875' }} />
+                          </Popconfirm>
+                          </div>
+                    )}
+                        </Space>
+                      </Space>
+                    </Card>
+                  );
+                }
+              })
+            ) : (
+              <div>게시글이 없습니다.</div>
+            )}
+          </Space>
         </Col>
         <Col span={12}>
           <Space style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}>
             <Title level={5}>내가 작성한 댓글</Title>
             <Button onClick={() => router.push('/mypage/mycomments')}>모두 보기</Button>
           </Space>
-          <MyCommentComponent />
+
+          <Space
+            direction="vertical"
+            style={{
+              width: '100%',
+              border: '1px solid grey',
+              padding: '16px',
+              borderRadius: '8px',
+            }}
+          >
+            {commentData ? (
+              commentData.map((element: PostInterface, index: number) => {
+                if (index < 2) {
+                  return (
+                    <Card style={{ width: '100%', marginTop: '-1px' }}>
+                      <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
+                        <Space>
+                          <EnterOutlined style={{ transform: 'scaleX(-1)' }} />
+                          <Popconfirm
+                            title={
+                              <>
+                                <Paragraph>{loginInfo.user_nickname}</Paragraph>
+                                <Paragraph>{loginInfo.user_introduction}</Paragraph>
+                                <Paragraph>{loginInfo.user_address}</Paragraph>
+                              </>
+                            }
+                            icon={<UserOutlined style={{ color: '#bfbfbf' }} />}
+                            okText="지갑 주소 복사"
+                            cancelText="닫기"
+                            onConfirm={(e) => {
+                              e?.stopPropagation();
+                              navigator.clipboard.writeText(loginInfo.user_address);
+                              message.success('지갑 주소가 복사되었습니다!');
+                            }}
+                            onCancel={(e) => {
+                              e?.stopPropagation();
+                            }}
+                          >
+                            <Text
+                              type="secondary"
+                              strong
+                              onClick={(e) => e?.stopPropagation()}
+                              style={{ cursor: 'pointer' }}
+                            >
+                              {loginInfo.user_nickname}
+                            </Text>
+                          </Popconfirm>
+                          <Text type="secondary">{timeForToday(element.created_at)}</Text>
+                        </Space>
+                        {element.comment_content}
+                        <Space style={{ width: '100%', justifyContent: 'end' }}>
+                          {element.user_id === loginInfo.user_id && (
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <Popconfirm
+                                title="정말 댓글을 삭제하시겠습니까?"
+                                onConfirm={() => onCommentDelete(element.id)}
+                                okText="삭제"
+                                cancelText="취소"
+                              >
+                                <DeleteOutlined style={{ color: '#ff7875' }} />
+                              </Popconfirm>
+                            </div>
+                          )}
+                        </Space>
+
+                        {/* <Space>
+          <Button type="link" icon={<MessageOutlined />} size="small">
+            {' '}
+            답글달기
+          </Button>
+        </Space> */}
+                      </Space>
+                    </Card>
+                  );
+                }
+              })
+            ) : (
+              <div>댓글이 없습니다.</div>
+            )}
+          </Space>
         </Col>
       </Row>
       <Divider />
