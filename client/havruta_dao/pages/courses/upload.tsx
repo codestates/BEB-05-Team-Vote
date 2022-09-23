@@ -32,7 +32,7 @@ const { TextArea } = Input;
 
 export default function Upload() {
   const router = useRouter();
-  const [isLoding, setIsLoding] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const [course, setCourse] = useState({
     user_id: loginInfo.user_id,
@@ -45,24 +45,81 @@ export default function Upload() {
     lecture_price: 0,
   });
 
+  const onUpload = () => {
+    const data = window.caver.klay.abi.encodeFunctionCall(
+      {
+        name: 'transfer',
+        type: 'function',
+        inputs: [
+          {
+            type: 'address',
+            name: 'recipient',
+          },
+          {
+            type: 'uint256',
+            name: 'amount',
+          },
+        ],
+      },
+      [
+        process.env.NEXT_PUBLIC_HADATOKEN,
+        window.caver.utils
+          .toBN(50)
+          .mul(window.caver.utils.toBN(Number(`1e18`)))
+          .toString(),
+      ]
+    );
+
+    window.caver.klay
+      .sendTransaction({
+        type: 'SMART_CONTRACT_EXECUTION',
+        from: window.klaytn?.selectedAddress,
+        to: process.env.NEXT_PUBLIC_HADATOKEN,
+        data,
+        gas: '3000000',
+      })
+      .on('transactionHash', (transactionHash: any) => {
+        console.log('txHash', transactionHash);
+      })
+      .on('receipt', (receipt: any) => {
+        console.log('receipt', receipt);
+        saveUploadToDB();
+      })
+      .on('error', (error: any) => {
+        setIsLoading(false);
+        console.log('error', error.message);
+        Sentry.captureException(error.message);
+        cancelUploadOnWallet();
+      });
+  };
+
+  const saveUploadToDB = () => {
+    axios
+      .post(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`, { course })
+      .then((res) => {
+        if (res.status === 201) {
+          setIsLoading(false);
+          notification['success']({
+            message: '지식 공유에 성공하였습니다.',
+            description: '지식을 공유해주셔서 감사드립니다!',
+          });
+          router.push(`/courses`);
+        }
+      })
+      .catch((err) => {
+        Sentry.captureException(err);
+      });
+  };
+
+  const cancelUploadOnWallet = () => {
+    notification['error']({
+      message: '강의 등록이 실패되었습니다.',
+    });
+  };
+
   useEffect(() => {
-    console.log(course);
     if (course.lecture_title) {
-      axios
-        .post(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`, { course })
-        .then((res) => {
-          if (res.status === 201) {
-            setIsLoding(false);
-            notification['success']({
-              message: '지식 공유에 성공하였습니다.',
-              description: '지식을 공유해주셔서 감사드립니다!',
-            });
-            router.push(`/courses`);
-          }
-        })
-        .catch((err) => {
-          Sentry.captureException(err);
-        });
+      onUpload();
     }
   }, [course]);
 
@@ -82,7 +139,7 @@ export default function Upload() {
   };
 
   const onFinish = (values: UploadCourse) => {
-    setIsLoding(true);
+    setIsLoading(true);
     changeValue(values);
   };
   return (
@@ -187,7 +244,7 @@ export default function Upload() {
               </Form.Item>
 
               <Form.Item name="submitButton">
-                {isLoding ? (
+                {isLoading ? (
                   <Button type="primary" block size={'large'} style={{ width: '100%' }} loading>
                     <span>강의 업로드 중..</span>
                   </Button>
@@ -202,7 +259,7 @@ export default function Upload() {
                     <span>
                       강의 업로드하기&nbsp;
                       <CodepenOutlined />
-                      &nbsp; 1
+                      &nbsp; 50
                     </span>
                   </Button>
                 )}
