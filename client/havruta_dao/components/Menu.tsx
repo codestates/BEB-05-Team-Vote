@@ -103,6 +103,7 @@ export default function MenuComponent() {
     {
       key: 'userLoginInfo',
       icon: <UserOutlined />,
+      title: '마이 페이지',
       label: (
         <Text
           // editable={{

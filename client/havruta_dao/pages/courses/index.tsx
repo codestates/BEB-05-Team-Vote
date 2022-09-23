@@ -60,10 +60,11 @@ export default function Details() {
               />
 
               <Title
-                ellipsis={{ rows: 2 }}
+                ellipsis={{ rows: 1 }}
                 level={4}
                 style={{ lineHeight: '150%', cursor: 'pointer' }}
                 onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
+                title={course.lecture_title}
               >
                 {course.lecture_title}
               </Title>
