@@ -32,6 +32,7 @@ import useSWR from 'swr';
 import axios from 'axios';
 import { useSWRConfig } from 'swr';
 import { timeForToday } from '../lib/date';
+import { useSession } from 'next-auth/react';
 
 export interface PostInterface {
   article_id: number;
@@ -41,7 +42,7 @@ export interface PostInterface {
   comment_count: number;
   comment_content: string;
   created_at: string;
-  id:number;
+  id: number;
   user: {
     user_id: number;
     user_address: string;
@@ -57,6 +58,7 @@ const { Text, Paragraph } = Typography;
 
 const Home: NextPage = () => {
   const router = useRouter();
+  const { data: session } = useSession();
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const { mutate } = useSWRConfig();
 
@@ -65,12 +67,14 @@ const Home: NextPage = () => {
   });
 
   const fetchLike = async (article_id: number) => {
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
-      user_id: loginInfo.user_id,
-      article_id: article_id,
-    });
-    if (res.status === 201) {
-      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+    if (session) {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
+        user_id: loginInfo.user_id,
+        article_id: article_id,
+      });
+      if (res.status === 201) {
+        mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+      }
     }
   };
 
@@ -109,7 +113,7 @@ const Home: NextPage = () => {
             //   </Radio.Group>
             // }
           />
-          {loginInfo.user_id ? (
+          {session ? (
             <UploadPost />
           ) : (
             <Space
@@ -188,7 +192,7 @@ const Home: NextPage = () => {
                             {post.comment_count}
                           </Button>
                         </Space>
-                        {post.user_id === loginInfo.user_id && (
+                        {post.user_id === session?.user.user_id && (
                           <div onClick={(e) => e.stopPropagation()}>
                             <Popconfirm
                               title="정말 게시글을 삭제하시겠습니까?"

@@ -7,11 +7,13 @@ import { timeForToday } from '../../lib/date';
 import { loginInfoState } from '../../states/loginInfoState';
 import { useSWRConfig } from 'swr';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 const { Text, Paragraph } = Typography;
 
 export default function Reply({ comments }: { comments: any }) {
   const router = useRouter();
+  const { data: session } = useSession();
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const { mutate } = useSWRConfig();
 
@@ -70,7 +72,7 @@ export default function Reply({ comments }: { comments: any }) {
         </Space>
         {comments.comment_content}
         <Space style={{ width: '100%', justifyContent: 'end' }}>
-          {comments.user_id === loginInfo.user_id && (
+          {comments.user_id === session?.user.user_id && (
             <div onClick={(e) => e.stopPropagation()}>
               <Popconfirm
                 title="정말 댓글을 삭제하시겠습니까?"

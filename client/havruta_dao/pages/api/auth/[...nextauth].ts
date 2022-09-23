@@ -5,11 +5,16 @@ import axios from 'axios';
 
 export default NextAuth({
   secret: process.env.SECRET,
+  session: {
+    strategy: 'jwt',
+    maxAge: 3 * 60 * 60,
+  },
   providers: [
     CredentialsProvider({
       id: 'kaikas-credential',
       name: 'kaikas',
       type: 'credentials',
+
       credentials: {},
       async authorize(credentials: any, req) {
         let { address, network } = credentials;

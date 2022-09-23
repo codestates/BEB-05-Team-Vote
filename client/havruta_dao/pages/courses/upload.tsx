@@ -17,6 +17,7 @@ import * as Sentry from '@sentry/react';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../states/loginInfoState';
 import { useRouter } from 'next/router';
+import { useSession } from 'next-auth/react';
 
 interface UploadCourse {
   user_id: number;
@@ -32,6 +33,7 @@ const { TextArea } = Input;
 
 export default function Upload() {
   const router = useRouter();
+  const { data: session } = useSession();
   const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const [course, setCourse] = useState({
@@ -46,6 +48,16 @@ export default function Upload() {
   });
 
   const onUpload = () => {
+    const walletState = window.klaytn.publicConfigStore.getState();
+    if (walletState.isUnlocked === false) {
+      setIsLoading(false);
+      window.klaytn.enable();
+      return notification['info']({
+        message: '지갑이 잠겨있습니다.',
+        description: '강의를 생성하시려면 먼저 지갑의 잠금을 해제해주세요.',
+      });
+    }
+
     const data = window.caver.klay.abi.encodeFunctionCall(
       {
         name: 'transfer',
@@ -142,16 +154,33 @@ export default function Upload() {
     setIsLoading(true);
     changeValue(values);
   };
+
+  const [form] = Form.useForm();
+  const videoUrl = Form.useWatch('lecture_url', form);
+  if (String(videoUrl).includes('you')) {
+    let imgUrl = '';
+    let symbol = videoUrl.split('/');
+    if (symbol[2] === 'youtu.be') {
+      imgUrl = `http://img.youtube.com/vi/${symbol[3]}/maxresdefault.jpg`;
+    } else if (symbol[2] === 'www.youtube.com') {
+      symbol = symbol[3].split('=');
+      imgUrl = `http://img.youtube.com/vi/${symbol[1]}/maxresdefault.jpg`;
+    }
+    form.setFieldsValue({
+      lecture_image: imgUrl,
+    });
+  }
+
   return (
     <>
-      {loginInfo.user_id ? (
+      {session ? (
         <Row>
           <Col span={12}>
             <Space>
               <PageHeader onBack={() => {}} backIcon={<CloudUploadOutlined />} title="지식 공유" />
             </Space>
 
-            <Form layout="vertical" onFinish={onFinish}>
+            <Form layout="vertical" onFinish={onFinish} form={form}>
               <Form.Item
                 name="lecture_title"
                 label="강의 제목"
@@ -177,19 +206,6 @@ export default function Upload() {
               </Form.Item>
 
               <Form.Item
-                name="lecture_image"
-                label="대표 이미지 업로드"
-                hasFeedback
-                rules={[
-                  { required: true, message: '강의 유튜브 URL은 필수 입력 사항입니다!' },
-                  { type: 'url', warningOnly: true, message: 'URL 형식으로 입력해주세요!' },
-                  { type: 'string', min: 6, message: '최소 6자 이상 입력해야합니다!' },
-                ]}
-              >
-                <Input size="large" placeholder="대표 이미지를 업로드해주세요.." />
-              </Form.Item>
-
-              <Form.Item
                 name="lecture_url"
                 label="강의 유튜브 URL"
                 hasFeedback
@@ -200,6 +216,19 @@ export default function Upload() {
                 ]}
               >
                 <Input size="large" placeholder="강의 동영상 URL을 입력해주세요.." />
+              </Form.Item>
+
+              <Form.Item
+                name="lecture_image"
+                label="대표 이미지 업로드"
+                hasFeedback
+                rules={[
+                  { required: true, message: '강의 이미지 URL은 필수 입력 사항입니다!' },
+                  { type: 'url', warningOnly: true, message: 'URL 형식으로 입력해주세요!' },
+                  { type: 'string', min: 6, message: '최소 6자 이상 입력해야합니다!' },
+                ]}
+              >
+                <Input size="large" placeholder="대표 이미지를 업로드해주세요.." />
               </Form.Item>
 
               <Form.Item
@@ -243,27 +272,25 @@ export default function Upload() {
                 <TextArea rows={5} placeholder="강사 소개를 입력해주세요.." size="large" />
               </Form.Item>
 
-              <Form.Item name="submitButton">
-                {isLoading ? (
-                  <Button type="primary" block size={'large'} style={{ width: '100%' }} loading>
-                    <span>강의 업로드 중..</span>
-                  </Button>
-                ) : (
-                  <Button
-                    type="primary"
-                    block
-                    size={'large'}
-                    style={{ width: '100%' }}
-                    htmlType="submit"
-                  >
-                    <span>
-                      강의 업로드하기&nbsp;
-                      <CodepenOutlined />
-                      &nbsp; 50
-                    </span>
-                  </Button>
-                )}
-              </Form.Item>
+              {isLoading ? (
+                <Button type="primary" block size={'large'} style={{ width: '100%' }} loading>
+                  <span>강의 업로드 중..</span>
+                </Button>
+              ) : (
+                <Button
+                  type="primary"
+                  block
+                  size={'large'}
+                  style={{ width: '100%' }}
+                  htmlType="submit"
+                >
+                  <span>
+                    강의 업로드하기&nbsp;
+                    <CodepenOutlined />
+                    &nbsp; 50
+                  </span>
+                </Button>
+              )}
             </Form>
           </Col>
         </Row>

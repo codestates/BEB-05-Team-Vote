@@ -19,7 +19,7 @@ import { CodepenOutlined, QuestionCircleOutlined, ThunderboltOutlined } from '@a
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { useRouter } from 'next/router';
-import { getSession } from 'next-auth/react';
+import { getSession, useSession } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
 import { useSWRConfig } from 'swr';
 
@@ -44,13 +44,14 @@ export default function Detail({
 }) {
   const router = useRouter();
   const { mutate } = useSWRConfig();
+  const { data: session } = useSession();
 
   const [isSubscribe, setIsSubscribe] = useState(subscribe || false);
   const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
   const onSubscribe = async () => {
-    if (!loginInfo.user_id) {
+    if (!session) {
       return notification['info']({
         message: '지갑 연동이 필요합니다.',
         description: '이 강의를 수강하시려면 먼저 지갑을 연동해주세요.',
@@ -61,6 +62,16 @@ export default function Detail({
     if (course.lecture_price === 0) {
       saveSubscribeToDB();
     } else {
+      const walletState = window.klaytn.publicConfigStore.getState();
+      if (walletState.isUnlocked === false) {
+        setIsLoading(false);
+        window.klaytn.enable();
+        return notification['info']({
+          message: '지갑이 잠겨있습니다.',
+          description: '이 강의를 수강하시려면 먼저 지갑의 잠금을 해제해주세요.',
+        });
+      }
+
       const data = window.caver.klay.abi.encodeFunctionCall(
         {
           name: 'transfer',
@@ -123,9 +134,23 @@ export default function Detail({
         setIsSubscribe(true);
       }
     } catch (error) {
+      setIsLoading(false);
+      // setIsSubscribe(false);
       Sentry.captureException(error);
     }
   };
+
+  const changeLoginState = async () => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session?.user.user_id}&lecture_id=${course.lecture_id}`
+    );
+    const subscribe = res.data.length !== 0;
+    setIsSubscribe(subscribe);
+  };
+
+  useEffect(() => {
+    changeLoginState();
+  }, [session]);
 
   const cancelSubscribeOnWallet = () => {
     notification['error']({
@@ -213,7 +238,7 @@ export default function Detail({
                 </>
               )}
             </Space>
-            {isSubscribe ? (
+            {isSubscribe && session ? (
               <Button onClick={onClick} type="ghost" size={'large'} style={{ width: '100%' }} block>
                 강의실로 이동하기
               </Button>
@@ -232,7 +257,7 @@ export default function Detail({
                 수강 신청 하기
               </Button>
             )}
-            {loginInfo.user_id === course.user_id ? (
+            {session?.user.user_id === course.user_id ? (
               <Popconfirm
                 placement="bottom"
                 title={'정말 강의를 삭제하시겠습니까?'}

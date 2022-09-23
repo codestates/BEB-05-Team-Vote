@@ -83,7 +83,7 @@ export default function MenuComponent() {
     label: item.name,
     onClick: () => {
       if (item.name === '지식공유') {
-        if (!loginInfo.user_id) {
+        if (!session) {
           return notification['info']({
             message: '지갑 연동이 필요합니다.',
             description: '지식 공유를 하려면 먼저 지갑을 연동해주세요.',

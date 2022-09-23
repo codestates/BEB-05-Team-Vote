@@ -3,6 +3,7 @@ import { CodepenOutlined, SearchOutlined } from '@ant-design/icons';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
 import useSWR from 'swr';
+import Paragraph from 'antd/lib/skeleton/Paragraph';
 
 const { Title, Text } = Typography;
 
@@ -68,9 +69,9 @@ export default function Details() {
               </Title>
 
               <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
-                <Text style={{ fontSize: '16px' }} type="secondary">
+                <Text style={{ fontSize: '16px', overflow: 'hidden' }} type="secondary">
                   {course.user.user_nickname.length > 10
-                    ? course.user.user_nickname.substr(0, 30) + '...'
+                    ? course.user.user_nickname.substr(0, 10) + '...'
                     : course.user.user_nickname}
                 </Text>
                 <Space>
