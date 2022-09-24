@@ -21,11 +21,13 @@ import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { useSWRConfig } from 'swr';
 import { timeForToday } from '../../../lib/date';
+import { useSession } from 'next-auth/react';
 
 const { Text, Paragraph } = Typography;
 
 export default function PostDetail() {
   const router = useRouter();
+  const { data: session } = useSession();
   const { mutate } = useSWRConfig();
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
@@ -37,14 +39,16 @@ export default function PostDetail() {
   );
 
   const fetchLike = async (article_id: number) => {
-    const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
-      user_id: loginInfo.user_id,
-      article_id: article_id,
-    });
-    if (res.status === 201) {
-      mutate(
-        `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
-      );
+    if (session) {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
+        user_id: loginInfo.user_id,
+        article_id: article_id,
+      });
+      if (res.status === 201) {
+        mutate(
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
+        );
+      }
     }
   };
 
@@ -126,7 +130,7 @@ export default function PostDetail() {
                         {post[0].comment_count}
                       </Button>
                     </Space>
-                    {post[0].user_id === loginInfo.user_id && (
+                    {post[0].user_id === session?.user.user_id && (
                       <div onClick={(e) => e.stopPropagation()}>
                         <Popconfirm
                           title="정말 게시글을 삭제하시겠습니까?"
@@ -141,7 +145,7 @@ export default function PostDetail() {
                   </Space>
                 </Space>
               </Card>
-              {loginInfo.user_id ? <UploadReply /> : <></>}
+              {session ? <UploadReply /> : <></>}
 
               {post[0].comments.length === 0 ? (
                 <div style={{ textAlign: `center`, paddingTop: '32px' }}>

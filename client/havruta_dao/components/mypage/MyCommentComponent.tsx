@@ -1,5 +1,15 @@
 import { DeleteOutlined, EnterOutlined, UserOutlined } from '@ant-design/icons';
-import { Card, Popconfirm, Space, Typography, List, Comment, Tooltip, message, notification } from 'antd';
+import {
+  Card,
+  Popconfirm,
+  Space,
+  Typography,
+  List,
+  Comment,
+  Tooltip,
+  message,
+  notification,
+} from 'antd';
 import Paragraph from 'antd/lib/skeleton/Paragraph';
 import axios from 'axios';
 import { useRecoilState } from 'recoil';
@@ -17,28 +27,28 @@ export default function MyCommentComponent() {
     return res.data;
   };
 
-   const { data: commentData } = useSWR(
-     `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`,
-     fetcher
-   );
+  const { data: commentData } = useSWR(
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`,
+    fetcher
+  );
 
-   const onCommentDelete = async (id: number) => {
-     const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
-       data: {
-         user_id: loginInfo.user_id,
-         comment_id: id,
-       },
-     });
-     if (res.status === 201) {
-       notification['success']({
-         message: '게시글이 성공적으로 삭제되었습니다.',
-       });
-       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`);
-     }
-   };
+  const onCommentDelete = async (id: number) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
+      data: {
+        user_id: loginInfo.user_id,
+        comment_id: id,
+      },
+    });
+    if (res.status === 201) {
+      notification['success']({
+        message: '게시글이 성공적으로 삭제되었습니다.',
+      });
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`);
+    }
+  };
 
-   console.log('코멘트데이터', commentData)
-  
+  console.log('코멘트데이터', commentData);
+
   return (
     <Space
       direction="vertical"
@@ -49,10 +59,9 @@ export default function MyCommentComponent() {
         borderRadius: '8px',
       }}
     >
-      {
-      commentData.map((element:PostInterface)=>{
+      {commentData.map((element: PostInterface, i: number) => {
         return (
-          <Card style={{ width: '100%', marginTop: '-1px' }}>
+          <Card style={{ width: '100%', marginTop: '-1px' }} key={i}>
             <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
               <Space>
                 <EnterOutlined style={{ transform: 'scaleX(-1)' }} />
@@ -112,8 +121,7 @@ export default function MyCommentComponent() {
             </Space>
           </Card>
         );
-      })
-      }
-          </Space>
+      })}
+    </Space>
   );
 }

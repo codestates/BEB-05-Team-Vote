@@ -10,7 +10,7 @@ const { Paragraph, Text } = Typography;
 export default function RcmdCourse() {
   const router = useRouter();
 
-  const { data: courses } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`);
+  const { data: courses } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/limit?limit=5`);
 
   return (
     <Space style={{ padding: '0 20px', width: '100%' }}>
