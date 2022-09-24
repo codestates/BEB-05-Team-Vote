@@ -45,7 +45,7 @@ export default function Mypage() {
   const router = useRouter();
   const { TextArea } = Input;
   const { Title, Text, Paragraph } = Typography;
-  const [isModalVisible, setIsModalVisible] = useState(false);  
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -59,13 +59,13 @@ export default function Mypage() {
     `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`,
     fetcher
   );
-  
-  // 내가 쓴 댓글  
+
+  // 내가 쓴 댓글
   const { data: commentData } = useSWR(
     `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`,
     fetcher
   );
-  console.log('??S>sss', commentData)
+  console.log('??S>sss', commentData);
 
   const fetchLike = async (article_id: number) => {
     const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
@@ -105,8 +105,6 @@ export default function Mypage() {
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`);
     }
   };
-
-  
 
   const handleOk = () => {
     axios
@@ -232,7 +230,7 @@ export default function Mypage() {
               isArticle.map((element: PostInterface, index: number) => {
                 if (index < 2) {
                   return (
-                    <Card style={{ width: '100%', marginTop: '-1px' }}>
+                    <Card style={{ width: '100%', marginTop: '-1px' }} key={index}>
                       <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                         <Space>
                           <Popconfirm
@@ -283,19 +281,18 @@ export default function Mypage() {
                               {element.comment_count}
                             </Button>
                           </Space>
-                          {
-                            element.user_id === loginInfo.user_id && (
-                      <div onClick={(e) => e.stopPropagation()}>
-                          <Popconfirm
-                            title="정말 게시글을 삭제하시겠습니까?"
-                              onConfirm={() => onPostDelete(element.article_id)}
-                            okText="삭제"
-                            cancelText="취소"
-                          >
-                            <DeleteOutlined style={{ color: '#ff7875' }} />
-                          </Popconfirm>
-                          </div>
-                    )}
+                          {element.user_id === loginInfo.user_id && (
+                            <div onClick={(e) => e.stopPropagation()}>
+                              <Popconfirm
+                                title="정말 게시글을 삭제하시겠습니까?"
+                                onConfirm={() => onPostDelete(element.article_id)}
+                                okText="삭제"
+                                cancelText="취소"
+                              >
+                                <DeleteOutlined style={{ color: '#ff7875' }} />
+                              </Popconfirm>
+                            </div>
+                          )}
                         </Space>
                       </Space>
                     </Card>
@@ -326,7 +323,7 @@ export default function Mypage() {
               commentData.map((element: PostInterface, index: number) => {
                 if (index < 2) {
                   return (
-                    <Card style={{ width: '100%', marginTop: '-1px' }}>
+                    <Card style={{ width: '100%', marginTop: '-1px' }} key={index}>
                       <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                         <Space>
                           <EnterOutlined style={{ transform: 'scaleX(-1)' }} />
