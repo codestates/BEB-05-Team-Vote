@@ -1,13 +1,41 @@
-# Sample Hardhat Project
+# 하브루타 스마트 컨트랙트
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+하브루타 DAO에 사용되는 스마트 컨트랙트입니다.
 
-Try running some of the following tasks:
+# Description
+
+하브루타 DAO Tokenomics Flow
+
+![](https://user-images.githubusercontent.com/64685759/191690526-67a0dc59-a721-4a7b-b4ce-d76ab5fbe61a.png)
+
+# Getting Started
+
+## Installing
 
 ```shell
-npx hardhat help
-npx hardhat test
-GAS_REPORT=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
+yarn
 ```
+
+## Executing program
+
+How to deploy the contract
+
+```shell
+yarn hardhat compile
+```
+
+```
+yarn hardhat node
+```
+
+```
+yarn hardhat run scripts/deploy.ts --network localhost
+```
+
+```
+yarn hardhat test test/HadaToken.ts --network localhost
+```
+
+# License
+
+This project is licensed under the MIT License

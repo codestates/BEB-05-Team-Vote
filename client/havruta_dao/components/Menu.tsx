@@ -12,47 +12,63 @@ import {
 } from 'antd';
 import { Menu } from 'antd';
 import {
-  AlignCenterOutlined,
+  AuditOutlined,
+  BankOutlined,
   BulbOutlined,
+  CommentOutlined,
   FileSearchOutlined,
   LogoutOutlined,
+  QuestionCircleOutlined,
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
 import styled from 'styled-components';
 import Image from 'next/image';
-import logoImage from '../assets/images/HAVRUTADAO.png';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
-import { UseReloadSession } from '../lib/hooks/UseReloadSession';
 import axios from 'axios';
+// import logoImage from '../assets/images/HAVRUTADAO.png';
+import logoImage from '../assets/images/svglogo4.svg';
 
 const { Sider } = Layout;
 const { Paragraph, Text, Link } = Typography;
 
 const menuItem = [
   {
+    id: '0',
+    name: 'DAO소개',
+    icon: <BankOutlined />,
+    path: '/about',
+  },
+  {
     id: '1',
     name: '커뮤니티',
-    icon: <AlignCenterOutlined />,
+    icon: <CommentOutlined />,
     path: '/',
   },
+
   { id: '2', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
+  // {
+  //   id: '3',
+  //   name: '질의응답',
+  //   icon: <QuestionCircleOutlined />,
+  //   path: '/ama',
+  // },
   {
-    id: '3',
+    id: '4',
     name: '지식공유',
     icon: <BulbOutlined />,
     path: '/courses/upload',
   },
-  // {
-  //   id : '4',
-  //   name: '투표',
-  //   icon: <BulbOutlined />,
-  //   path: '/poll',
-  // },
+  {
+    id: '5',
+    name: 'DAO투표',
+    icon: <AuditOutlined />,
+    path: 'https://demo.snapshot.org/#/havruta.eth',
+  },
 ];
 
 export default function MenuComponent() {
@@ -66,8 +82,8 @@ export default function MenuComponent() {
     icon: item.icon,
     label: item.name,
     onClick: () => {
-      if (item.id === '3') {
-        if (!loginInfo.user_id) {
+      if (item.name === '지식공유') {
+        if (!session) {
           return notification['info']({
             message: '지갑 연동이 필요합니다.',
             description: '지식 공유를 하려면 먼저 지갑을 연동해주세요.',
@@ -75,41 +91,29 @@ export default function MenuComponent() {
         } else {
           router.push(item.path, undefined, { shallow: true });
         }
+      } else if (item.name === 'DAO투표') {
+        window.open(item.path);
       } else {
         router.push(item.path, undefined, { shallow: true });
       }
     },
   }));
 
-  const onEditProfile = (e: any) => {
-    setLoginInfo((prevState) => ({ ...prevState, user_nickname: e }));
-  };
-
-  useEffect(() => {
-    try {
-      axios.put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
-        user_address: loginInfo.user_address,
-        user_nickname: loginInfo.user_nickname,
-        user_introduction: loginInfo.user_introduction,
-      });
-    } catch (error) {
-      Sentry.captureException(error);
-    }
-  }, [loginInfo.user_nickname, loginInfo.user_introduction, loginInfo.user_address]);
-
   const userLoginInfo: MenuProps['items'] = [
     {
       key: 'userLoginInfo',
       icon: <UserOutlined />,
+      title: '마이 페이지',
       label: (
         <Text
-          editable={{
-            onChange: onEditProfile,
-          }}
-          onClick={() => {
-            navigator.clipboard.writeText(loginInfo.user_address);
-            message.success('계정 주소가 복사되었습니다!');
-          }}
+          // editable={{
+          //   onChange: onEditProfile,
+          // }}
+          // onClick={() => {
+          //   navigator.clipboard.writeText(loginInfo.user_address);
+          //   message.success('지갑 주소가 복사되었습니다!');
+          // }}
+          onClick={() => router.push('/mypage')}
         >
           {loginInfo.user_nickname === loginInfo.user_address
             ? loginInfo.user_nickname.length > 10 && loginInfo.user_nickname.substr(0, 8) + '...'
@@ -164,9 +168,9 @@ export default function MenuComponent() {
               redirect: false,
             });
 
-            if (response?.ok && response.status === 200) {
-              router.reload();
-            }
+            // if (response?.ok && response.status === 200) {
+            //   router.reload();
+            // }
           }
         } catch (error) {
           Sentry.captureException(error);
@@ -224,9 +228,23 @@ export default function MenuComponent() {
       }}
     >
       <Space direction="vertical" size={'large'}>
-        <Link href="/">
-          <Image src={logoImage} alt="logo image" width={221} height={'100%'} />
-        </Link>
+        <Image
+          src={logoImage}
+          alt="logo image"
+          width={221}
+          style={{ cursor: 'pointer', transform: 'scale(2.5)' }}
+          height={'100%'}
+          onClick={() => router.push('/')}
+        />
+        {/* <Image
+          src={logoImage}
+          alt="logo image"
+          width={221}
+          style={{ cursor: 'pointer' }}
+          height={'100%'}
+          onClick={() => router.push('/')}
+        /> */}
+
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
         {status === 'authenticated' ? (
@@ -252,9 +270,7 @@ export default function MenuComponent() {
               HAVRUTADAO는 경제적, 사회적 배경에 상관 없이, 누구나 잠재력을 발휘할 수 있는 세상을
               만들어가는 탈중앙 비영리조직입니다.
             </Text>
-            <Link href="https://ant.design" target="_blank">
-              → 자세히 알아보기
-            </Link>
+            <Link onClick={() => router.push('/about')}>→ 자세히 알아보기</Link>
           </Space>
         </DescriptionOfDao>
       </Space>
@@ -265,6 +281,6 @@ export default function MenuComponent() {
 const DescriptionOfDao = styled.div`
   padding: 16px;
   border-radius: 4px;
-  background-color: #f9f9f9;
+  /* background-color: #f9f9f9; */
   width: 221px;
 `;

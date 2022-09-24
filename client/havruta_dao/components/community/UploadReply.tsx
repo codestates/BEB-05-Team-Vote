@@ -1,42 +1,72 @@
-import { Button, Card, Input, Space, Typography } from 'antd';
-import React from 'react';
-import styled from 'styled-components';
-import { PostInterface } from '../../pages';
+import { Button, Card, Input, notification, Space, Typography } from 'antd';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useRecoilState } from 'recoil';
+import { loginInfoState } from '../../states/loginInfoState';
+import * as Sentry from '@sentry/react';
+import { useSWRConfig } from 'swr';
+import { useRouter } from 'next/router';
 
 const { TextArea } = Input;
-const { Title, Text } = Typography;
-
-const post: PostInterface = {
-  id: 1,
-  author: 'SUNGMAN5',
-  content:
-    '그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다. 끓는 그들은 하는 광야에서 불어 위하여 꽃 없으면, 하는 사막이다.그림자는 피는 산야에 뜨고, 부패뿐이다. 얼마나 대한 가슴에 없는 구하지 이것은 무엇을 풀이 뿐이다.',
-  like: 22,
-  commentCount: 22,
-  createdDate: '09-03-2022',
-};
+const { Text } = Typography;
 
 export default function UploadReply() {
+  const { mutate } = useSWRConfig();
+  const router = useRouter();
+
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const [value, setValue] = useState('');
+
+  async function submitComment() {
+    if (value.length === 0) {
+      return notification['warning']({
+        message: '댓글을 입력해주세요!',
+      });
+    }
+
+    try {
+      const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
+        user_id: loginInfo.user_id,
+        article_id: Number(router.query.post_id),
+        comment_content: value,
+      });
+
+      if (res.status === 201) {
+        mutate(
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
+        );
+        setValue('');
+      }
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+  }
+
   return (
-    <UploadCard style={{ width: '100%' }}>
+    <Card style={{ width: '100%' }}>
       <Space direction="vertical" size={'middle'} style={{ width: '100%' }}>
         <Space>
-          <Text strong>댓글</Text>
+          <Text strong>
+            <span style={{ color: '#bae637' }}>{loginInfo.user_nickname}</span>님의 댓글
+          </Text>
         </Space>
         <TextArea
           rows={5}
           bordered={false}
-          placeholder="내용을 입력하세요."
+          placeholder="댓글을 남겨보세요."
           style={{ padding: 0 }}
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
         />
-        <Button type="primary" shape={'round'} style={{ float: 'right' }}>
+        <Button
+          onClick={() => submitComment()}
+          type="primary"
+          shape={'round'}
+          style={{ float: 'right' }}
+        >
           댓글달기
         </Button>
       </Space>
-    </UploadCard>
+    </Card>
   );
 }
-
-const UploadCard = styled(Card)`
-  background-color: #f9f9f9;
-`;

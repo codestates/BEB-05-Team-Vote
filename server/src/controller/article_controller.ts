@@ -16,6 +16,14 @@ module.exports = {
       });
       const allArticle = await prisma.Article.findMany({});
       console.dir(allArticle, { depth: null });
+      await prisma.User.update({
+        where: {
+          user_id: user_id,
+        },
+        data: {
+          user_point: { increment: 5 },
+        },
+      });
     };
     postArticleHandler(user_id, article_content)
       .then(async () => {
@@ -171,12 +179,23 @@ module.exports = {
       });
 
       if (result[0].user_id === user_id) {
-        await prisma.Article.delete({
+        await prisma.Like.deleteMany({
           where: {
             article_id: article_id,
           },
         });
 
+        await prisma.Comment.deleteMany({
+          where: {
+            article_id: article_id,
+          },
+        });
+
+        await prisma.Article.delete({
+          where: {
+            article_id: article_id,
+          },
+        });
         await prisma.$disconnect();
         res.status(201).send('delete article success');
       } else {

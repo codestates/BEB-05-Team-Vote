@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
-import Link from 'next/link';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import { Courses } from '../';
@@ -14,16 +13,17 @@ import {
   Image,
   Button,
   notification,
+  Popconfirm,
 } from 'antd';
-import { ThunderboltOutlined } from '@ant-design/icons';
+import { CodepenOutlined, QuestionCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { useRouter } from 'next/router';
-import { getSession } from 'next-auth/react';
-import { User } from '../../../types/next-auth';
+import { getSession, useSession } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
+import { useSWRConfig } from 'swr';
 
-const { Title, Paragraph } = Typography;
+const { Title, Paragraph, Text } = Typography;
 
 interface CourseDetail extends Courses {
   user_id: number;
@@ -35,20 +35,92 @@ interface CourseDetail extends Courses {
   updated_at: string;
 }
 
-export default function Detail({ course, subscribe }: { course: CourseDetail; subscribe: boolean }) {
+export default function Detail({
+  course,
+  subscribe,
+}: {
+  course: CourseDetail;
+  subscribe: boolean;
+}) {
   const router = useRouter();
+  const { mutate } = useSWRConfig();
+  const { data: session } = useSession();
+
   const [isSubscribe, setIsSubscribe] = useState(subscribe || false);
   const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
   const onSubscribe = async () => {
-    if (!loginInfo.user_id) {
+    if (!session) {
       return notification['info']({
         message: '지갑 연동이 필요합니다.',
         description: '이 강의를 수강하시려면 먼저 지갑을 연동해주세요.',
       });
     }
     setIsLoading(true);
+
+    if (course.lecture_price === 0) {
+      saveSubscribeToDB();
+    } else {
+      const walletState = window.klaytn.publicConfigStore.getState();
+      if (walletState.isUnlocked === false) {
+        setIsLoading(false);
+        window.klaytn.enable();
+        return notification['info']({
+          message: '지갑이 잠겨있습니다.',
+          description: '이 강의를 수강하시려면 먼저 지갑의 잠금을 해제해주세요.',
+        });
+      }
+
+      const data = window.caver.klay.abi.encodeFunctionCall(
+        {
+          name: 'transfer',
+          type: 'function',
+          inputs: [
+            {
+              type: 'address',
+              name: 'recipient',
+            },
+            {
+              type: 'uint256',
+              name: 'amount',
+            },
+          ],
+        },
+        [
+          course.user.user_address,
+          window.caver.utils
+            .toBN(course.lecture_price)
+            .mul(window.caver.utils.toBN(Number(`1e18`)))
+            .toString(),
+        ]
+      );
+
+      window.caver.klay
+        .sendTransaction({
+          type: 'SMART_CONTRACT_EXECUTION',
+          from: window.klaytn?.selectedAddress,
+          to: process.env.NEXT_PUBLIC_HADATOKEN,
+          data,
+          gas: '3000000',
+        })
+        .on('transactionHash', (transactionHash: any) => {
+          console.log('txHash', transactionHash);
+        })
+        .on('receipt', (receipt: any) => {
+          console.log('receipt', receipt);
+          saveSubscribeToDB();
+        })
+        .on('error', (error: any) => {
+          setIsLoading(false);
+          console.log('error', error.message);
+          Sentry.captureException(error.message);
+          cancelSubscribeOnWallet();
+        });
+    }
+  };
+
+  const saveSubscribeToDB = async () => {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture`, {
         user_id: loginInfo.user_id,
@@ -57,12 +129,48 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
       if (res.status === 201) {
         setIsLoading(false);
         notification['success']({
-          message: '강의 수강 등록이 완료되었습니다!',
+          message: '수강 신청이 완료되었습니다!',
         });
         setIsSubscribe(true);
       }
     } catch (error) {
+      setIsLoading(false);
+      // setIsSubscribe(false);
       Sentry.captureException(error);
+    }
+  };
+
+  const changeLoginState = async () => {
+    const res = await axios.get(
+      `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session?.user.user_id}&lecture_id=${course.lecture_id}`
+    );
+    const subscribe = res.data.length !== 0;
+    setIsSubscribe(subscribe);
+  };
+
+  useEffect(() => {
+    changeLoginState();
+  }, [session]);
+
+  const cancelSubscribeOnWallet = () => {
+    notification['error']({
+      message: '수강 신청이 실패되었습니다.',
+    });
+  };
+
+  const onDelete = async (lecture_id: number) => {
+    const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`, {
+      data: {
+        user_id: loginInfo.user_id,
+        lecture_id: lecture_id,
+      },
+    });
+    if (res.status === 201) {
+      notification['success']({
+        message: '강의가 성공적으로 삭제되었습니다.',
+      });
+      router.push('/courses');
+      mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`);
     }
   };
 
@@ -84,7 +192,11 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
         <title>{course.lecture_title}</title>
       </Head>
       <Space style={{ width: '100%' }}>
-        <PageHeader title="목록으로" style={{ paddingLeft: 0 }} onBack={() => router.back()} />
+        <PageHeader
+          title="목록으로"
+          style={{ paddingLeft: 0 }}
+          onBack={() => router.push('/courses')}
+        />
       </Space>
       <Row gutter={48}>
         <Col span={16}>
@@ -115,14 +227,20 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
 
           <Space direction="vertical" style={{ width: '100%' }}>
             <Space>
-              <ThunderboltOutlined style={{ fontSize: '32px', color: '#9B4DEA' }} />
-              <Paragraph style={{ fontSize: '24px', fontWeight: 600, color: '#9B4DEA', margin: 0 }}>
-                {course.lecture_price}
-              </Paragraph>
+              {course.lecture_price === 0 ? (
+                <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>무료</Text>
+              ) : (
+                <>
+                  <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
+                  <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>
+                    {course.lecture_price}
+                  </Text>
+                </>
+              )}
             </Space>
-            {isSubscribe ? (
+            {isSubscribe && session ? (
               <Button onClick={onClick} type="ghost" size={'large'} style={{ width: '100%' }} block>
-                계속 수강하기
+                강의실로 이동하기
               </Button>
             ) : isLoading ? (
               <Button type="primary" size={'large'} style={{ width: '100%' }} block loading>
@@ -136,8 +254,24 @@ export default function Detail({ course, subscribe }: { course: CourseDetail; su
                 style={{ width: '100%' }}
                 block
               >
-                수강신청 하기
+                수강 신청 하기
               </Button>
+            )}
+            {session?.user.user_id === course.user_id ? (
+              <Popconfirm
+                placement="bottom"
+                title={'정말 강의를 삭제하시겠습니까?'}
+                onConfirm={() => onDelete(course.lecture_id)}
+                okText={'삭제'}
+                cancelText="취소"
+                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+              >
+                <Button type={'text'} danger size={'large'} style={{ width: '100%' }} block>
+                  강의 삭제하기
+                </Button>
+              </Popconfirm>
+            ) : (
+              <></>
             )}
           </Space>
         </Col>
