@@ -185,7 +185,7 @@ export default function Upload() {
 
   return (
     <>
-      {isModalOpen && (
+      {isModalOpen && session && (
         <Modal
           visible={true}
           onCancel={() => setIsModalOpen(false)}
