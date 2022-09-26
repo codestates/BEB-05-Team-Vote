@@ -403,7 +403,7 @@ export default function Mypage() {
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >
                 <Title level={5}>내가 작성한 게시글</Title>
-                {isArticle.length > 2 && (
+                {isArticle && isArticle.length > 2 && (
                   <Button onClick={() => router.push('/mypage/myposts')}>모두 보기</Button>
                 )}
               </Space>
@@ -416,7 +416,7 @@ export default function Mypage() {
                   borderRadius: '8px',
                 }}
               >
-                {isArticle.length ? (
+                {isArticle && isArticle.length ? (
                   isArticle.map((element: PostInterface, index: number) => {
                     if (index < 2) {
                       return (
@@ -505,7 +505,7 @@ export default function Mypage() {
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >
                 <Title level={5}>내가 작성한 댓글</Title>
-                {commentData.length > 2 && (
+                {commentData && commentData.length > 2 && (
                   <Button onClick={() => router.push('/mypage/mycomments')}>모두 보기</Button>
                 )}
               </Space>
@@ -519,7 +519,7 @@ export default function Mypage() {
                   borderRadius: '8px',
                 }}
               >
-                {commentData.length ? (
+                {commentData && commentData.length ? (
                   commentData.map((element: PostInterface, index: number) => {
                     if (index < 2) {
                       return (
@@ -605,7 +605,7 @@ export default function Mypage() {
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >
                 <Title level={5}>내가 생성한 강의</Title>
-                {createdLecture.length > 4 && (
+                {createdLecture && createdLecture.length > 4 && (
                   <Button onClick={() => router.push('/mypage/myuploadlectures')}>모두 보기</Button>
                 )}
               </Space>
@@ -617,7 +617,7 @@ export default function Mypage() {
                   borderRadius: '8px',
                 }}
               >
-                {createdLecture.length ? (
+                {createdLecture && createdLecture.length ? (
                   <MyLectureComponent data={createdLecture} />
                 ) : (
                   <div>내가 생성한 강의가 없습니다.</div>
@@ -632,7 +632,7 @@ export default function Mypage() {
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >
                 <Title level={5}>내가 수강 중인 강의</Title>
-                {subscribeLecture.length > 4 && (
+                {subscribeLecture && subscribeLecture.length > 4 && (
                   <Button onClick={() => router.push('/mypage/mylectures')}>모두 보기</Button>
                 )}
               </Space>
@@ -644,7 +644,7 @@ export default function Mypage() {
                   borderRadius: '8px',
                 }}
               >
-                {subscribeLecture.length ? (
+                {subscribeLecture && subscribeLecture.length ? (
                   <SubscribeLectureComponent data={subscribeLecture} />
                 ) : (
                   <div>수강 중인 강의가 없습니다.</div>
