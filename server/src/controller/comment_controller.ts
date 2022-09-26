@@ -21,14 +21,7 @@ module.exports = {
         where: { article_id: article_id },
         data: { comment_count: { increment: 1 } },
       });
-      await prisma.User.update({
-        where: {
-          user_id: user_id,
-        },
-        data: {
-          user_point: { increment: 3 },
-        },
-      });
+
       const allComment = await prisma.Comment.findMany({});
       console.dir(allComment, { depth: null });
     };
@@ -74,10 +67,7 @@ module.exports = {
   },
   deleteComment: (req: Request, res: Response) => {
     const { user_id, comment_id } = req.body;
-    const deleteCommentHandler = async (
-      user_id: Number,
-      comment_id: Number
-    ) => {
+    const deleteCommentHandler = async (user_id: Number, comment_id: Number) => {
       const result = await prisma.Comment.findMany({
         where: {
           id: comment_id,
