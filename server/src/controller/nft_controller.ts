@@ -38,4 +38,9 @@ module.exports = {
       res.status(403).send('insufficient token balance');
     }
   },
+  findNFT: async (req: Request, res: Response) => {
+    const user_address = req.query.user_address;
+    const nftBalance = await passContract.methods.balanceOf(user_address).call();
+    res.status(201).send(nftBalance);
+  },
 };
