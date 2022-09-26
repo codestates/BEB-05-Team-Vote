@@ -27,9 +27,15 @@ passContract.options.from = keyring.address;
 
 module.exports = {
   exchangeNFT: async (req: Request, res: Response) => {
-    const { recipient } = req.body;
+    const { recipient, nft_price } = req.body;
 
-    passContract.methods.mintNFT(recipient, tokenURI).send({ from: deployAddress, gas: 3000000 });
-    res.status(201).send('mint nft success');
+    const tokenBalance = await tokenContract.methods.balanceOf(recipient).call();
+
+    if (tokenBalance >= nft_price) {
+      passContract.methods.mintNFT(recipient, tokenURI).send({ from: deployAddress, gas: 3000000 });
+      res.status(201).send('mint nft success');
+    } else {
+      res.status(403).send('insufficient token balance');
+    }
   },
 };
