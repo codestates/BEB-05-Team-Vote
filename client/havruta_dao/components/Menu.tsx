@@ -182,7 +182,7 @@ export default function MenuComponent() {
     }
   };
 
-  const setLoginInfomation = useCallback(() => {
+  const setLoginInfomation = () => {
     if (status === 'authenticated') {
       setLoginInfo({
         user_id: Number(session?.user.user_id),
@@ -192,11 +192,11 @@ export default function MenuComponent() {
         user_introduction: String(session?.user.user_introduction),
       });
     }
-  }, [session?.user]);
+  };
 
   useEffect(() => {
     setLoginInfomation();
-  }, [setLoginInfomation]);
+  }, [session?.user]);
 
   const handleNetworkChanged = (...args: Array<string>) => {
     const networkId = args[0];

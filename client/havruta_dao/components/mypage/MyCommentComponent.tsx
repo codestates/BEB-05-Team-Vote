@@ -10,7 +10,6 @@ import {
   message,
   notification,
 } from 'antd';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
 import axios from 'axios';
 import { useRecoilState } from 'recoil';
 import useSWR, { mutate } from 'swr';
@@ -22,14 +21,8 @@ export default function MyCommentComponent() {
   const { Text, Paragraph } = Typography;
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
-  const fetcher = async (url: string) => {
-    const res = await axios.get(url);
-    return res.data;
-  };
-
   const { data: commentData } = useSWR(
-    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`,
-    fetcher
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`
   );
 
   const onCommentDelete = async (id: number) => {

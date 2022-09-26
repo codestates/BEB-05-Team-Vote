@@ -16,10 +16,10 @@ export default function MyInfoComponent() {
         borderRadius: '8px',
       }}
     >
-      <label htmlFor="nickname">닉네임</label>
-      <Input id="nickname" style={{ color: '#ffffff' }} value={loginInfo.user_nickname} disabled />
       <label htmlFor="address">지갑주소</label>
       <Input id="address" style={{ color: '#ffffff' }} value={loginInfo.user_address} disabled />
+      <label htmlFor="nickname">닉네임</label>
+      <Input id="nickname" style={{ color: '#ffffff' }} value={loginInfo.user_nickname} disabled />
       <label htmlFor="introduction">소개글</label>
       <TextArea
         id="introduction"

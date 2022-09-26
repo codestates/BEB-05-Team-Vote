@@ -22,26 +22,27 @@ import {
   MessageOutlined,
   EnterOutlined,
 } from '@ant-design/icons';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Head from 'next/head';
-import useSWR, { mutate, useSWRConfig } from 'swr';
+import useSWR, { mutate } from 'swr';
 import MyInfoComponent from '../../components/mypage/MyInfoComponent';
-import MyCommentComponent from '../../components/mypage/MyCommentComponent';
-import MyPostComponent from '../../components/mypage/MyPostComponent';
 import MyLectureComponent from '../../components/mypage/MyLectureComponent';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../states/loginInfoState';
 import axios from 'axios';
-import { useSession } from 'next-auth/react';
 import { PostInterface } from '..';
 import { timeForToday } from '../../lib/date';
+import * as Sentry from '@sentry/react';
+import { useSession } from 'next-auth/react';
+import { reloadSession } from '../../lib/useReloadSession';
 
 export default function Mypage() {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const [isNickname, setIsNickname] = useState('');
   const [isIntro, setIsIntro] = useState('');
 
+  const { data: session } = useSession();
   const router = useRouter();
   const { TextArea } = Input;
   const { Title, Text, Paragraph } = Typography;
@@ -51,21 +52,14 @@ export default function Mypage() {
   };
 
   // 내가 쓴 글
-  const fetcher = async (url: string) => {
-    const res = await axios.get(url);
-    return res.data;
-  };
   const { data: isArticle } = useSWR(
-    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`,
-    fetcher
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`
   );
 
   // 내가 쓴 댓글
   const { data: commentData } = useSWR(
-    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`,
-    fetcher
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`
   );
-  console.log('??S>sss', commentData);
 
   const fetchLike = async (article_id: number) => {
     const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
@@ -91,6 +85,7 @@ export default function Mypage() {
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`);
     }
   };
+
   const onCommentDelete = async (id: number) => {
     const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/comment`, {
       data: {
@@ -106,18 +101,26 @@ export default function Mypage() {
     }
   };
 
-  const handleOk = () => {
-    axios
-      .put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
+  const handleOk = async () => {
+    try {
+      const res = await axios.put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
         user_address: loginInfo.user_address,
         user_nickname: isNickname,
         user_introduction: isIntro,
-      })
-      .then((res) => {
-        console.log('응답데이터?', res.data);
       });
 
-    setIsModalVisible(false);
+      if (res.status === 201) {
+        setIsModalVisible(false);
+        const { data: res } = await axios.get('/api/auth/session?update');
+        reloadSession();
+        notification['success']({
+          message: '프로필이 성공적으로 업데이트 되었습니다.',
+        });
+      }
+    } catch (error) {
+      Sentry.captureException(error);
+      setIsModalVisible(false);
+    }
   };
 
   const handleCancel = () => {
@@ -195,17 +198,16 @@ export default function Mypage() {
               borderRadius: '8px',
             }}
           >
-            <label htmlFor="user_point">보유 포인트</label>
-            <Input id="user_point" value={'1000'} suffix="P" style={{ color: '#bae637' }} />
+            {/* <label htmlFor="user_point">보유 포인트</label>
+            <Input id="user_point" value={'1000'} suffix="P" style={{ color: '#bae637' }} /> */}
             <label htmlFor="user_token">보유 토큰 개수</label>
             <Input
               id="user_token"
-              value={''}
               disabled
               suffix={<CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />}
             />
             <label htmlFor="introduction">NFT 보유 여부</label>
-            <TextArea id="introduction" rows={3} placeholder="보유한 PASS가 없습니다." disabled />
+            <TextArea id="introduction" rows={6} placeholder="보유한 PASS가 없습니다." disabled />
           </Space>
         </Col>
       </Row>

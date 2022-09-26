@@ -3,7 +3,7 @@ import CredentialsProvider from 'next-auth/providers/credentials';
 import * as Sentry from '@sentry/react';
 import axios from 'axios';
 
-export default NextAuth({
+const createOptions: any = (req: any) => ({
   secret: process.env.SECRET,
   session: {
     strategy: 'jwt',
@@ -37,18 +37,24 @@ export default NextAuth({
     }),
   ],
   callbacks: {
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
+      if (req.url === '/api/auth/session?update') {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userinfo?user_id=${token.user_id}`
+        );
+        token = res.data[0];
+      }
       return { ...token, ...user };
     },
 
-    async session({ session, user, token }) {
+    async session({ session, user, token }: any) {
       session.accessToken = token.accessToken;
-      session.user.user_id = token.user_id;
-      session.user.user_address = token.user_address;
-      session.user.user_network = token.user_network;
-      session.user.user_nickname = token.user_nickname;
-      session.user.user_introduction = token.user_introduction;
+      session.user = token;
       return session;
     },
   },
 });
+
+export default async (req: any, res: any) => {
+  return NextAuth(req, res, createOptions(req));
+};

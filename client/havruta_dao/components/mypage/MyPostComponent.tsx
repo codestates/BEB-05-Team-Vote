@@ -58,13 +58,8 @@ export default function MyPostComponent() {
       });
   }, []);
 
-  const fetcher = async (url: string) => {
-    const res = await axios.get(url);
-    return res.data;
-  };
   const { data: isArticle } = useSWR(
-    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`,
-    fetcher
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`
   );
 
   console.log('이즈마이아티클', isMyArticle);
