@@ -1,12 +1,15 @@
 import { CodepenOutlined } from '@ant-design/icons';
-import { Col, Image, Space, Typography } from 'antd';
+import { Col, Image, Row, Space, Typography } from 'antd';
+import { useRouter } from 'next/router';
+import React from 'react';
+import { Courses } from '../../pages/courses';
 
-export default function MyLectureComponent() {
+export default function MyLectureComponent({ data }: any) {
+  const router = useRouter();
   const { Text, Title } = Typography;
 
   return (
     <Space
-      direction="vertical"
       style={{
         width: '100%',
         border: '1px solid grey',
@@ -14,42 +17,60 @@ export default function MyLectureComponent() {
         borderRadius: '8px',
       }}
     >
-      <Col span={8} key={1}>
-        <Image
-          width={'100%'}
-          height={'auto'}
-          style={{
-            objectFit: 'cover',
-            marginBottom: '8px',
-            borderRadius: '8px',
-            cursor: 'pointer',
-          }}
-          // onClick={() => router.push(`/courses/details/`)}
-          src={`https://miricanvas.zendesk.com/hc/article_attachments/360049418812/__________._8.png`}
-          alt={`대체 텍스트`}
-          preview={false}
-          fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
-        />
+      <Row justify="space-around">
+        {data &&
+          data.map((item: Courses, i: number) => {
+            if (i < 4) {
+              return (
+                <Col
+                  span={5}
+                  key={item.lecture_id}
+                  onClick={() => {
+                    router.push(`/courses/details/${item.lecture_id}`);
+                  }}
+                >
+                  <Space direction="vertical">
+                    <Image
+                      width={'100%'}
+                      height={'auto'}
+                      style={{
+                        objectFit: 'cover',
+                        marginBottom: '8px',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                      }}
+                      // onClick={() => router.push(`/courses/details/`)}
+                      src={item.lecture_image}
+                      alt={item.lecture_title}
+                      preview={false}
+                      fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
+                    />
 
-        <Title ellipsis={{ rows: 2 }} level={4} style={{ lineHeight: '150%', cursor: 'pointer' }}>
-          {`실패없는 주식투자 2개월치`}
-        </Title>
-
-        <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
-          <Text style={{ fontSize: '16px' }} type="secondary">
-            {/* {course.user.user_nickname.length > 10 &&
-                    course.user.user_nickname.substr(0, 30) + '...'} */}
-
-            {`Lorem ipsum dolor sit, amet consectetur adipisicing elit. `}
-          </Text>
-          <Space>
-            <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
-            <Text style={{ fontSize: '16px', color: '#bae637', fontWeight: 500 }} type="secondary">
-              {`2`}
-            </Text>
-          </Space>
-        </Space>
-      </Col>
+                    <Space>
+                      <Title
+                        ellipsis={{ rows: 2 }}
+                        level={4}
+                        style={{ lineHeight: '150%', cursor: 'pointer' }}
+                      >
+                        {item.lecture_title}
+                      </Title>
+                      <Space style={{ width: '80px' }}>
+                        <Text
+                          style={{ fontSize: '16px', color: '#bae637', fontWeight: 500 }}
+                          type="secondary"
+                        >
+                          <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
+                          &nbsp;
+                          {item.lecture_price}
+                        </Text>
+                      </Space>
+                    </Space>
+                  </Space>
+                </Col>
+              );
+            }
+          })}
+      </Row>
     </Space>
   );
 }

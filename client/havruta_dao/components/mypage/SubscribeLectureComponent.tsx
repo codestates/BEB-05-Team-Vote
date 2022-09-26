@@ -1,46 +1,30 @@
-import { Col, Image, PageHeader, Row, Space, Typography } from 'antd';
-import { useRouter } from 'next/router';
-import useSWR from 'swr';
-import { loginInfoState } from '../../states/loginInfoState';
-import { useRecoilState } from 'recoil';
 import { CodepenOutlined } from '@ant-design/icons';
+import { Col, Image, Row, Space, Typography } from 'antd';
+import { useRouter } from 'next/router';
+import React from 'react';
 
-const { Title, Text } = Typography;
+const { Text, Title } = Typography;
 
-export default function MyLectures() {
+export default function SubscribeLectureComponent({ data }: any) {
   const router = useRouter();
-  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
-
-  // 강의 수강 목록
-  const { data: subscribeLecture } = useSWR(
-    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userclass?user_id=${loginInfo.user_id}`
-  );
 
   return (
-    <Space direction="vertical">
-      <PageHeader
-        className="site-page-header"
-        // onBack={() => ('/mypage')}
-        onBack={() => router.push('/mypage')}
-        title="내가 수강 중인 강의"
-        subTitle="내가 수강 중인 강의 목록입니다."
-        style={{ paddingLeft: 0 }}
-      />
-      <Space
-        style={{
-          width: '100%',
-          border: '1px solid grey',
-          padding: '16px',
-          borderRadius: '8px',
-        }}
-      >
-        <Row gutter={[24, 24]}>
-          {subscribeLecture &&
-            subscribeLecture.map((item: any) => {
+    <Space
+      style={{
+        width: '100%',
+        border: '1px solid grey',
+        padding: '16px',
+        borderRadius: '8px',
+      }}
+    >
+      <Row justify="space-around">
+        {data &&
+          data.map((item: any, i: number) => {
+            if (i < 4) {
               return (
                 <Col
-                  span={6}
-                  key={item.lecture.lecture_id}
+                  span={5}
+                  key={item.id}
                   onClick={() => {
                     router.push(`/courses/details/${item.lecture.lecture_id}`);
                   }}
@@ -84,9 +68,9 @@ export default function MyLectures() {
                   </Space>
                 </Col>
               );
-            })}
-        </Row>
-      </Space>
+            }
+          })}
+      </Row>
     </Space>
   );
 }

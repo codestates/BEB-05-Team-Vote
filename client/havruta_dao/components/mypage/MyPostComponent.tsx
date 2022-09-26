@@ -1,16 +1,19 @@
 import { DeleteOutlined, LikeOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Card, message, notification, Popconfirm, Space, Typography } from 'antd';
-import Paragraph from 'antd/lib/skeleton/Paragraph';
 import axios from 'axios';
-import { type } from 'os';
-import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 import useSWR, { mutate } from 'swr';
 import { timeForToday } from '../../lib/date';
 import { PostInterface } from '../../pages';
 import { loginInfoState } from '../../states/loginInfoState';
 
+const { Paragraph, Text } = Typography;
+
 export default function MyPostComponent() {
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const router = useRouter();
+
   const fetchLike = async (article_id: number) => {
     const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
       user_id: loginInfo.user_id,
@@ -36,33 +39,9 @@ export default function MyPostComponent() {
     }
   };
 
-  const { Paragraph, Text } = Typography;
-  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
-
-  type isMyArticle = {
-    article_content: string;
-    article_id: Number;
-    comment_count: Number;
-    created_at: string;
-    like_count: Number;
-    updated_at: string;
-  };
-  const [isMyArticle, setIsMyArticle] = useState<isMyArticle[]>([]);
-
-  useEffect(() => {
-    axios
-      .get(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`)
-      .then((res) => {
-        console.log('내가 쓴 글', res.data);
-        setIsMyArticle(res.data);
-      });
-  }, []);
-
   const { data: isArticle } = useSWR(
     `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`
   );
-
-  console.log('이즈마이아티클', isMyArticle);
 
   return (
     <Space
@@ -77,7 +56,13 @@ export default function MyPostComponent() {
       {isArticle &&
         isArticle.map((element: PostInterface, i: number) => {
           return (
-            <Card style={{ width: '100%', marginTop: '-1px' }} key={i}>
+            <Card
+              style={{ width: '100%', marginTop: '-1px', cursor: 'pointer' }}
+              key={i}
+              onClick={() => {
+                router.push(`/community/details/${element.article_id}`);
+              }}
+            >
               <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                 <Space>
                   <Popconfirm

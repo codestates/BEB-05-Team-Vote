@@ -11,14 +11,17 @@ import {
   notification,
 } from 'antd';
 import axios from 'axios';
+import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 import useSWR, { mutate } from 'swr';
 import { timeForToday } from '../../lib/date';
 import { PostInterface } from '../../pages';
 import { loginInfoState } from '../../states/loginInfoState';
 
+const { Text, Paragraph } = Typography;
+
 export default function MyCommentComponent() {
-  const { Text, Paragraph } = Typography;
+  const router = useRouter();
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
   const { data: commentData } = useSWR(
@@ -40,8 +43,6 @@ export default function MyCommentComponent() {
     }
   };
 
-  console.log('코멘트데이터', commentData);
-
   return (
     <Space
       direction="vertical"
@@ -55,7 +56,13 @@ export default function MyCommentComponent() {
       {commentData &&
         commentData.map((element: PostInterface, i: number) => {
           return (
-            <Card style={{ width: '100%', marginTop: '-1px' }} key={i}>
+            <Card
+              style={{ width: '100%', marginTop: '-1px', cursor: 'pointer' }}
+              key={i}
+              onClick={() => {
+                router.push(`/community/details/${element.article_id}`);
+              }}
+            >
               <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                 <Space>
                   <EnterOutlined style={{ transform: 'scaleX(-1)' }} />

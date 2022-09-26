@@ -36,17 +36,20 @@ import { timeForToday } from '../../lib/date';
 import * as Sentry from '@sentry/react';
 import { useSession } from 'next-auth/react';
 import { reloadSession } from '../../lib/useReloadSession';
+import SubscribeLectureComponent from '../../components/mypage/SubscribeLectureComponent';
+
+const { TextArea } = Input;
+const { Title, Text, Paragraph } = Typography;
 
 export default function Mypage() {
-  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
-  const [isNickname, setIsNickname] = useState('');
-  const [isIntro, setIsIntro] = useState('');
-
   const { data: session } = useSession();
   const router = useRouter();
-  const { TextArea } = Input;
-  const { Title, Text, Paragraph } = Typography;
+
+  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const [isNickname, setIsNickname] = useState(loginInfo.user_nickname);
+  const [isIntro, setIsIntro] = useState(loginInfo.user_introduction);
   const [isModalVisible, setIsModalVisible] = useState(false);
+
   const showModal = () => {
     setIsModalVisible(true);
   };
@@ -59,6 +62,16 @@ export default function Mypage() {
   // 내가 쓴 댓글
   const { data: commentData } = useSWR(
     `${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`
+  );
+
+  // 강의 수강 목록
+  const { data: subscribeLecture } = useSWR(
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userclass?user_id=${loginInfo.user_id}`
+  );
+
+  // 강의 생성 목록
+  const { data: createdLecture } = useSWR(
+    `${process.env.NEXT_PUBLIC_ENDPOINT}/user/userlecture?user_id=${loginInfo.user_id}`
   );
 
   const fetchLike = async (article_id: number) => {
@@ -102,6 +115,11 @@ export default function Mypage() {
   };
 
   const handleOk = async () => {
+    if (!isNickname.length) {
+      return notification['warning']({
+        message: '변경할 닉네임을 입력해주세요!.',
+      });
+    }
     try {
       const res = await axios.put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
         user_address: loginInfo.user_address,
@@ -232,7 +250,13 @@ export default function Mypage() {
               isArticle.map((element: PostInterface, index: number) => {
                 if (index < 2) {
                   return (
-                    <Card style={{ width: '100%', marginTop: '-1px' }} key={index}>
+                    <Card
+                      style={{ width: '100%', marginTop: '-1px', cursor: 'pointer' }}
+                      key={index}
+                      onClick={() => {
+                        router.push(`/community/details/${element.article_id}`);
+                      }}
+                    >
                       <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                         <Space>
                           <Popconfirm
@@ -325,7 +349,13 @@ export default function Mypage() {
               commentData.map((element: PostInterface, index: number) => {
                 if (index < 2) {
                   return (
-                    <Card style={{ width: '100%', marginTop: '-1px' }} key={index}>
+                    <Card
+                      style={{ width: '100%', marginTop: '-1px', cursor: 'pointer' }}
+                      key={index}
+                      onClick={() => {
+                        router.push(`/community/details/${element.article_id}`);
+                      }}
+                    >
                       <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
                         <Space>
                           <EnterOutlined style={{ transform: 'scaleX(-1)' }} />
@@ -401,7 +431,7 @@ export default function Mypage() {
             <Title level={5}>내가 생성한 강의</Title>
             <Button onClick={() => router.push('/mypage/myuploadlectures')}>모두 보기</Button>
           </Space>
-          <MyLectureComponent />
+          <MyLectureComponent data={createdLecture} />
         </Col>
       </Row>
       <Divider />
@@ -411,7 +441,7 @@ export default function Mypage() {
             <Title level={5}>내가 수강 중인 강의</Title>
             <Button onClick={() => router.push('/mypage/mylectures')}>모두 보기</Button>
           </Space>
-          <MyLectureComponent />
+          <SubscribeLectureComponent data={subscribeLecture} />
         </Col>
       </Row>
     </section>
