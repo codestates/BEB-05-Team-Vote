@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import {
   Button,
   Divider,
@@ -9,8 +9,8 @@ import {
   notification,
   Space,
   Typography,
+  Menu,
 } from 'antd';
-import { Menu } from 'antd';
 import {
   AuditOutlined,
   BankOutlined,
@@ -18,7 +18,6 @@ import {
   CommentOutlined,
   FileSearchOutlined,
   LogoutOutlined,
-  QuestionCircleOutlined,
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
@@ -29,7 +28,6 @@ import { signIn, signOut, useSession } from 'next-auth/react';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
-import axios from 'axios';
 // import logoImage from '../assets/images/HAVRUTADAO.png';
 import logoImage from '../assets/images/svglogo4.svg';
 
@@ -201,13 +199,22 @@ export default function MenuComponent() {
   const handleNetworkChanged = (...args: Array<string>) => {
     const networkId = args[0];
     console.log(networkId);
-    window.location.reload();
+    if (status === 'authenticated') {
+      signOut();
+    } else window.location.reload();
   };
 
   useEffect(() => {
     window.klaytn?.on('networkChanged', handleNetworkChanged);
     return () => {
       window.klaytn?.removeListener('networkChanged', handleNetworkChanged);
+    };
+  });
+
+  useEffect(() => {
+    window.klaytn?.on('accountsChanged', handleNetworkChanged);
+    return () => {
+      window.klaytn?.removeListener('accountsChanged', handleNetworkChanged);
     };
   });
 
