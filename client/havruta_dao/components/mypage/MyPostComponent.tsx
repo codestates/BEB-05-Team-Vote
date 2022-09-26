@@ -11,7 +11,6 @@ import { PostInterface } from '../../pages';
 import { loginInfoState } from '../../states/loginInfoState';
 
 export default function MyPostComponent() {
-
   const fetchLike = async (article_id: number) => {
     const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/like`, {
       user_id: loginInfo.user_id,
@@ -37,10 +36,9 @@ export default function MyPostComponent() {
     }
   };
 
-  
   const { Paragraph, Text } = Typography;
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
-  
+
   type isMyArticle = {
     article_content: string;
     article_id: Number;
@@ -50,14 +48,15 @@ export default function MyPostComponent() {
     updated_at: string;
   };
   const [isMyArticle, setIsMyArticle] = useState<isMyArticle[]>([]);
-  
-  useEffect(()=>{
-    axios.get(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`)    
-    .then((res)=>{
-      console.log('내가 쓴 글', res.data)
-      setIsMyArticle(res.data)
-    })
-  },[])
+
+  useEffect(() => {
+    axios
+      .get(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`)
+      .then((res) => {
+        console.log('내가 쓴 글', res.data);
+        setIsMyArticle(res.data);
+      });
+  }, []);
 
   const fetcher = async (url: string) => {
     const res = await axios.get(url);
@@ -68,7 +67,7 @@ export default function MyPostComponent() {
     fetcher
   );
 
-  console.log('이즈마이아티클',isMyArticle)
+  console.log('이즈마이아티클', isMyArticle);
 
   return (
     <Space
@@ -80,77 +79,77 @@ export default function MyPostComponent() {
         borderRadius: '8px',
       }}
     >
-      {
-      isArticle.map((element: PostInterface) => {
-        return (
-          <Card style={{ width: '100%', marginTop: '-1px' }}>
-            <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
-              <Space>
-                <Popconfirm
-                  title={
-                    <>
-                      <Paragraph>{loginInfo.user_nickname}</Paragraph>
-                      <Paragraph>{loginInfo.user_introduction}</Paragraph>
-                      <Paragraph>{loginInfo.user_address}</Paragraph>
-                    </>
-                  }
-                  icon={<UserOutlined style={{ color: '#bfbfbf' }} />}
-                  okText="지갑 주소 복사"
-                  cancelText="닫기"
-                  onConfirm={(e) => {
-                    e?.stopPropagation();
-                    navigator.clipboard.writeText(loginInfo.user_address);
-                    message.success('지갑 주소가 복사되었습니다!');
-                  }}
-                  onCancel={(e) => {
-                    e?.stopPropagation();
-                  }}
-                >
-                  <Text
-                    type="secondary"
-                    strong
-                    onClick={(e) => e?.stopPropagation()}
-                    style={{ cursor: 'pointer' }}
+      {isArticle &&
+        isArticle.map((element: PostInterface, i: number) => {
+          return (
+            <Card style={{ width: '100%', marginTop: '-1px' }} key={i}>
+              <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
+                <Space>
+                  <Popconfirm
+                    title={
+                      <>
+                        <Paragraph>{loginInfo.user_nickname}</Paragraph>
+                        <Paragraph>{loginInfo.user_introduction}</Paragraph>
+                        <Paragraph>{loginInfo.user_address}</Paragraph>
+                      </>
+                    }
+                    icon={<UserOutlined style={{ color: '#bfbfbf' }} />}
+                    okText="지갑 주소 복사"
+                    cancelText="닫기"
+                    onConfirm={(e) => {
+                      e?.stopPropagation();
+                      navigator.clipboard.writeText(loginInfo.user_address);
+                      message.success('지갑 주소가 복사되었습니다!');
+                    }}
+                    onCancel={(e) => {
+                      e?.stopPropagation();
+                    }}
                   >
-                    {loginInfo.user_nickname}
-                  </Text>
-                </Popconfirm>
-                <Text type="secondary">{timeForToday(element.created_at)}</Text>
-              </Space>
-              {element.article_content}
-              <Space style={{ justifyContent: 'space-between', width: '100%' }}>
-                <Space size={'large'}>
-                  <Button
-                    type="link"
-                    icon={<LikeOutlined />}
-                    size="small"
-                    onClick={() => fetchLike(element.article_id)}
-                  >
-                    {' '}
-                    {element.like_count}
-                  </Button>
-                  <Button type="link" icon={<MessageOutlined />} size="small">
-                    {' '}
-                    {element.comment_count}
-                  </Button>
+                    <Text
+                      type="secondary"
+                      strong
+                      onClick={(e) => e?.stopPropagation()}
+                      style={{ cursor: 'pointer' }}
+                    >
+                      {loginInfo.user_nickname}
+                    </Text>
+                  </Popconfirm>
+                  <Text type="secondary">{timeForToday(element.created_at)}</Text>
                 </Space>
-                {element.user_id === loginInfo.user_id && (
-                      <div onClick={(e) => e.stopPropagation()}>
-                <Popconfirm
-                  title="정말 게시글을 삭제하시겠습니까?"
-                    onConfirm={() => onPostDelete(element.article_id)}
-                  okText="삭제"
-                  cancelText="취소"
-                >
-                  <DeleteOutlined style={{ color: '#ff7875' }} />
-                </Popconfirm>
-                </div>
-                    )}
+                {element.article_content}
+                <Space style={{ justifyContent: 'space-between', width: '100%' }}>
+                  <Space size={'large'}>
+                    <Button
+                      type="link"
+                      icon={<LikeOutlined />}
+                      size="small"
+                      onClick={() => fetchLike(element.article_id)}
+                    >
+                      {' '}
+                      {element.like_count}
+                    </Button>
+                    <Button type="link" icon={<MessageOutlined />} size="small">
+                      {' '}
+                      {element.comment_count}
+                    </Button>
+                  </Space>
+                  {element.user_id === loginInfo.user_id && (
+                    <div onClick={(e) => e.stopPropagation()}>
+                      <Popconfirm
+                        title="정말 게시글을 삭제하시겠습니까?"
+                        onConfirm={() => onPostDelete(element.article_id)}
+                        okText="삭제"
+                        cancelText="취소"
+                      >
+                        <DeleteOutlined style={{ color: '#ff7875' }} />
+                      </Popconfirm>
+                    </div>
+                  )}
+                </Space>
               </Space>
-            </Space>
-          </Card>
-        );
-      })}
+            </Card>
+          );
+        })}
     </Space>
   );
 }

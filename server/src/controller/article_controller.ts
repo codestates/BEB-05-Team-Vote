@@ -4,10 +4,7 @@ const prisma = require('../db/index');
 module.exports = {
   postArticle: (req: Request, res: Response) => {
     const { user_id, article_content } = req.body;
-    const postArticleHandler = async (
-      user_id: Number,
-      article_content: String
-    ) => {
+    const postArticleHandler = async (user_id: Number, article_content: String) => {
       await prisma.Article.create({
         data: {
           user_id: user_id,
@@ -16,14 +13,6 @@ module.exports = {
       });
       const allArticle = await prisma.Article.findMany({});
       console.dir(allArticle, { depth: null });
-      await prisma.User.update({
-        where: {
-          user_id: user_id,
-        },
-        data: {
-          user_point: { increment: 5 },
-        },
-      });
     };
     postArticleHandler(user_id, article_content)
       .then(async () => {
@@ -155,20 +144,15 @@ module.exports = {
         res.status(403).send("you're not the author");
       }
     };
-    editArticleHandler(user_id, article_id, article_content).catch(
-      async (e) => {
-        console.error(e);
-        await prisma.$disconnect();
-        res.status(500).send('Server Error');
-      }
-    );
+    editArticleHandler(user_id, article_id, article_content).catch(async (e) => {
+      console.error(e);
+      await prisma.$disconnect();
+      res.status(500).send('Server Error');
+    });
   },
   deleteArticle: (req: Request, res: Response) => {
     const { user_id, article_id } = req.body;
-    const deleteArticleHandler = async (
-      user_id: Number,
-      article_id: Number
-    ) => {
+    const deleteArticleHandler = async (user_id: Number, article_id: Number) => {
       const result = await prisma.Article.findMany({
         where: {
           article_id: article_id,
