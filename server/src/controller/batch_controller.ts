@@ -101,11 +101,26 @@ module.exports = {
       }
     }
 
+    const newUserTokenArray = userTokenArray.map((e) =>
+      caver.utils.toBN(caver.utils.convertToPeb(Number(e), 'KLAY'))
+    );
+
+    const numberUserTokenArray = newUserTokenArray.map((e) => caver.utils.toBN(Number(e)));
+
+    const totalToken = caver.utils.toBN(
+      numberUserTokenArray.reduce((acc, cur) => {
+        return acc + cur;
+      }, 0)
+    );
+
     const keyring = caver.wallet.add(caver.wallet.keyring.createFromPrivateKey(deployKey));
     tokenContract.options.from = keyring.address;
     batchContract.options.from = keyring.address;
+
+    await tokenContract.methods.mint(totalToken).send({ from: deployAddress, gas: 3000000 });
+
     await batchContract.methods
-      .batchTransfer(userAddressArray, userTokenArray)
+      .batchTransfer(userAddressArray, newUserTokenArray)
       .send({ from: deployAddress, gas: 3000000 });
   },
 };

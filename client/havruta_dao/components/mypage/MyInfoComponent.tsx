@@ -1,11 +1,15 @@
-import { Space, Input } from 'antd';
+import { Space, Input, message } from 'antd';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../states/loginInfoState';
+const { TextArea } = Input;
 
 export default function MyInfoComponent() {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
-  const { TextArea } = Input;
+  const copyAddressToClipboard = () => {
+    navigator.clipboard.writeText(loginInfo.user_address);
+    message.success('지갑 주소가 복사되었습니다!');
+  };
   return (
     <Space
       direction="vertical"
@@ -16,18 +20,18 @@ export default function MyInfoComponent() {
         borderRadius: '8px',
       }}
     >
-      <label htmlFor="nickname">닉네임</label>
-      <Input id="nickname" style={{ color: '#ffffff' }} value={loginInfo.user_nickname} disabled />
       <label htmlFor="address">지갑주소</label>
-      <Input id="address" style={{ color: '#ffffff' }} value={loginInfo.user_address} disabled />
-      <label htmlFor="introduction">소개글</label>
-      <TextArea
-        id="introduction"
-        style={{ color: '#ffffff' }}
-        value={loginInfo.user_introduction}
-        rows={3}
-        disabled
+      <Input
+        id="address"
+        style={{ cursor: 'pointer' }}
+        value={loginInfo.user_address}
+        readOnly
+        onClick={copyAddressToClipboard}
       />
+      <label htmlFor="nickname">닉네임</label>
+      <Input id="nickname" value={loginInfo.user_nickname} readOnly />
+      <label htmlFor="introduction">소개글</label>
+      <TextArea id="introduction" value={loginInfo.user_introduction} rows={3} readOnly />
     </Space>
   );
 }

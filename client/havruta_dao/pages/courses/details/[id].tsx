@@ -22,6 +22,7 @@ import { useRouter } from 'next/router';
 import { getSession, useSession } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
 import { useSWRConfig } from 'swr';
+import { HADAPassState } from '../../../states/HADAPassState';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -46,9 +47,14 @@ export default function Detail({
   const { mutate } = useSWRConfig();
   const { data: session } = useSession();
 
+  const [HADAPASS, setIsPass] = useRecoilState(HADAPassState);
   const [isSubscribe, setIsSubscribe] = useState(subscribe || false);
   const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+
+  useEffect(() => {
+    getBalanceNFT();
+  }, []);
 
   const onSubscribe = async () => {
     if (!session) {
@@ -59,6 +65,10 @@ export default function Detail({
     }
     setIsLoading(true);
 
+    if (HADAPASS.isPass) {
+      saveSubscribeToDB();
+      return;
+    }
     if (course.lecture_price === 0) {
       saveSubscribeToDB();
     } else {
@@ -186,6 +196,20 @@ export default function Detail({
     });
   };
 
+  const getBalanceNFT = async () => {
+    try {
+      const res = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/nft?user_address=${window.klaytn?.selectedAddress}`
+      );
+      if (res.status === 201) {
+        const isPass = Number(res.data) > 0;
+        setIsPass({ isPass: isPass });
+      }
+    } catch (error) {
+      Sentry.captureException(error);
+    }
+  };
+
   return (
     <section>
       <Head>
@@ -229,6 +253,10 @@ export default function Detail({
             <Space>
               {course.lecture_price === 0 ? (
                 <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>무료</Text>
+              ) : HADAPASS.isPass ? (
+                <Text type="success" style={{ fontSize: '16px' }}>
+                  HADA PASS 보유 중! 자유롭게 수강하세요!
+                </Text>
               ) : (
                 <>
                   <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />

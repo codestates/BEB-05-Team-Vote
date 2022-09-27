@@ -24,6 +24,7 @@ interface Store {
 declare interface Window {
   klaytn?: Klaytn | any;
   caver?: any;
+  Caver?: any;
 }
 declare global {
   interface Window {

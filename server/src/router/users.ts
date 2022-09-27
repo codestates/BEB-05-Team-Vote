@@ -8,6 +8,7 @@ const {
   userArticle,
   userComment,
   userLecture,
+  userClass,
 } = require('../controller/userinfo_controller');
 
 router.post('/login', user_login);
@@ -16,5 +17,6 @@ router.get('/userinfo', userInfo);
 router.get('/userarticle', userArticle);
 router.get('/usercomment', userComment);
 router.get('/userlecture', userLecture);
+router.get('/userclass', userClass);
 
 module.exports = router;
