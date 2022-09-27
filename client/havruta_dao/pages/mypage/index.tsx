@@ -87,9 +87,11 @@ export default function Mypage() {
 
   const getBalanceToken = async () => {
     const token = new caver.klay.KIP7(process.env.NEXT_PUBLIC_HADATOKEN);
-    const pebBalance = await token.balanceOf(window.klaytn?.selectedAddress);
-    const klayBalance = await caver.utils.convertFromPeb(pebBalance, 'KLAY');
-    setTokenBalance(String(klayBalance));
+    if (token) {
+      const pebBalance = await token.balanceOf(window.klaytn?.selectedAddress);
+      const klayBalance = await caver.utils.convertFromPeb(pebBalance, 'KLAY');
+      setTokenBalance(String(klayBalance));
+    }
   };
 
   const getBalanceNFT = async () => {
