@@ -39,6 +39,7 @@ import { useSession } from 'next-auth/react';
 import { reloadSession } from '../../lib/useReloadSession';
 import SubscribeLectureComponent from '../../components/mypage/SubscribeLectureComponent';
 import Caver from 'caver-js';
+import { HADAPassState } from '../../states/HADAPassState';
 
 const { TextArea } = Input;
 const { Title, Text, Paragraph } = Typography;
@@ -50,11 +51,11 @@ export default function Mypage() {
   const router = useRouter();
 
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const [isPass, setIsPass] = useRecoilState(HADAPassState);
   const [isNickname, setIsNickname] = useState(loginInfo.user_nickname);
   const [isIntro, setIsIntro] = useState(loginInfo.user_introduction);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [tokenBalance, setTokenBalance] = useState('');
-  const [passBalance, setPassBalance] = useState('');
 
   const showModal = () => {
     setIsModalVisible(true);
@@ -100,7 +101,8 @@ export default function Mypage() {
         `${process.env.NEXT_PUBLIC_ENDPOINT}/nft?user_address=${window.klaytn?.selectedAddress}`
       );
       if (res.status === 201) {
-        setPassBalance(res.data);
+        const isPass = Number(res.data) > 0;
+        setIsPass({ isPass: isPass });
       }
     } catch (error) {
       Sentry.captureException(error);
@@ -366,7 +368,7 @@ export default function Mypage() {
                   id="introduction"
                   rows={3}
                   value={
-                    passBalance ? 'HADA PASS 보유 중입니다.' : '보유 중인 HADA PASS가 없습니다.'
+                    isPass.isPass ? 'HADA PASS 보유 중입니다.' : '보유 중인 HADA PASS가 없습니다.'
                   }
                   readOnly
                 />
