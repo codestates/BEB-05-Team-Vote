@@ -165,7 +165,6 @@ export default function MenuComponent() {
               network,
               redirect: false,
             });
-
             // if (response?.ok && response.status === 200) {
             //   router.reload();
             // }
@@ -195,28 +194,6 @@ export default function MenuComponent() {
   useEffect(() => {
     setLoginInfomation();
   }, [session?.user]);
-
-  const handleNetworkChanged = (...args: Array<string>) => {
-    const networkId = args[0];
-    console.log(networkId);
-    if (status === 'authenticated') {
-      signOut();
-    } else window.location.reload();
-  };
-
-  useEffect(() => {
-    window.klaytn?.on('networkChanged', handleNetworkChanged);
-    return () => {
-      window.klaytn?.removeListener('networkChanged', handleNetworkChanged);
-    };
-  });
-
-  useEffect(() => {
-    window.klaytn?.on('accountsChanged', handleNetworkChanged);
-    return () => {
-      window.klaytn?.removeListener('accountsChanged', handleNetworkChanged);
-    };
-  });
 
   return (
     <Sider
