@@ -71,8 +71,9 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
   const handleNetworkChanged = (...args: Array<string>) => {
     const networkId = args[0];
-    console.log(networkId);
-    signOut();
+    if (window?.klaytn?.networkVersion !== networkId) {
+      signOut();
+    }
   };
 
   useEffect(() => {
