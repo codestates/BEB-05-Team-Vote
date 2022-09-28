@@ -1,5 +1,3 @@
-// Threejs example: threejs.org/examples/?q=asc#webgl_effects_ascii
-
 import { useEffect, useRef, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
@@ -20,7 +18,7 @@ export default function App() {
         <Col span={24} style={{ marginBottom: '80px' }}>
           <Canvas style={{ width: '100%', height: '50vh' }} onScroll={(e) => e.stopPropagation}>
             {/* <color attach="background" args={['rgba(0,0,0,0)']} /> */}
-            <spotLight position={[15, 0, 5]} angle={0.3} penumbra={2} />
+            <spotLight position={[15, 0, 5]} angle={0.1} penumbra={2} />
             <pointLight position={[10, 10, 15]} />
             <Torusknot />
             <AsciiRenderer invert />
@@ -168,6 +166,9 @@ export default function App() {
                   강의 콘텐츠 광고 기능 구현
                 </p>
                 <p style={{ paddingLeft: '10px', fontSize: '18px', color: '#a1a1a1' }}>
+                  강의 NFT화 구현
+                </p>
+                <p style={{ paddingLeft: '10px', fontSize: '18px', color: '#a1a1a1' }}>
                   질의응답 기능 구현
                 </p>
                 <p style={{ paddingLeft: '10px', fontSize: '18px', color: '#a1a1a1' }}>
@@ -235,7 +236,7 @@ export default function App() {
           </Col>
         </Row>
         <Divider style={{ border: 'none', borderTop: '1px solid #434343' }} />
-        <Title>Team Vote</Title>
+        <Title>Team Vote Member</Title>
         <Row gutter={[32, 32]}>
           <Col span={8} style={{ textAlign: 'center' }}>
             <Avatar
@@ -257,8 +258,8 @@ export default function App() {
             />
             <Title level={3}>El</Title>
             <Paragraph style={{ fontSize: '20px', wordBreak: 'keep-all' }}>
-              프론트엔드 엔지니어. 하늘을 날다가 사이버 세상에 착륙했다. 갈색 푸들 '라떼'와 함께
-              거주 중.
+              프론트엔드 엔지니어. 하늘을 날다가 사이버 세상에 착륙했다. 갈색 푸들 &#39;라떼&#39;와
+              함께 거주 중.
             </Paragraph>
           </Col>
           <Col span={8} style={{ textAlign: 'center' }}>
