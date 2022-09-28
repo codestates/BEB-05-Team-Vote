@@ -324,32 +324,40 @@ export default function Detail({
 }
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
-    const resCourse = await axios.get(
-      `${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/detail?lecture_id=${ctx.params?.id}`
-    );
-    const course = resCourse.data[0];
-
-    const session = await getSession(ctx);
-
-    if (session?.user) {
-      const resSubscribe = await axios.get(
-        `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session.user.user_id}&lecture_id=${ctx.params?.id}`
+    if (ctx.params?.id) {
+      const resCourse = await axios.get(
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/detail?lecture_id=${ctx.params?.id}`
       );
-      const subscribe = resSubscribe.data.length !== 0;
+      const course = resCourse.data[0];
+
+      const session = await getSession(ctx);
+
+      if (session?.user) {
+        const resSubscribe = await axios.get(
+          `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session.user.user_id}&lecture_id=${ctx.params?.id}`
+        );
+        const subscribe = resSubscribe.data.length !== 0;
+
+        return {
+          props: {
+            course,
+            subscribe,
+          },
+        };
+      }
 
       return {
         props: {
           course,
-          subscribe,
+        },
+      };
+    } else {
+      return {
+        props: {
+          course: undefined,
         },
       };
     }
-
-    return {
-      props: {
-        course,
-      },
-    };
   } catch (error) {
     Sentry.captureException(error);
     return { props: {} };
