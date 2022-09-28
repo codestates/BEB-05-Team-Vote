@@ -15,7 +15,7 @@ import {
   notification,
   Popconfirm,
 } from 'antd';
-import { CodepenOutlined, QuestionCircleOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { CodepenOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { useRouter } from 'next/router';
@@ -216,95 +216,109 @@ export default function Detail({
 
   return (
     <section>
-      <Space style={{ width: '100%' }}>
-        <PageHeader
-          title="목록으로"
-          style={{ paddingLeft: 0 }}
-          onBack={() => router.push('/courses')}
-        />
-      </Space>
-      <Row gutter={48}>
-        <Col span={16}>
-          <Image
-            width={'100%'}
-            src={course.lecture_image}
-            style={{ marginBottom: '24px' }}
-            preview={false}
-            alt="강의 이미지"
-            fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
-          />
-          <Title level={3}>강의 상세 소개</Title>
-          <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
-            {course.lecture_introduction}
-          </Paragraph>
-          <Divider />
-          <Title level={3}>강사 소개</Title>
-          <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
-            {course.instructor_introduction}
-          </Paragraph>
-          <Divider />
-        </Col>
-        <Col span={8}>
-          <Title level={3}>{course.lecture_title}</Title>
-          <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
-            {course.lecture_summary}
-          </Paragraph>
-
-          <Space direction="vertical" style={{ width: '100%' }}>
-            <Space>
-              {course.lecture_price === 0 ? (
-                <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>무료</Text>
-              ) : HADAPASS.isPass ? (
-                <Text type="success" style={{ fontSize: '16px' }}>
-                  HADA PASS 보유 중! 자유롭게 수강하세요!
-                </Text>
-              ) : (
-                <>
-                  <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
-                  <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>
-                    {course.lecture_price}
-                  </Text>
-                </>
-              )}
-            </Space>
-            {isSubscribe && session ? (
-              <Button onClick={onClick} type="ghost" size={'large'} style={{ width: '100%' }} block>
-                강의실로 이동하기
-              </Button>
-            ) : isLoading ? (
-              <Button type="primary" size={'large'} style={{ width: '100%' }} block loading>
-                <span>수강 신청 중..</span>
-              </Button>
-            ) : (
-              <Button
-                onClick={onSubscribe}
-                type="primary"
-                size={'large'}
-                style={{ width: '100%' }}
-                block
-              >
-                수강 신청 하기
-              </Button>
-            )}
-            {session?.user.user_id === course.user_id ? (
-              <Popconfirm
-                placement="bottom"
-                title={'정말 강의를 삭제하시겠습니까?'}
-                onConfirm={() => onDelete(course.lecture_id)}
-                okText={'삭제'}
-                cancelText="취소"
-                icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
-              >
-                <Button type={'text'} danger size={'large'} style={{ width: '100%' }} block>
-                  강의 삭제하기
-                </Button>
-              </Popconfirm>
-            ) : (
-              <></>
-            )}
+      {course ? (
+        <>
+          <Space style={{ width: '100%' }}>
+            <PageHeader
+              title="목록으로"
+              style={{ paddingLeft: 0 }}
+              onBack={() => router.push('/courses')}
+            />
           </Space>
-        </Col>
-      </Row>
+          <Row gutter={48}>
+            <Col span={16}>
+              <Image
+                width={'100%'}
+                src={course.lecture_image}
+                style={{ marginBottom: '24px' }}
+                preview={false}
+                alt="강의 이미지"
+                fallback="https://images.unsplash.com/photo-1534337621606-e3df5ee0e97f?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1332&q=80"
+              />
+              <Title level={3}>강의 상세 소개</Title>
+              <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
+                {course.lecture_introduction}
+              </Paragraph>
+              <Divider />
+              <Title level={3}>강사 소개</Title>
+              <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
+                {course.instructor_introduction}
+              </Paragraph>
+              <Divider />
+            </Col>
+            <Col span={8}>
+              <Title level={3}>{course.lecture_title}</Title>
+              <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
+                {course.lecture_summary}
+              </Paragraph>
+
+              <Space direction="vertical" style={{ width: '100%' }}>
+                <Space>
+                  {course.lecture_price === 0 ? (
+                    <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>
+                      무료
+                    </Text>
+                  ) : HADAPASS.isPass ? (
+                    <Text type="success" style={{ fontSize: '16px' }}>
+                      HADA PASS 보유 중! 자유롭게 수강하세요!
+                    </Text>
+                  ) : (
+                    <>
+                      <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
+                      <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>
+                        {course.lecture_price}
+                      </Text>
+                    </>
+                  )}
+                </Space>
+                {isSubscribe && session ? (
+                  <Button
+                    onClick={onClick}
+                    type="ghost"
+                    size={'large'}
+                    style={{ width: '100%' }}
+                    block
+                  >
+                    강의실로 이동하기
+                  </Button>
+                ) : isLoading ? (
+                  <Button type="primary" size={'large'} style={{ width: '100%' }} block loading>
+                    <span>수강 신청 중..</span>
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={onSubscribe}
+                    type="primary"
+                    size={'large'}
+                    style={{ width: '100%' }}
+                    block
+                  >
+                    수강 신청 하기
+                  </Button>
+                )}
+                {session?.user.user_id === course.user_id ? (
+                  <Popconfirm
+                    placement="bottom"
+                    title={'정말 강의를 삭제하시겠습니까?'}
+                    onConfirm={() => onDelete(course.lecture_id)}
+                    okText={'삭제'}
+                    cancelText="취소"
+                    icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
+                  >
+                    <Button type={'text'} danger size={'large'} style={{ width: '100%' }} block>
+                      강의 삭제하기
+                    </Button>
+                  </Popconfirm>
+                ) : (
+                  <></>
+                )}
+              </Space>
+            </Col>
+          </Row>
+        </>
+      ) : (
+        <></>
+      )}
     </section>
   );
 }
