@@ -53,7 +53,9 @@ export default function Detail({
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
 
   useEffect(() => {
-    getBalanceNFT();
+    if (session) {
+      getBalanceNFT();
+    }
   }, []);
 
   const onSubscribe = async () => {
@@ -159,7 +161,9 @@ export default function Detail({
   };
 
   useEffect(() => {
-    changeLoginState();
+    if (session) {
+      changeLoginState();
+    }
   }, [session]);
 
   const cancelSubscribeOnWallet = () => {
@@ -316,7 +320,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
     const session = await getSession(ctx);
 
-    if (session) {
+    if (session?.user) {
       const resSubscribe = await axios.get(
         `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session.user.user_id}&lecture_id=${ctx.params?.id}`
       );
