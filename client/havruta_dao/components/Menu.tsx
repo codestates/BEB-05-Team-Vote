@@ -14,9 +14,11 @@ import {
 import {
   AuditOutlined,
   BankOutlined,
+  BookOutlined,
   BulbOutlined,
   CommentOutlined,
   FileSearchOutlined,
+  GithubOutlined,
   LogoutOutlined,
   UserOutlined,
   WalletOutlined,
@@ -255,6 +257,21 @@ export default function MenuComponent() {
               만들어가는 탈중앙 비영리조직입니다.
             </Text>
             <Link onClick={() => router.push('/about')}>→ 자세히 알아보기</Link>
+            <Divider />
+            <Link onClick={() => window.open('https://github.com/codestates/BEB-05-Team-Vote')}>
+              <GithubOutlined />
+              &nbsp; 하브루타 DAO Github
+            </Link>
+            <Link
+              onClick={() =>
+                window.open(
+                  'https://endurable-dodo-552.notion.site/Havruta-DAO-White-Paper-d7fe0d07b63f49cf9ddea3e4cea9a4ff'
+                )
+              }
+            >
+              <BookOutlined />
+              &nbsp; 하브루타 DAO 백서
+            </Link>
           </Space>
         </DescriptionOfDao>
       </Space>

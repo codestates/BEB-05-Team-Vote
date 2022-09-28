@@ -216,9 +216,6 @@ export default function Detail({
 
   return (
     <section>
-      <Head>
-        <title>{course.lecture_title}</title>
-      </Head>
       <Space style={{ width: '100%' }}>
         <PageHeader
           title="목록으로"

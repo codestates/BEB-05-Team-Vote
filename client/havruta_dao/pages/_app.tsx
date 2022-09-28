@@ -122,7 +122,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           >
             <LayoutComponent>
               <Head>
-                <title>Havruta DAO</title>
+                <title>Havruta DAO | 미래의 동료들과 함께할 수 있는 곳</title>
                 <meta name="title" content="Havruta DAO | 미래의 동료들과 함께할 수 있는 곳" />
                 <meta name="description" content="함께 배우고, 나누고, 성장하세요." />
                 <meta name="viewport" content="initial-scale=1.0, width=device-width" />

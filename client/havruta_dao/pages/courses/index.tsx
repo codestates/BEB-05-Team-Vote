@@ -21,9 +21,6 @@ export default function Details() {
 
   return (
     <section>
-      <Head>
-        <title>강의탐색</title>
-      </Head>
       <Space style={{ justifyContent: 'space-between', width: '100%' }}>
         <Space>
           <PageHeader
