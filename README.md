@@ -1,5 +1,7 @@
 # 지식공유 학습 플랫폼 : 하브루타 DAO
 
+![](https://user-images.githubusercontent.com/64685759/192935852-e8cb78b3-f330-43b4-85d8-0abc6cff591f.gif)
+
 - 블록체인 기술 기반 토큰 이코노미를 활용하여 지속가능한 선순환 지식공유 학습 플랫폼을 구축
 - 민주적 방식의 커뮤니티 활동을 통해서 플랫폼 참여자들이 당면한 교육문제를 해결하는 블록체인 기반 탈중앙 교육 콘텐츠 플랫폼
 
@@ -17,9 +19,15 @@
 
 [하브루타 DAO 웹사이트 바로가기](https://www.havruta.guru/)
 
+## 하브루타 DAO 시연 영상
+
+[![하브루타 DAO 시연 영상](http://img.youtube.com/vi/JYMnGRqSQsM/0.jpg)](https://youtu.be/JYMnGRqSQsM)
+* 이미지 클릭 시 유튜브로 이동
+
 ## 하브루타 DAO 발표 영상
 
 [![하브루타 DAO 발표 영상](http://img.youtube.com/vi/A3ZG5HiVyUU/0.jpg)](https://www.youtube.com/watch?v=A3ZG5HiVyUU)
+* 이미지 클릭 시 유튜브로 이동
 
 # 하브루타 DAO의 토큰 이코노미
 
@@ -59,20 +67,26 @@
 
 ## 토큰 소비
 
+![](https://user-images.githubusercontent.com/64685759/192938751-be5e04dd-5baf-41b2-a8a0-31ec3850992d.gif)
+
 ### (1) 강의 콘텐츠 생성 시
 
 하브루타 DAO의 사용자가 강의 콘텐츠를 생성할 경우 일정량의 토큰이 소요된다. 이 경우 사용된 토큰은 다시 사용할 수 없는 토큰이 되며 이는 강의 생성 시 비용의 개념으로 처리된다. 지식을 공유하는 이가 토큰을 소비함으로써 토큰 획득 만을 위한 무분별한 강의 생성을 방지하기 위함이다.
+
+![](https://user-images.githubusercontent.com/64685759/192938482-a456fae2-7dd3-44b4-a4c1-17414c95a4c9.gif)
 ![](https://user-images.githubusercontent.com/64685759/192926696-84057ade-7077-4749-9d85-973c5f388c34.PNG)
 
 ### (2) 강의 콘텐츠 소비
 
 하브루타 DAO의 사용자는 자신이 갖고 있는 토큰을 활용하여 강의 콘텐츠를 수강 할 수 있으며, 기타 활동을 영위할 수 있다. 모든 토큰 소진 시 부족한 토큰은 커뮤니티 활동으로 보충이 가능하다.
 
-![](https://user-images.githubusercontent.com/64685759/192926417-17679fc6-893e-4937-9d6f-d00d449dbdc9.PNG)
+![](https://user-images.githubusercontent.com/64685759/192938198-d38ef60b-ba33-401b-85df-332702eb0d38.gif)
 
 ### (3) HADA PASS NFT 발행
 
 사용자는 일정 토큰을 소비하여 HADA PASS를 구매할 수 있다. HADA PASS를 보유한 사용자는 하브루타 DAO 내 모든 강의를 무료로 수강할 수 있다. HADA PASS의 유효 기간을 설정하여, HADA PASS의 가치가 무한으로 높아지는 것을 방지한다. 일정 주기마다 새로운 NFT를 발행하여 사용자는 HADA PASS를 갱신해야 한다. HADA PASS를 구매하는 데 사용된 토큰은 다시 사용할 수 없는 토큰이 된다.
+
+![](https://user-images.githubusercontent.com/64685759/192939284-f0c886ad-d9cb-4f4f-8854-525b7eb2f9e6.gif)
 
 # DAO 투표 (Snapshot 사용)
 
@@ -84,6 +98,8 @@
 # 기술 스택 및 아키텍쳐
 
 ![image](https://user-images.githubusercontent.com/104472596/192920240-b14f2648-09e1-4437-b7a4-ee48c5c6c450.png)
+
+한 달이라는 시간안에 가장 생산성을 높히기 위한 기술들을 선별, 채택하였고, Team Vote의 구성원들이 하브루타 DAO 프로젝트를 통해 성장을 하여, 개발 업계로 나아갈 것을 고려하여 현재 개발 업계에서 선호하는 기술 스택들을 학습하도록 하였다. 따라서 해당 기술을 익히기 위해 Team Vote의 구성원들은 본격적인 프로젝트 개발 시작에 앞서 학습을 진행한 뒤 개발을 시작하였다. 하브루타 DAO 프로젝트에 사용한 기술 스택은 아래와 같다.
 
 ## 기술스택 목록
 
@@ -148,10 +164,6 @@ yarn
 yarn postinstall
 yarn dev
 ```
-
-# 하브루타 DAO 시연 영상
-
-[![하브루타 DAO 시연 영상](http://img.youtube.com/vi/JYMnGRqSQsM/0.jpg)](https://youtu.be/JYMnGRqSQsM)
 
 # 애플리케이션 워크플로우
 
