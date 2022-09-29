@@ -89,7 +89,7 @@ export default function Mypage() {
   const getBalanceToken = async () => {
     const token = new caver.klay.KIP7(process.env.NEXT_PUBLIC_HADATOKEN);
     if (token) {
-      const pebBalance = await token.balanceOf(window.klaytn?.selectedAddress);
+      const pebBalance = await token.balanceOf(loginInfo.user_address);
       const klayBalance = await caver.utils.convertFromPeb(pebBalance, 'KLAY');
       setTokenBalance(String(klayBalance));
     }
@@ -98,7 +98,7 @@ export default function Mypage() {
   const getBalanceNFT = async () => {
     try {
       const res = await axios.get(
-        `${process.env.NEXT_PUBLIC_ENDPOINT}/nft?user_address=${window.klaytn?.selectedAddress}`
+        `${process.env.NEXT_PUBLIC_ENDPOINT}/nft?user_address=${loginInfo.user_address}`
       );
       if (res.status === 201) {
         const isPass = Number(res.data) > 0;
@@ -137,7 +137,7 @@ export default function Mypage() {
     window.caver.klay
       .sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
-        from: window.klaytn?.selectedAddress,
+        from: loginInfo.user_address,
         to: process.env.NEXT_PUBLIC_HADATOKEN,
         data,
         gas: '3000000',
@@ -162,7 +162,7 @@ export default function Mypage() {
   const mintHADAPASS = async () => {
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/nft`, {
-        recipient: window.klaytn?.selectedAddress,
+        recipient: loginInfo.user_address,
       });
 
       if (res.status === 201) {

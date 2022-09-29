@@ -92,7 +92,7 @@ export default function Upload() {
     window.caver.klay
       .sendTransaction({
         type: 'SMART_CONTRACT_EXECUTION',
-        from: window.klaytn?.selectedAddress,
+        from: loginInfo.user_address,
         to: process.env.NEXT_PUBLIC_HADATOKEN,
         data,
         gas: '3000000',
