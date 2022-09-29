@@ -1,4 +1,4 @@
-# 지식공유 학습 플랫폼 : 하브루타 DAO
+# 지식 공유 학습 플랫폼 : 하브루타 DAO
 
 ![](https://user-images.githubusercontent.com/64685759/192935852-e8cb78b3-f330-43b4-85d8-0abc6cff591f.gif)
 
