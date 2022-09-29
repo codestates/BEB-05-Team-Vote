@@ -281,9 +281,6 @@ export default function Mypage() {
     <section>
       {session ? (
         <>
-          <Head>
-            <title>마이페이지</title>
-          </Head>
           <Space style={{ justifyContent: 'space-between', width: '100%' }}>
             <Space>
               <PageHeader
