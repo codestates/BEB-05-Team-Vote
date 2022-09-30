@@ -1,10 +1,11 @@
 import { DeleteOutlined, LikeOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, message, notification, Popconfirm, Space, Typography } from 'antd';
+import { Button, Card, message, Popconfirm, Space, Typography } from 'antd';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 import useSWR, { mutate } from 'swr';
 import { timeForToday } from '../../lib/date';
+import { noti } from '../../lib/notification';
 import { PostInterface } from '../../pages';
 import { loginInfoState } from '../../states/loginInfoState';
 
@@ -32,9 +33,7 @@ export default function MyPostComponent() {
       },
     });
     if (res.status === 201) {
-      notification['success']({
-        message: '게시글이 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '게시글이 성공적으로 삭제되었습니다.');
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`);
     }
   };

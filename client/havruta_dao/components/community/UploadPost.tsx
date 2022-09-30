@@ -1,10 +1,11 @@
-import { Button, Card, Input, Typography, Form, notification } from 'antd';
+import { Button, Card, Input, Typography, Form } from 'antd';
 import axios from 'axios';
 import React, { useState } from 'react';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../../states/loginInfoState';
 import { useRecoilState } from 'recoil';
 import { useSWRConfig } from 'swr';
+import { noti } from '../../lib/notification';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -17,9 +18,7 @@ export default function UploadPost() {
 
   async function submitPost() {
     if (value.length === 0) {
-      return notification['warning']({
-        message: '내용을 입력해주세요!',
-      });
+      return noti('warning', '내용을 입력해주세요!');
     }
 
     try {

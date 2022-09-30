@@ -1,5 +1,5 @@
 import { DeleteOutlined, EnterOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Card, message, notification, Popconfirm, Space, Typography } from 'antd';
+import { Card, message, Popconfirm, Space, Typography } from 'antd';
 import axios from 'axios';
 import React from 'react';
 import { useRecoilState } from 'recoil';
@@ -8,6 +8,7 @@ import { loginInfoState } from '../../states/loginInfoState';
 import { useSWRConfig } from 'swr';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
+import { noti } from '../../lib/notification';
 
 const { Text, Paragraph } = Typography;
 
@@ -25,9 +26,7 @@ export default function Reply({ comments }: { comments: any }) {
       },
     });
     if (res.status === 201) {
-      notification['success']({
-        message: '댓글이 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '댓글이 성공적으로 삭제되었습니다.');
       mutate(
         `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
       );

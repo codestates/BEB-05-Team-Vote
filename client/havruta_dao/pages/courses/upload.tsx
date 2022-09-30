@@ -9,11 +9,9 @@ import {
   Col,
   Space,
   InputNumber,
-  notification,
   Result,
   Modal,
   Typography,
-  Card,
   Image,
 } from 'antd';
 import axios from 'axios';
@@ -23,6 +21,7 @@ import { loginInfoState } from '../../states/loginInfoState';
 import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import ReactPlayer from 'react-player';
+import { noti } from '../../lib/notification';
 
 interface UploadCourse {
   user_id: number;
@@ -59,10 +58,11 @@ export default function Upload() {
     if (walletState.isUnlocked === false) {
       setIsLoading(false);
       window.klaytn.enable();
-      return notification['info']({
-        message: '지갑이 잠겨있습니다.',
-        description: '강의를 생성하시려면 먼저 지갑의 잠금을 해제해주세요.',
-      });
+      return noti(
+        'info',
+        '지갑이 잠겨있습니다.',
+        '강의를 생성하시려면 먼저 지갑의 잠금을 해제해주세요.'
+      );
     }
 
     const data = window.caver.klay.abi.encodeFunctionCall(
@@ -118,10 +118,7 @@ export default function Upload() {
       .then((res) => {
         if (res.status === 201) {
           setIsLoading(false);
-          notification['success']({
-            message: '지식 공유에 성공하였습니다.',
-            description: '지식을 공유해주셔서 감사드립니다!',
-          });
+          noti('success', '지식 공유에 성공하였습니다.', '지식을 공유해주셔서 감사드립니다!');
           router.push(`/courses`);
         }
       })
@@ -131,9 +128,7 @@ export default function Upload() {
   };
 
   const cancelUploadOnWallet = () => {
-    notification['error']({
-      message: '강의 등록이 실패되었습니다.',
-    });
+    noti('error', '강의 등록이 실패되었습니다.');
   };
 
   useEffect(() => {
