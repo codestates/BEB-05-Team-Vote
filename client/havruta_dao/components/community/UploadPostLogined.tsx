@@ -10,7 +10,7 @@ import { noti } from '../../lib/notification';
 const { TextArea } = Input;
 const { Text } = Typography;
 
-export default function UploadPost() {
+export default function UploadPostLogined() {
   const [form] = Form.useForm();
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const [value, setValue] = useState('');
