@@ -62,9 +62,7 @@ const Home: NextPage = () => {
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const { mutate } = useSWRConfig();
 
-  const { data: postList } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`, {
-    refreshInterval: 10000,
-  });
+  const { data: postList } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
 
   const fetchLike = async (article_id: number) => {
     if (session) {
