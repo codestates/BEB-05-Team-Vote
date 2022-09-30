@@ -3,8 +3,8 @@ import { EnterOutlined } from '@ant-design/icons';
 import { Card, Space, Typography } from 'antd';
 import { timeForToday } from '../../lib/date';
 import { useSession } from 'next-auth/react';
-import NicknamePopover from './part/NicknamePopover';
-import DeleteButton from './part/DeleteButton';
+import NicknamePopover from './atom/NicknamePopover';
+import DeleteButton from './atom/DeleteButton';
 
 const { Text } = Typography;
 

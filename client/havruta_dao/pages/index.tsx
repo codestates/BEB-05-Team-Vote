@@ -28,7 +28,7 @@ const Home: NextPage = () => {
           {session?.user ? <UploadPostLogined /> : <UploadPostNotLogined />}
           {postList &&
             postList.map((post: PostInterface) => {
-              return <Post post={post} key={post.article_id} />;
+              return <Post type="post" post={post} key={post.article_id} />;
             })}
         </Col>
         <Col xl={8} xs={0}>

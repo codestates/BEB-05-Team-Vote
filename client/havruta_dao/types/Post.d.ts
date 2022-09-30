@@ -25,6 +25,7 @@ export interface NicknamePopover {
 }
 
 export interface LikeButton {
+  type: 'post' | 'detail';
   article_id: number;
   like_count: number;
 }
@@ -34,6 +35,6 @@ export interface CommentButton {
 }
 
 export interface DeleteButton {
-  type: 'post' | 'comment';
+  type: 'post' | 'comment' | 'detail';
   id: number;
 }

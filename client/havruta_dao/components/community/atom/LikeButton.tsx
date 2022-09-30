@@ -7,8 +7,10 @@ import { Button } from 'antd';
 import { LikeOutlined } from '@ant-design/icons';
 import { loginInfoState } from '../../../states/loginInfoState';
 import { LikeButton } from '../../../types/Post';
+import { useRouter } from 'next/router';
 
-function LikeButton({ article_id, like_count }: LikeButton) {
+function LikeButton({ type, article_id, like_count }: LikeButton) {
+  const router = useRouter();
   const { data: session } = useSession();
   const loginInfo = useRecoilValue(loginInfoState);
 
@@ -19,7 +21,11 @@ function LikeButton({ article_id, like_count }: LikeButton) {
         article_id: article_id,
       });
       if (res.status === 201) {
-        mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
+        type === 'post'
+          ? mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`)
+          : mutate(
+              `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
+            );
       }
     }
   };
