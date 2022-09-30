@@ -1,20 +1,11 @@
 import { DeleteOutlined, EnterOutlined, UserOutlined } from '@ant-design/icons';
-import {
-  Card,
-  Popconfirm,
-  Space,
-  Typography,
-  List,
-  Comment,
-  Tooltip,
-  message,
-  notification,
-} from 'antd';
+import { Card, Popconfirm, Space, Typography, message } from 'antd';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import { useRecoilState } from 'recoil';
 import useSWR, { mutate } from 'swr';
 import { timeForToday } from '../../lib/date';
+import { noti } from '../../lib/notification';
 import { PostInterface } from '../../pages';
 import { loginInfoState } from '../../states/loginInfoState';
 
@@ -36,9 +27,7 @@ export default function MyCommentComponent() {
       },
     });
     if (res.status === 201) {
-      notification['success']({
-        message: '게시글이 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '게시글이 성공적으로 삭제되었습니다.');
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`);
     }
   };

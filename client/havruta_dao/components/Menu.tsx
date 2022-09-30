@@ -1,16 +1,5 @@
 import React, { useEffect } from 'react';
-import {
-  Button,
-  Divider,
-  Layout,
-  MenuProps,
-  message,
-  Modal,
-  notification,
-  Space,
-  Typography,
-  Menu,
-} from 'antd';
+import { Button, Divider, Layout, MenuProps, Modal, Space, Typography, Menu } from 'antd';
 import {
   AuditOutlined,
   BankOutlined,
@@ -32,6 +21,7 @@ import { loginInfoState } from '../states/loginInfoState';
 import { useRecoilState } from 'recoil';
 // import logoImage from '../assets/images/HAVRUTADAO.png';
 import logoImage from '../assets/images/svglogo4.svg';
+import { noti } from '../lib/notification';
 
 const { Sider } = Layout;
 const { Paragraph, Text, Link } = Typography;
@@ -84,10 +74,11 @@ export default function MenuComponent() {
     onClick: () => {
       if (item.name === '지식공유') {
         if (!session) {
-          return notification['info']({
-            message: '지갑 연동이 필요합니다.',
-            description: '지식 공유를 하려면 먼저 지갑을 연동해주세요.',
-          });
+          return noti(
+            'info',
+            '지갑 연동이 필요합니다.',
+            '지식 공유를 하려면 먼저 지갑을 연동해주세요.'
+          );
         } else {
           router.push(item.path, undefined, { shallow: true });
         }

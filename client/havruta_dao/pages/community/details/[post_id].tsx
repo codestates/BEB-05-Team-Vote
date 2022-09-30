@@ -1,17 +1,5 @@
 import { DeleteOutlined, LikeOutlined, MessageOutlined, UserOutlined } from '@ant-design/icons';
-import {
-  Card,
-  Space,
-  Typography,
-  Button,
-  Row,
-  Col,
-  PageHeader,
-  Skeleton,
-  Popconfirm,
-  notification,
-  message,
-} from 'antd';
+import { Card, Space, Typography, Button, Row, Col, PageHeader, Popconfirm, message } from 'antd';
 import { useRouter } from 'next/router';
 import Reply from '../../../components/community/Reply';
 import UploadReply from '../../../components/community/UploadReply';
@@ -22,6 +10,7 @@ import { loginInfoState } from '../../../states/loginInfoState';
 import { useSWRConfig } from 'swr';
 import { timeForToday } from '../../../lib/date';
 import { useSession } from 'next-auth/react';
+import { noti } from '../../../lib/notification';
 
 const { Text, Paragraph } = Typography;
 
@@ -58,9 +47,7 @@ export default function PostDetail() {
     });
     if (res.status === 201) {
       router.push('/');
-      notification['success']({
-        message: '게시글이 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '게시글이 성공적으로 삭제되었습니다.');
       mutate(
         `${process.env.NEXT_PUBLIC_ENDPOINT}/article/select?article_id=${router.query.post_id}`
       );

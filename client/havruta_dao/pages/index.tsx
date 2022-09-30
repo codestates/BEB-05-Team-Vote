@@ -7,20 +7,7 @@ import {
   MessageOutlined,
   UserOutlined,
 } from '@ant-design/icons';
-import {
-  Col,
-  PageHeader,
-  Row,
-  Radio,
-  Typography,
-  Card,
-  Space,
-  Button,
-  Skeleton,
-  Popconfirm,
-  notification,
-  message,
-} from 'antd';
+import { Col, PageHeader, Row, Typography, Card, Space, Button, Popconfirm, message } from 'antd';
 import type { NextPage } from 'next';
 import UploadPost from '../components/community/UploadPost';
 import RcmdCourse from '../components/RcmdCourse';
@@ -33,6 +20,7 @@ import axios from 'axios';
 import { useSWRConfig } from 'swr';
 import { timeForToday } from '../lib/date';
 import { useSession } from 'next-auth/react';
+import { noti } from '../lib/notification';
 
 export interface PostInterface {
   article_id: number;
@@ -84,9 +72,7 @@ const Home: NextPage = () => {
       },
     });
     if (res.status === 201) {
-      notification['success']({
-        message: '게시글이 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '게시글이 성공적으로 삭제되었습니다.');
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
     }
   };
