@@ -1,11 +1,12 @@
-import { Button, Card, Input, notification, Space, Typography } from 'antd';
+import { Button, Card, Input, Space, Typography } from 'antd';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { loginInfoState } from '../../states/loginInfoState';
 import * as Sentry from '@sentry/react';
 import { useSWRConfig } from 'swr';
 import { useRouter } from 'next/router';
+import { noti } from '../../lib/notification';
 
 const { TextArea } = Input;
 const { Text } = Typography;
@@ -14,14 +15,12 @@ export default function UploadReply() {
   const { mutate } = useSWRConfig();
   const router = useRouter();
 
-  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const loginInfo = useRecoilValue(loginInfoState);
   const [value, setValue] = useState('');
 
   async function submitComment() {
     if (value.length === 0) {
-      return notification['warning']({
-        message: '댓글을 입력해주세요!',
-      });
+      return noti('warning', '댓글을 입력해주세요!');
     }
 
     try {

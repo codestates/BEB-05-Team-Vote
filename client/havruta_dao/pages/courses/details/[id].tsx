@@ -3,18 +3,7 @@ import Head from 'next/head';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import { Courses } from '../';
-import {
-  Row,
-  Col,
-  PageHeader,
-  Space,
-  Typography,
-  Divider,
-  Image,
-  Button,
-  notification,
-  Popconfirm,
-} from 'antd';
+import { Row, Col, PageHeader, Space, Typography, Divider, Image, Button, Popconfirm } from 'antd';
 import { CodepenOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../../states/loginInfoState';
@@ -23,6 +12,7 @@ import { getSession, useSession } from 'next-auth/react';
 import { GetServerSideProps } from 'next';
 import { useSWRConfig } from 'swr';
 import { HADAPassState } from '../../../states/HADAPassState';
+import { noti } from '../../../lib/notification';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -60,10 +50,11 @@ export default function Detail({
 
   const onSubscribe = async () => {
     if (!session) {
-      return notification['info']({
-        message: '지갑 연동이 필요합니다.',
-        description: '이 강의를 수강하시려면 먼저 지갑을 연동해주세요.',
-      });
+      return noti(
+        'info',
+        '지갑 연동이 필요합니다.',
+        '이 강의를 수강하시려면 먼저 지갑을 연동해주세요.'
+      );
     }
     setIsLoading(true);
 
@@ -78,10 +69,11 @@ export default function Detail({
       if (walletState.isUnlocked === false) {
         setIsLoading(false);
         window.klaytn.enable();
-        return notification['info']({
-          message: '지갑이 잠겨있습니다.',
-          description: '이 강의를 수강하시려면 먼저 지갑의 잠금을 해제해주세요.',
-        });
+        return noti(
+          'info',
+          '지갑이 잠겨있습니다.',
+          '이 강의를 수강하시려면 먼저 지갑의 잠금을 해제해주세요.'
+        );
       }
 
       const data = window.caver.klay.abi.encodeFunctionCall(
@@ -140,9 +132,7 @@ export default function Detail({
       });
       if (res.status === 201) {
         setIsLoading(false);
-        notification['success']({
-          message: '수강 신청이 완료되었습니다!',
-        });
+        noti('success', '수강 신청이 완료되었습니다!');
         setIsSubscribe(true);
       }
     } catch (error) {
@@ -167,9 +157,7 @@ export default function Detail({
   }, [session]);
 
   const cancelSubscribeOnWallet = () => {
-    notification['error']({
-      message: '수강 신청이 실패되었습니다.',
-    });
+    noti('error', '수강 신청이 실패되었습니다.');
   };
 
   const onDelete = async (lecture_id: number) => {
@@ -180,9 +168,7 @@ export default function Detail({
       },
     });
     if (res.status === 201) {
-      notification['success']({
-        message: '강의가 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '강의가 성공적으로 삭제되었습니다.');
       router.push('/courses');
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`);
     }

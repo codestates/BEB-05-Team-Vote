@@ -11,7 +11,6 @@ import {
   Popconfirm,
   message,
   Card,
-  notification,
   Result,
 } from 'antd';
 import {
@@ -25,7 +24,6 @@ import {
 } from '@ant-design/icons';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
-import Head from 'next/head';
 import useSWR, { mutate } from 'swr';
 import MyInfoComponent from '../../components/mypage/MyInfoComponent';
 import MyLectureComponent from '../../components/mypage/MyLectureComponent';
@@ -40,6 +38,7 @@ import { reloadSession } from '../../lib/useReloadSession';
 import SubscribeLectureComponent from '../../components/mypage/SubscribeLectureComponent';
 import Caver from 'caver-js';
 import { HADAPassState } from '../../states/HADAPassState';
+import { noti } from '../../lib/notification';
 
 const { TextArea } = Input;
 const { Title, Text, Paragraph } = Typography;
@@ -153,9 +152,7 @@ export default function Mypage() {
       .on('error', (error: any) => {
         console.log('error', error.message);
         Sentry.captureException(error.message);
-        return notification['error']({
-          message: 'HADA PASS 발행에 실패하였습니다!',
-        });
+        return noti('error', 'HADA PASS 발행에 실패하였습니다!');
       });
   };
 
@@ -166,14 +163,13 @@ export default function Mypage() {
       });
 
       if (res.status === 201) {
-        return notification['success']({
-          message: 'HADA PASS가 성공적으로 발행되었습니다.',
-          description: '이제부터 모든 강의를 자유롭게 이용하실 수 있습니다!',
-        });
+        return noti(
+          'success',
+          'HADA PASS가 성공적으로 발행되었습니다.',
+          '이제부터 모든 강의를 자유롭게 이용하실 수 있습니다!'
+        );
       } else if (res.status === 403) {
-        return notification['warning']({
-          message: 'HADA PASS 발행에 필요한 토큰이 부족합니다!',
-        });
+        return noti('warning', 'HADA PASS 발행에 필요한 토큰이 부족합니다!');
       }
     } catch (error) {
       Sentry.captureException(error);
@@ -198,9 +194,7 @@ export default function Mypage() {
       },
     });
     if (res.status === 201) {
-      notification['success']({
-        message: '게시글이 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '게시글이 성공적으로 삭제되었습니다.');
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/userarticle?user_id=${loginInfo.user_id}`);
     }
   };
@@ -213,18 +207,14 @@ export default function Mypage() {
       },
     });
     if (res.status === 201) {
-      notification['success']({
-        message: '게시글이 성공적으로 삭제되었습니다.',
-      });
+      noti('success', '게시글이 성공적으로 삭제되었습니다.');
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/user/usercomment?user_id=${loginInfo.user_id}`);
     }
   };
 
   const handleOk = async () => {
     if (!isNickname.length) {
-      return notification['warning']({
-        message: '변경할 닉네임을 입력해주세요!.',
-      });
+      return noti('warning', '변경할 닉네임을 입력해주세요!.');
     }
     try {
       const res = await axios.put(`${process.env.NEXT_PUBLIC_ENDPOINT}/profile`, {
@@ -237,9 +227,7 @@ export default function Mypage() {
         setIsModalVisible(false);
         const { data: res } = await axios.get('/api/auth/session?update');
         reloadSession();
-        notification['success']({
-          message: '프로필이 성공적으로 업데이트 되었습니다.',
-        });
+        noti('success', '프로필이 성공적으로 업데이트 되었습니다.');
       }
     } catch (error) {
       Sentry.captureException(error);
@@ -270,9 +258,7 @@ export default function Mypage() {
       (err: any, result: any) => {
         console.log(err, result);
         if (result.result === true) {
-          notification['success']({
-            message: '토큰이 성공적으로 등록되었습니다.',
-          });
+          noti('success', '토큰이 성공적으로 등록되었습니다.');
         }
       }
     );
