@@ -34,5 +34,6 @@ export interface CommentButton {
 }
 
 export interface DeleteButton {
-  article_id: number;
+  type: 'post' | 'comment';
+  id: number;
 }

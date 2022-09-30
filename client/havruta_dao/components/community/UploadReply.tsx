@@ -1,7 +1,7 @@
 import { Button, Card, Input, Space, Typography } from 'antd';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { loginInfoState } from '../../states/loginInfoState';
 import * as Sentry from '@sentry/react';
 import { useSWRConfig } from 'swr';
@@ -15,7 +15,7 @@ export default function UploadReply() {
   const { mutate } = useSWRConfig();
   const router = useRouter();
 
-  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const loginInfo = useRecoilValue(loginInfoState);
   const [value, setValue] = useState('');
 
   async function submitComment() {

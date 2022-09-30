@@ -40,7 +40,7 @@ function Post({ post }: { post: PostInterface }) {
               <CommentButton comment_count={post.comment_count} />
             </Space>
             {post.user_id === session?.user.user_id && (
-              <DeleteButton article_id={post.article_id} />
+              <DeleteButton type="post" id={post.article_id} />
             )}
           </Space>
         </Space>

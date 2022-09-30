@@ -27,7 +27,12 @@ function NicknamePopover({ user_nickname, user_introduction, user_address }: Nic
         e?.stopPropagation();
       }}
     >
-      <Text type="secondary" strong onClick={(e) => e?.stopPropagation()}>
+      <Text
+        type="secondary"
+        strong
+        onClick={(e) => e?.stopPropagation()}
+        style={{ cursor: 'pointer' }}
+      >
         {user_nickname}
       </Text>
     </Popconfirm>

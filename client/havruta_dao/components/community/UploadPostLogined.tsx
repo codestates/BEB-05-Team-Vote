@@ -3,7 +3,7 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import * as Sentry from '@sentry/react';
 import { loginInfoState } from '../../states/loginInfoState';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { useSWRConfig } from 'swr';
 import { noti } from '../../lib/notification';
 
@@ -12,7 +12,7 @@ const { Text } = Typography;
 
 export default function UploadPostLogined() {
   const [form] = Form.useForm();
-  const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
+  const loginInfo = useRecoilValue(loginInfoState);
   const [value, setValue] = useState('');
   const { mutate } = useSWRConfig();
 
