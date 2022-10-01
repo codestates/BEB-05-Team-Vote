@@ -2,25 +2,24 @@ import React from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { Card, Space, Typography } from 'antd';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { timeForToday } from '../../lib/date';
 import { PostInterface } from '../../types/Post';
-import CommentButton from './part/CommentButton';
-import DeleteButton from './part/DeleteButton';
-import LikeButton from './part/LikeButton';
-import NicknamePopover from './part/NicknamePopover';
+import CommentButton from './atom/CommentButton';
+import DeleteButton from './atom/DeleteButton';
+import LikeButton from './atom/LikeButton';
+import NicknamePopover from './atom/NicknamePopover';
 
 const { Text, Paragraph } = Typography;
 
-function Post({ post }: { post: PostInterface }) {
+function Post({ post, type }: { post: PostInterface; type: 'post' | 'detail' }) {
   const router = useRouter();
   const { data: session } = useSession();
 
   return (
     <div onClick={() => router.push(`/community/details/${post.article_id}`)}>
-      <PostCard>
+      <PostCard _type={type}>
         <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
-          {/**글 상단 */}
           <Space>
             <NicknamePopover
               user_nickname={post.user.user_nickname}
@@ -29,18 +28,16 @@ function Post({ post }: { post: PostInterface }) {
             />
             <Text type="secondary">{timeForToday(post.created_at)}</Text>
           </Space>
-          {/**글 본문 */}
-          <Paragraph ellipsis={{ rows: 4, expandable: true, symbol: 'more' }}>
+          <Paragraph ellipsis={type === 'post' && { rows: 4, expandable: true, symbol: 'more' }}>
             {post.article_content}
           </Paragraph>
-          {/**글 하단 */}
           <Space style={{ justifyContent: 'space-between', width: '100%' }}>
             <Space size={'large'}>
-              <LikeButton article_id={post.article_id} like_count={post.like_count} />
+              <LikeButton type={type} article_id={post.article_id} like_count={post.like_count} />
               <CommentButton comment_count={post.comment_count} />
             </Space>
             {post.user_id === session?.user.user_id && (
-              <DeleteButton type="post" id={post.article_id} />
+              <DeleteButton type={type} id={post.article_id} />
             )}
           </Space>
         </Space>
@@ -49,14 +46,18 @@ function Post({ post }: { post: PostInterface }) {
   );
 }
 
-const PostCard = styled(Card)`
+const PostCard = styled(Card)<{ _type: 'post' | 'detail' }>`
   width: 100%;
-  margin-top: -1px;
 
-  :hover {
-    cursor: pointer;
-    background-color: rgba(200, 200, 200, 0.1);
-  }
+  ${(props) =>
+    props._type === 'post' &&
+    css`
+      margin-top: -1px;
+      :hover {
+        cursor: pointer;
+        background-color: rgba(200, 200, 200, 0.1);
+      }
+    `}
 `;
 
 export default Post;
