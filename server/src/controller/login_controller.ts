@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import session from "express-session";
-import { SessionData } from "express-session";
-const prisma = require("../db/index");
+import { Request, Response } from 'express';
+import session from 'express-session';
+import { SessionData } from 'express-session';
+const prisma = require('../db/index');
 
-declare module "express-session" {
+declare module 'express-session' {
   export interface SessionData {
     user_address: String;
   }
@@ -17,6 +17,12 @@ module.exports = {
       where: {
         user_address: user_address,
         user_network: user_network,
+      },
+      select: {
+        user_id: true,
+        user_address: true,
+        user_nickname: true,
+        user_introduction: true,
       },
     });
 
@@ -32,16 +38,13 @@ module.exports = {
       });
 
       if (otherAccount[0] === undefined) {
-        const loginHandler = async (
-          user_address: String,
-          user_network: String
-        ) => {
+        const loginHandler = async (user_address: String, user_network: String) => {
           await prisma.User.create({
             data: {
               user_address: user_address,
               user_network: user_network,
               user_nickname: user_address,
-              user_introduction: "",
+              user_introduction: '',
             },
           });
         };
@@ -53,23 +56,24 @@ module.exports = {
                 user_address: user_address,
                 user_network: user_network,
               },
+              select: {
+                user_id: true,
+                user_address: true,
+                user_nickname: true,
+                user_introduction: true,
+              },
             });
             await prisma.$disconnect();
             req.session.user_address = user_address;
-            res
-              .status(201)
-              .json({ data: createdData, message: "로그인에 성공하였습니다." });
+            res.status(201).json({ data: createdData, message: '로그인에 성공하였습니다.' });
           })
           .catch(async (e) => {
             console.error(e);
             await prisma.$disconnect();
-            res.status(500).send("Server Error");
+            res.status(500).send('Server Error');
           });
       } else {
-        const loginHandler = async (
-          user_address: String,
-          user_network: String
-        ) => {
+        const loginHandler = async (user_address: String, user_network: String) => {
           await prisma.User.create({
             data: {
               user_address: user_address,
@@ -87,24 +91,26 @@ module.exports = {
                 user_address: user_address,
                 user_network: user_network,
               },
+              select: {
+                user_id: true,
+                user_address: true,
+                user_nickname: true,
+                user_introduction: true,
+              },
             });
             await prisma.$disconnect();
             req.session.user_address = user_address;
-            res
-              .status(201)
-              .json({ data: createdData, message: "로그인에 성공하였습니다." });
+            res.status(201).json({ data: createdData, message: '로그인에 성공하였습니다.' });
           })
           .catch(async (e) => {
             console.error(e);
             await prisma.$disconnect();
-            res.status(500).send("Server Error");
+            res.status(500).send('Server Error');
           });
       }
     } else {
       req.session.user_address = user_address;
-      res
-        .status(200)
-        .json({ data: result, message: "로그인에 성공하였습니다." });
+      res.status(200).json({ data: result, message: '로그인에 성공하였습니다.' });
     }
   },
 };

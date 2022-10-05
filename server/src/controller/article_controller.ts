@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 const prisma = require('../db/index');
 
 module.exports = {
@@ -11,8 +11,6 @@ module.exports = {
           article_content: article_content,
         },
       });
-      const allArticle = await prisma.Article.findMany({});
-      console.dir(allArticle, { depth: null });
     };
     postArticleHandler(user_id, article_content)
       .then(async () => {
@@ -31,11 +29,20 @@ module.exports = {
         orderBy: {
           created_at: 'desc',
         },
-        include: {
-          user: true,
+        select: {
+          article_id: true,
+          user_id: true,
+          article_content: true,
+          comment_count: true,
+          like_count: true,
+          created_at: true,
+          user: {
+            select: {
+              user_nickname: true,
+            },
+          },
         },
       });
-      console.dir(allRecentArticle, { depth: null });
       return allRecentArticle;
     };
     readRecentArticleHandler()
@@ -60,11 +67,20 @@ module.exports = {
             created_at: 'desc',
           },
         ],
-        include: {
-          user: true,
+        select: {
+          article_id: true,
+          user_id: true,
+          article_content: true,
+          comment_count: true,
+          like_count: true,
+          created_at: true,
+          user: {
+            select: {
+              user_nickname: true,
+            },
+          },
         },
       });
-      console.dir(allLikeArticle, { depth: null });
       return allLikeArticle;
     };
     readLikeArticleHandler()
@@ -86,14 +102,32 @@ module.exports = {
         where: {
           article_id: article_id,
         },
-        include: {
-          user: true,
+        select: {
+          article_id: true,
+          user_id: true,
+          article_content: true,
+          comment_count: true,
+          like_count: true,
+          created_at: true,
+          user: {
+            select: {
+              user_nickname: true,
+            },
+          },
           comments: {
             orderBy: {
               created_at: 'desc',
             },
-            include: {
-              user: true,
+            select: {
+              id: true,
+              comment_content: true,
+              created_at: true,
+              user: {
+                select: {
+                  user_id: true,
+                  user_nickname: true,
+                },
+              },
             },
           },
         },
@@ -130,12 +164,6 @@ module.exports = {
           },
           data: { article_content: article_content },
         });
-        const editedArticle = await prisma.Article.findUnique({
-          where: {
-            article_id: article_id,
-          },
-        });
-        console.dir(editedArticle, { depth: null });
 
         await prisma.$disconnect();
         res.status(201).send('edit article success');

@@ -21,9 +21,6 @@ module.exports = {
         where: { article_id: article_id },
         data: { comment_count: { increment: 1 } },
       });
-
-      const allComment = await prisma.Comment.findMany({});
-      console.dir(allComment, { depth: null });
     };
     postCommentHandler(user_id, article_id, comment_content)
       .then(async () => {
@@ -47,11 +44,19 @@ module.exports = {
         orderBy: {
           created_at: 'desc',
         },
-        include: {
-          user: true,
+        select: {
+          id: true,
+          article_id: true,
+          user_id: true,
+          comment_content: true,
+          created_at: true,
+          user: {
+            select: {
+              user_nickname: true,
+            },
+          },
         },
       });
-      console.dir(allComment, { depth: null });
       return allComment;
     };
     readCommentHandler(numArticleId)

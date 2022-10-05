@@ -9,6 +9,12 @@ module.exports = {
         where: {
           user_id: user_id,
         },
+        select: {
+          user_id: true,
+          user_address: true,
+          user_nickname: true,
+          user_introduction: true,
+        },
       });
       return userInfo;
     };
@@ -34,11 +40,15 @@ module.exports = {
         orderBy: {
           created_at: 'desc',
         },
-        include: {
-          user: true,
+        select: {
+          article_id: true,
+          user_id: true,
+          article_content: true,
+          comment_count: true,
+          like_count: true,
+          created_at: true,
         },
       });
-      console.dir(myUserReadArticle, { depth: null });
       return myUserReadArticle;
     };
     userArticleHandler(user_id)
@@ -63,11 +73,14 @@ module.exports = {
         orderBy: {
           created_at: 'desc',
         },
-        include: {
-          user: true,
+        select: {
+          id: true,
+          article_id: true,
+          user_id: true,
+          comment_content: true,
+          created_at: true,
         },
       });
-      console.dir(allComment, { depth: null });
       return allComment;
     };
     userCommentHandler(user_id)
@@ -92,11 +105,13 @@ module.exports = {
         orderBy: {
           created_at: 'desc',
         },
-        include: {
-          user: true,
+        select: {
+          lecture_id: true,
+          lecture_image: true,
+          lecture_title: true,
+          lecture_price: true,
         },
       });
-      console.dir(allComment, { depth: null });
       return allComment;
     };
     userLectureHandler(user_id)
@@ -121,11 +136,17 @@ module.exports = {
         orderBy: {
           created_at: 'desc',
         },
-        include: {
-          lecture: true,
+        select: {
+          lecture: {
+            select: {
+              lecture_id: true,
+              lecture_image: true,
+              lecture_title: true,
+              lecture_price: true,
+            },
+          },
         },
       });
-      console.dir(allClass, { depth: null });
       return allClass;
     };
     userClassHandler(user_id)
