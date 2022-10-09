@@ -1,4 +1,4 @@
-export interface PostInterface {
+interface PostInterface {
   article_id: number;
   user_id: number;
   article_content: string;
@@ -18,23 +18,23 @@ export interface PostInterface {
   };
 }
 
-export interface NicknamePopover {
+interface NicknamePopover {
   user_nickname: string;
   user_introduction: string;
   user_address: string;
 }
 
-export interface LikeButton {
+interface LikeButton {
   type: 'post' | 'detail';
   article_id: number;
   like_count: number;
 }
 
-export interface CommentButton {
+interface CommentButton {
   comment_count: number;
 }
 
-export interface DeleteButton {
+interface DeleteButton {
   type: 'post' | 'comment' | 'detail';
   id: number;
 }

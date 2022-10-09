@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
-import { Courses } from '../';
 import { Row, Col, PageHeader, Space, Typography, Divider, Image, Button, Popconfirm } from 'antd';
 import { CodepenOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { useRecoilState } from 'recoil';
@@ -16,21 +15,11 @@ import { noti } from '../../../lib/notification';
 
 const { Title, Paragraph, Text } = Typography;
 
-interface CourseDetail extends Courses {
-  user_id: number;
-  lecture_summary: string;
-  lecture_introduction: string;
-  instructor_introduction: string;
-  lecture_url: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export default function Detail({
-  course,
+  lecture,
   subscribe,
 }: {
-  course: CourseDetail;
+  lecture: LectureDetail;
   subscribe: boolean;
 }) {
   const router = useRouter();
@@ -62,7 +51,7 @@ export default function Detail({
       saveSubscribeToDB();
       return;
     }
-    if (course.lecture_price === 0) {
+    if (lecture.lecture_price === 0) {
       saveSubscribeToDB();
     } else {
       const walletState = window.klaytn.publicConfigStore.getState();
@@ -92,9 +81,9 @@ export default function Detail({
           ],
         },
         [
-          course.user.user_address,
+          lecture.user.user_address,
           window.caver.utils
-            .toBN(course.lecture_price)
+            .toBN(lecture.lecture_price)
             .mul(window.caver.utils.toBN(Number(`1e18`)))
             .toString(),
         ]
@@ -128,7 +117,7 @@ export default function Detail({
     try {
       const res = await axios.post(`${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture`, {
         user_id: loginInfo.user_id,
-        lecture_id: course.lecture_id,
+        lecture_id: lecture.lecture_id,
       });
       if (res.status === 201) {
         setIsLoading(false);
@@ -144,7 +133,7 @@ export default function Detail({
 
   const changeLoginState = async () => {
     const res = await axios.get(
-      `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session?.user.user_id}&lecture_id=${course.lecture_id}`
+      `${process.env.NEXT_PUBLIC_ENDPOINT}/userlecture?user_id=${session?.user.user_id}&lecture_id=${lecture.lecture_id}`
     );
     const subscribe = res.data.length !== 0;
     setIsSubscribe(subscribe);
@@ -169,19 +158,19 @@ export default function Detail({
     });
     if (res.status === 201) {
       noti('success', '강의가 성공적으로 삭제되었습니다.');
-      router.push('/courses');
+      router.push('/lectures');
       mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`);
     }
   };
 
   const onClick = () => {
     router.push({
-      pathname: `/courses/class/${course.lecture_id}`,
+      pathname: `/lectures/class/${lecture.lecture_id}`,
       query: {
-        lecture_id: course.lecture_id,
-        lecture_title: course.lecture_title,
-        lecture_summary: course.lecture_summary,
-        lecture_url: course.lecture_url,
+        lecture_id: lecture.lecture_id,
+        lecture_title: lecture.lecture_title,
+        lecture_summary: lecture.lecture_summary,
+        lecture_url: lecture.lecture_url,
       },
     });
   };
@@ -202,20 +191,20 @@ export default function Detail({
 
   return (
     <section>
-      {course ? (
+      {lecture ? (
         <>
           <Space style={{ width: '100%' }}>
             <PageHeader
               title="목록으로"
               style={{ paddingLeft: 0 }}
-              onBack={() => router.push('/courses')}
+              onBack={() => router.push('/lectures')}
             />
           </Space>
           <Row gutter={48}>
             <Col span={16}>
               <Image
                 width={'100%'}
-                src={course.lecture_image}
+                src={lecture.lecture_image}
                 style={{ marginBottom: '24px' }}
                 preview={false}
                 alt="강의 이미지"
@@ -223,24 +212,24 @@ export default function Detail({
               />
               <Title level={3}>강의 상세 소개</Title>
               <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
-                {course.lecture_introduction}
+                {lecture.lecture_introduction}
               </Paragraph>
               <Divider />
               <Title level={3}>강사 소개</Title>
               <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
-                {course.instructor_introduction}
+                {lecture.instructor_introduction}
               </Paragraph>
               <Divider />
             </Col>
             <Col span={8}>
-              <Title level={3}>{course.lecture_title}</Title>
+              <Title level={3}>{lecture.lecture_title}</Title>
               <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
-                {course.lecture_summary}
+                {lecture.lecture_summary}
               </Paragraph>
 
               <Space direction="vertical" style={{ width: '100%' }}>
                 <Space>
-                  {course.lecture_price === 0 ? (
+                  {lecture.lecture_price === 0 ? (
                     <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>
                       무료
                     </Text>
@@ -252,7 +241,7 @@ export default function Detail({
                     <>
                       <CodepenOutlined style={{ fontSize: '24px', color: '#bae637' }} />
                       <Text style={{ fontSize: '20px', color: '#bae637', fontWeight: 500 }}>
-                        {course.lecture_price}
+                        {lecture.lecture_price}
                       </Text>
                     </>
                   )}
@@ -282,11 +271,11 @@ export default function Detail({
                     수강 신청 하기
                   </Button>
                 )}
-                {session?.user.user_id === course.user_id ? (
+                {session?.user.user_id === lecture.user_id ? (
                   <Popconfirm
                     placement="bottom"
                     title={'정말 강의를 삭제하시겠습니까?'}
-                    onConfirm={() => onDelete(course.lecture_id)}
+                    onConfirm={() => onDelete(lecture.lecture_id)}
                     okText={'삭제'}
                     cancelText="취소"
                     icon={<QuestionCircleOutlined style={{ color: 'red' }} />}
@@ -311,10 +300,10 @@ export default function Detail({
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   try {
     if (ctx.params?.id) {
-      const resCourse = await axios.get(
+      const resLecture = await axios.get(
         `${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/detail?lecture_id=${ctx.params?.id}`
       );
-      const course = resCourse.data[0];
+      const lecture = resLecture.data[0];
 
       const session = await getSession(ctx);
 
@@ -326,7 +315,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
         return {
           props: {
-            course,
+            lecture,
             subscribe,
           },
         };
@@ -334,13 +323,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
       return {
         props: {
-          course,
+          lecture,
         },
       };
     } else {
       return {
         props: {
-          course: undefined,
+          lecture: undefined,
         },
       };
     }

@@ -8,7 +8,6 @@ import { useSession } from 'next-auth/react';
 import UploadPostNotLogined from '../components/community/UploadPostNotLogined';
 import UploadPostLogined from '../components/community/UploadPostLogined';
 import Post from '../components/community/Post';
-import { PostInterface } from '../types/Post';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -26,10 +25,9 @@ const Home: NextPage = () => {
             subTitle={'어떤 이야기든 자유롭게 이야기를 나눠보세요.'}
           />
           {session?.user ? <UploadPostLogined /> : <UploadPostNotLogined />}
-          {postList &&
-            postList.map((post: PostInterface) => {
-              return <Post type="post" post={post} key={post.article_id} />;
-            })}
+          {postList?.map((post: PostInterface) => {
+            return <Post type="post" post={post} key={post.article_id} />;
+          })}
         </Col>
         <Col xl={8} xs={0}>
           <PageHeader backIcon={<FireOutlined />} onBack={() => null} title="추천강의" />

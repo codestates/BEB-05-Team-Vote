@@ -12,7 +12,7 @@ import {
   UserOutlined,
   WalletOutlined,
 } from '@ant-design/icons';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import Image from 'next/image';
 import { useRouter } from 'next/router';
 import { signIn, signOut, useSession } from 'next-auth/react';
@@ -40,7 +40,7 @@ const menuItem = [
     path: '/',
   },
 
-  { id: '2', name: '강의탐색', icon: <FileSearchOutlined />, path: '/courses' },
+  { id: '2', name: '강의탐색', icon: <FileSearchOutlined />, path: '/lectures' },
   // {
   //   id: '3',
   //   name: '질의응답',
@@ -51,7 +51,7 @@ const menuItem = [
     id: '4',
     name: '지식공유',
     icon: <BulbOutlined />,
-    path: '/courses/upload',
+    path: '/lectures/upload',
   },
   {
     id: '5',
@@ -205,22 +205,14 @@ export default function MenuComponent() {
       }}
     >
       <Space direction="vertical" size={'large'}>
-        <Image
+        <MainLogo
           src={logoImage}
           alt="logo image"
           width={221}
-          style={{ cursor: 'pointer', transform: 'scale(2.5)' }}
+          // style={{ cursor: 'pointer', transform: 'scale(2.5)' }}
           height={'100%'}
           onClick={() => router.push('/')}
         />
-        {/* <Image
-          src={logoImage}
-          alt="logo image"
-          width={221}
-          style={{ cursor: 'pointer' }}
-          height={'100%'}
-          onClick={() => router.push('/')}
-        /> */}
 
         <Menu theme="light" mode="inline" defaultSelectedKeys={[router.pathname]} items={items} />
 
@@ -269,6 +261,30 @@ export default function MenuComponent() {
     </Sider>
   );
 }
+
+const MainLogoFade = keyframes`
+    0% {
+    filter: drop-shadow(0px 0px 0px #000)
+    drop-shadow(0px 0px 0px #000)
+    drop-shadow(0px 0px 0px #f1fad7)
+    drop-shadow(0px 0px 0px #ceed73)
+    drop-shadow(0px 0px 0px #a7cf31);
+  }
+
+  100% {
+    filter: drop-shadow(0px 0px 0px #121705)
+    drop-shadow(0px 0px 0.5px #262626)
+    drop-shadow(0px 0px 0.5px #f1fad7)
+    drop-shadow(0px 0px 0.5px #ceed73)
+    drop-shadow(0px 0px 0.5px #a7cf31); 
+  }
+`;
+
+const MainLogo = styled(Image)`
+  cursor: pointer;
+  transform: scale(2.5);
+  /* animation: ${MainLogoFade} 5s 0s infinite linear alternate; */
+`;
 
 const DescriptionOfDao = styled.div`
   padding: 16px;
