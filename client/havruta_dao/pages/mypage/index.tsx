@@ -38,6 +38,8 @@ import SubscribeLectureComponent from '../../components/mypage/SubscribeLectureC
 import Caver from 'caver-js';
 import { HADAPassState } from '../../states/HADAPassState';
 import { noti } from '../../lib/notification';
+import approveERC20Token from '../../lib/klaytn/approve';
+import addHadaERC20Token from '../../lib/klaytn/addHadaToken';
 
 const { TextArea } = Input;
 const { Title, Text, Paragraph } = Typography;
@@ -109,52 +111,19 @@ export default function Mypage() {
     }
   };
 
-  const approveHADATokenToHADAPassCA = async () => {
-    const data = window.caver.klay.abi.encodeFunctionCall(
-      {
-        name: 'approve',
-        type: 'function',
-        inputs: [
-          {
-            type: 'address',
-            name: 'recipient',
-          },
-          {
-            type: 'uint256',
-            name: 'amount',
-          },
-        ],
-      },
-      [
-        process.env.NEXT_PUBLIC_HADAPASS_CA,
-        window.caver.utils
-          .toBN(20)
-          .mul(window.caver.utils.toBN(Number(`1e18`)))
-          .toString(),
-      ]
-    );
-
-    window.caver.klay
-      .sendTransaction({
-        type: 'SMART_CONTRACT_EXECUTION',
-        from: loginInfo.user_address,
-        to: process.env.NEXT_PUBLIC_HADATOKEN,
-        data,
-        gas: '3000000',
-      })
-      .on('transactionHash', (transactionHash: any) => {
-        console.log('txHash', transactionHash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('receipt', receipt);
+  const approveHADATokenToHADAPassCA = () => {
+    approveERC20Token(
+      loginInfo.user_address,
+      process.env.NEXT_PUBLIC_HADAPASS_CA,
+      20,
+      () => {
         mintHADAPASS();
         getBalanceNFT();
-      })
-      .on('error', (error: any) => {
-        console.log('error', error.message);
-        Sentry.captureException(error.message);
+      },
+      () => {
         return noti('error', 'HADA PASS 발행에 실패하였습니다!');
-      });
+      }
+    );
   };
 
   const mintHADAPASS = async () => {
@@ -241,28 +210,7 @@ export default function Mypage() {
   };
 
   const addTokenOnWallet = () => {
-    window.klaytn.sendAsync(
-      {
-        method: 'wallet_watchAsset',
-        params: {
-          type: 'ERC20',
-          options: {
-            address: process.env.NEXT_PUBLIC_HADATOKEN,
-            symbol: 'HADA',
-            decimals: '18',
-            image:
-              'https://user-images.githubusercontent.com/64685759/192302728-1b284976-57fe-4ece-b3bb-86676eedd7fe.png',
-          },
-        },
-        id: Math.round(Math.random() * 100000),
-      },
-      (err: any, result: any) => {
-        console.log(err, result);
-        if (result.result === true) {
-          noti('success', '토큰이 성공적으로 등록되었습니다.');
-        }
-      }
-    );
+    addHadaERC20Token();
   };
   return (
     <section>
