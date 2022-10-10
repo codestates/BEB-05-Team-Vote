@@ -10,7 +10,6 @@ import {
   Space,
   InputNumber,
   Result,
-  Modal,
   Typography,
   Image,
 } from 'antd';
@@ -22,19 +21,11 @@ import { useRouter } from 'next/router';
 import { useSession } from 'next-auth/react';
 import ReactPlayer from 'react-player';
 import { noti } from '../../lib/notification';
+import UploadNotiModal from '../../components/lectures/UploadNotiModal';
+import TransferERC20Token from '../../lib/klaytn/transfer';
 
-interface UploadCourse {
-  user_id: number;
-  lecture_title: string;
-  lecture_summary: string;
-  lecture_introduction: string;
-  instructor_introduction: string;
-  lecture_url: string;
-  lecture_image: string;
-  lecture_price: number;
-}
 const { TextArea } = Input;
-const { Paragraph, Title, Text } = Typography;
+const { Paragraph, Title } = Typography;
 
 export default function Upload() {
   const router = useRouter();
@@ -42,7 +33,7 @@ export default function Upload() {
   const [isLoading, setIsLoading] = useState(false);
   const [loginInfo, setLoginInfo] = useRecoilState(loginInfoState);
   const [isModalOpen, setIsModalOpen] = useState(true);
-  const [course, setCourse] = useState({
+  const [lecture, setLecture] = useState({
     user_id: loginInfo.user_id,
     lecture_title: '',
     lecture_summary: '',
@@ -53,73 +44,29 @@ export default function Upload() {
     lecture_price: 0,
   });
 
+  let uploadTokenPrice = 10;
+
   const onUpload = () => {
-    const walletState = window.klaytn.publicConfigStore.getState();
-    if (walletState.isUnlocked === false) {
-      setIsLoading(false);
-      window.klaytn.enable();
-      return noti(
-        'info',
-        '지갑이 잠겨있습니다.',
-        '강의를 생성하시려면 먼저 지갑의 잠금을 해제해주세요.'
-      );
-    }
-
-    const data = window.caver.klay.abi.encodeFunctionCall(
-      {
-        name: 'transfer',
-        type: 'function',
-        inputs: [
-          {
-            type: 'address',
-            name: 'recipient',
-          },
-          {
-            type: 'uint256',
-            name: 'amount',
-          },
-        ],
-      },
-      [
-        process.env.NEXT_PUBLIC_HADATOKEN,
-        window.caver.utils
-          .toBN(50)
-          .mul(window.caver.utils.toBN(Number(`1e18`)))
-          .toString(),
-      ]
-    );
-
-    window.caver.klay
-      .sendTransaction({
-        type: 'SMART_CONTRACT_EXECUTION',
-        from: loginInfo.user_address,
-        to: process.env.NEXT_PUBLIC_HADATOKEN,
-        data,
-        gas: '3000000',
-      })
-      .on('transactionHash', (transactionHash: any) => {
-        console.log('txHash', transactionHash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('receipt', receipt);
-        saveUploadToDB();
-      })
-      .on('error', (error: any) => {
+    TransferERC20Token(
+      loginInfo.user_address,
+      process.env.NEXT_PUBLIC_HADATOKEN,
+      uploadTokenPrice,
+      () => saveUploadToDB(),
+      () => {
         setIsLoading(false);
-        console.log('error', error.message);
-        Sentry.captureException(error.message);
         cancelUploadOnWallet();
-      });
+      }
+    );
   };
 
   const saveUploadToDB = () => {
     axios
-      .post(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`, { course })
+      .post(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`, { lecture })
       .then((res) => {
         if (res.status === 201) {
           setIsLoading(false);
           noti('success', '지식 공유에 성공하였습니다.', '지식을 공유해주셔서 감사드립니다!');
-          router.push(`/courses`);
+          router.push(`/lectures`);
         }
       })
       .catch((err) => {
@@ -132,13 +79,13 @@ export default function Upload() {
   };
 
   useEffect(() => {
-    if (course.lecture_title) {
+    if (lecture.lecture_title) {
       onUpload();
     }
-  }, [course]);
+  }, [lecture]);
 
-  const changeValue = (values: UploadCourse) => {
-    setCourse(() => {
+  const changeValue = (values: UploadLecture) => {
+    setLecture(() => {
       return {
         user_id: loginInfo.user_id,
         lecture_title: values.lecture_title,
@@ -152,7 +99,7 @@ export default function Upload() {
     });
   };
 
-  const onFinish = (values: UploadCourse) => {
+  const onFinish = (values: UploadLecture) => {
     setIsLoading(true);
     changeValue(values);
   };
@@ -180,55 +127,7 @@ export default function Upload() {
 
   return (
     <>
-      {isModalOpen && session && (
-        <Modal
-          visible={true}
-          onCancel={() => setIsModalOpen(false)}
-          footer={
-            <Button
-              type="primary"
-              size="large"
-              style={{ width: '100%' }}
-              onClick={() => setIsModalOpen(false)}
-            >
-              확인했습니다 😀
-            </Button>
-          }
-        >
-          <Title level={4}>
-            안녕하세요.
-            <br />
-            <Text underline>지식공유에 동참해 주셔서 감사합니다!</Text> <br />
-            하브루타DAO의 이야기를 들어주세요!
-          </Title>
-          <Title level={5}>1. 하브루타DAO는 성장기회의 평등을 추구합니다.</Title>
-          <Paragraph style={{ fontSize: '16px' }}>
-            우리는 때로 무언가를 배워야만 합니다.
-            <br /> 하지만 여러 이유로 당연하다고 생각되어 지는것들이 누군가에게는 사치가 되기도
-            합니다.
-            <br /> 하브루타DAO는 누구나, 경제적으로 시간적 제약없이 내가 원하는 것을 배우고, 지식을
-            나눌 수 있는 공간입니다.
-          </Paragraph>
-          <Title level={5}>2. 전문 지식으로 수익이 가능한 유일한 곳.</Title>
-          <Paragraph style={{ fontSize: '16px' }}>
-            하브루타DAO는 기술 강의, 멘토링으로 의미 있는 보상을 가질 수 있는 유일한 플랫폼 입니다.
-            수강생이 강의를 신청할 때마다 수익을 얻을 수 있어요!
-            <br /> 지속가능한 수익과 명예를 가져가세요 :)
-          </Paragraph>
-          <Title level={5}>3. 하브루타DAO는 100% 의 비율의 높은 수익을 제공합니다.</Title>
-          <Paragraph style={{ fontSize: '16px' }}>
-            좋은 지식은 합당한 보상에서 나온다고 하브루타DAO는 생각합니다. 때문에 하브루타DAO는 다른
-            학습 서비스에 비해 월등히 높은 수익을 드리고 있어요.
-            <br /> 실제로 하브루타DAO엔 꾸준히 월 수백 ~ 수천 토큰 이상의 수익을 가져가는 많은
-            지식공유자들이 계셔요.
-          </Paragraph>
-          <Title level={5}>4. 하브루타DAO의 강의는 지식공유자가 자유롭게 운영할 수 있습니다.</Title>
-          <Paragraph style={{ fontSize: '16px' }}>
-            강의에 필요한 토큰 설정 등 지식공유자는 자신의 강의를 자유롭게 운영할 수 있습니다.
-            학습자들과 소식을 공유하고 자유롭게 운영해 주세요.
-          </Paragraph>
-        </Modal>
-      )}
+      {isModalOpen && session && <UploadNotiModal setIsModalOpen={setIsModalOpen} />}
       {session ? (
         <Row>
           <Col xl={12} xs={24}>
@@ -353,7 +252,7 @@ export default function Upload() {
                   <span>
                     강의 업로드하기&nbsp;
                     <CodepenOutlined />
-                    &nbsp; 50
+                    &nbsp; {uploadTokenPrice}
                   </span>
                 </Button>
               )}
@@ -375,8 +274,7 @@ export default function Upload() {
                   height={'300px'}
                 />
               )}
-              {/* eslint-disable-next-line jsx-a11y/alt-text*/}
-              {lecture_image && <Image width={200} src={lecture_image} />}
+              {lecture_image && <Image width={200} src={lecture_image} alt={'previewImg'} />}
               {lecture_introduction && (
                 <TextArea
                   rows={5}

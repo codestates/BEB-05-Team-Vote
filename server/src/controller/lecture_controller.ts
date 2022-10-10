@@ -13,7 +13,7 @@ module.exports = {
       lecture_url,
       lecture_image,
       lecture_price,
-    } = req.body.course;
+    } = req.body.lecture;
 
     const postLectureHandler = async (
       user_id: Number,
@@ -37,9 +37,6 @@ module.exports = {
           lecture_price: Number(lecture_price),
         },
       });
-      const allLecture = await prisma.Lecture.findMany({});
-      console.dir(allLecture, { depth: null });
-
       await prisma.$disconnect();
       res.status(201).send('post Lecture success');
     };
@@ -71,11 +68,14 @@ module.exports = {
           lecture_title: true,
           lecture_image: true,
           lecture_price: true,
-          user: true,
+          user: {
+            select: {
+              user_id: true,
+              user_nickname: true,
+            },
+          },
         },
       });
-
-      console.dir(allLecture, { depth: null });
       return allLecture;
     };
     readAllLectureHandler()
@@ -98,11 +98,19 @@ module.exports = {
         where: {
           lecture_id: lecture_id,
         },
-        include: {
+        select: {
+          lecture_id: true,
           user: true,
+          user_id: true,
+          lecture_title: true,
+          lecture_summary: true,
+          lecture_introduction: true,
+          instructor_introduction: true,
+          lecture_url: true,
+          lecture_image: true,
+          lecture_price: true,
         },
       });
-      console.dir(selectedLecture, { depth: null });
       return selectedLecture;
     };
 
@@ -127,8 +135,17 @@ module.exports = {
         orderBy: {
           created_at: 'desc',
         },
-        include: {
-          user: true,
+        select: {
+          lecture_id: true,
+          lecture_title: true,
+          lecture_image: true,
+          lecture_price: true,
+          user: {
+            select: {
+              user_id: true,
+              user_nickname: true,
+            },
+          },
         },
         take: limitNum,
       });

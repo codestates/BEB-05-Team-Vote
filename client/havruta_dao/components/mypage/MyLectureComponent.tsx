@@ -2,7 +2,6 @@ import { CodepenOutlined } from '@ant-design/icons';
 import { Col, Image, Row, Space, Typography } from 'antd';
 import { useRouter } from 'next/router';
 import React from 'react';
-import { Courses } from '../../pages/courses';
 
 export default function MyLectureComponent({ data }: any) {
   const router = useRouter();
@@ -11,16 +10,16 @@ export default function MyLectureComponent({ data }: any) {
   return (
     <Row justify="space-around" gutter={[16, 16]}>
       {data &&
-        data.map((item: Courses, i: number) => {
+        data.map((item: Lecture, i: number) => {
           if (i < 4) {
             return (
               <Col
                 xxl={5}
                 lg={12}
-                sm={24}
+                xs={12}
                 key={item.lecture_id}
                 onClick={() => {
-                  router.push(`/courses/details/${item.lecture_id}`);
+                  router.push(`/lectures/details/${item.lecture_id}`);
                 }}
               >
                 <Space direction="vertical">
@@ -33,7 +32,6 @@ export default function MyLectureComponent({ data }: any) {
                       borderRadius: '8px',
                       cursor: 'pointer',
                     }}
-                    // onClick={() => router.push(`/courses/details/`)}
                     src={item.lecture_image}
                     alt={item.lecture_title}
                     preview={false}

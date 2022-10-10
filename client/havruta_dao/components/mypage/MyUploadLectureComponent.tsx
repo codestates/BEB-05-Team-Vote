@@ -24,7 +24,6 @@ export default function MyLectureComponent() {
             borderRadius: '8px',
             cursor: 'pointer',
           }}
-          // onClick={() => router.push(`/courses/details/`)}
           src={`https://miricanvas.zendesk.com/hc/article_attachments/360049418812/__________._8.png`}
           alt={`대체 텍스트`}
           preview={false}
@@ -37,9 +36,6 @@ export default function MyLectureComponent() {
 
         <Space align="center" style={{ justifyContent: 'space-between', width: '100%' }}>
           <Text style={{ fontSize: '16px' }} type="secondary">
-            {/* {course.user.user_nickname.length > 10 &&
-                    course.user.user_nickname.substr(0, 30) + '...'} */}
-
             {`Lorem ipsum dolor sit, amet consectetur adipisicing elit. `}
           </Text>
           <Space>

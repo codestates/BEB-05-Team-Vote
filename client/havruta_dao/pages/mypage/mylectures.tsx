@@ -42,7 +42,7 @@ export default function MyLectures() {
                   span={6}
                   key={item.lecture.lecture_id}
                   onClick={() => {
-                    router.push(`/courses/details/${item.lecture.lecture_id}`);
+                    router.push(`/lectures/details/${item.lecture.lecture_id}`);
                   }}
                 >
                   <Space direction="vertical">
@@ -55,7 +55,6 @@ export default function MyLectures() {
                         borderRadius: '8px',
                         cursor: 'pointer',
                       }}
-                      // onClick={() => router.push(`/courses/details/`)}
                       src={item.lecture.lecture_image}
                       alt={item.lecture.lecture_title}
                       preview={false}

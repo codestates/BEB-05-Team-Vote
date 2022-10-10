@@ -30,6 +30,9 @@ export default function UploadPostLogined() {
       if (res.status === 201) {
         mutate(`${process.env.NEXT_PUBLIC_ENDPOINT}/article/recent`);
         setValue('');
+        form.setFieldsValue({
+          post_upload: '',
+        });
       }
     } catch (error) {
       Sentry.captureException(error);
@@ -40,9 +43,8 @@ export default function UploadPostLogined() {
     <Card style={{ width: '100%' }}>
       <Text strong>{loginInfo.user_nickname}</Text>
       <Form form={form} name="content">
-        <Form.Item name="article_content">
+        <Form.Item name="post_upload">
           <TextArea
-            className="article_body"
             rows={5}
             bordered={false}
             placeholder="자유롭게 이야기를 나눠보세요."

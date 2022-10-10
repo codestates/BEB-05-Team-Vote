@@ -20,7 +20,7 @@ export default function PostDetail() {
         <PageHeader title="목록으로" style={{ paddingLeft: 0 }} onBack={() => router.back()} />
       </Space>
       <Row gutter={48}>
-        <Col span={16}>
+        <Col xs={24} lg={16}>
           {post ? (
             <>
               <Post type="detail" post={post[0]} />

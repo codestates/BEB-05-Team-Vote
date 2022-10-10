@@ -6,7 +6,6 @@ import { useRecoilState } from 'recoil';
 import useSWR, { mutate } from 'swr';
 import { timeForToday } from '../../lib/date';
 import { noti } from '../../lib/notification';
-import { PostInterface } from '../../pages';
 import { loginInfoState } from '../../states/loginInfoState';
 
 const { Paragraph, Text } = Typography;

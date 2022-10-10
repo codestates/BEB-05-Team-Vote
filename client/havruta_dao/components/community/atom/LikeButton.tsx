@@ -6,7 +6,6 @@ import { mutate } from 'swr';
 import { Button } from 'antd';
 import { LikeOutlined } from '@ant-design/icons';
 import { loginInfoState } from '../../../states/loginInfoState';
-import { LikeButton } from '../../../types/Post';
 import { useRouter } from 'next/router';
 
 function LikeButton({ type, article_id, like_count }: LikeButton) {

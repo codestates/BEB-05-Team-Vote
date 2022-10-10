@@ -17,10 +17,10 @@ export default function SubscribeLectureComponent({ data }: any) {
               <Col
                 xxl={5}
                 lg={12}
-                sm={24}
+                xs={12}
                 key={item.id}
                 onClick={() => {
-                  router.push(`/courses/details/${item.lecture.lecture_id}`);
+                  router.push(`/lectures/details/${item.lecture.lecture_id}`);
                 }}
               >
                 <Space direction="vertical">
@@ -33,7 +33,6 @@ export default function SubscribeLectureComponent({ data }: any) {
                       borderRadius: '8px',
                       cursor: 'pointer',
                     }}
-                    // onClick={() => router.push(`/courses/details/`)}
                     src={item.lecture.lecture_image}
                     alt={item.lecture.lecture_title}
                     preview={false}

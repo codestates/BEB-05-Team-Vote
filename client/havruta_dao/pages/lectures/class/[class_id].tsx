@@ -7,41 +7,34 @@ import Head from 'next/head';
 
 const { Title, Text } = Typography;
 
-type Course = {
-  lecture_id: string;
-  lecture_title: string;
-  lecture_summary: string;
-  lecture_url: string;
-  class_id: string;
-};
-export default function ClassDetails({ course }: { course: Course }) {
+export default function ClassDetails({ lecture }: { lecture: LectureDetail }) {
   const router = useRouter();
   return (
     <section>
       <Head>
-        <title>{course.lecture_title}</title>
+        <title>{lecture.lecture_title}</title>
       </Head>
       <Space style={{ justifyContent: 'space-between', width: '100%' }}>
         <PageHeader
           onBack={() => router.back()}
           style={{ paddingLeft: 0, width: '100%' }}
-          title={course.lecture_title}
+          title={lecture.lecture_title}
         />
       </Space>
 
       <PlayerWrapper>
         <ReactPlayer
           className="react-player"
-          url={course.lecture_url}
+          url={lecture.lecture_url}
           controls={true}
           width={'100%'}
           height={'100%'}
         />
       </PlayerWrapper>
 
-      <Title level={3}>{course.lecture_title}</Title>
+      <Title level={3}>{lecture.lecture_title}</Title>
       <Text style={{ display: 'block', fontSize: '18px', marginBottom: '16px' }}>
-        {course.lecture_summary}
+        {lecture.lecture_summary}
       </Text>
     </section>
   );
@@ -59,8 +52,8 @@ const PlayerWrapper = styled.div`
 `;
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const course = ctx.query;
+  const lecture = ctx.query;
   return {
-    props: { course },
+    props: { lecture },
   };
 };

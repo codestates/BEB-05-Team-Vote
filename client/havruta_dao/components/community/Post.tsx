@@ -4,7 +4,6 @@ import { useRouter } from 'next/router';
 import { Card, Space, Typography } from 'antd';
 import styled, { css } from 'styled-components';
 import { timeForToday } from '../../lib/date';
-import { PostInterface } from '../../types/Post';
 import CommentButton from './atom/CommentButton';
 import DeleteButton from './atom/DeleteButton';
 import LikeButton from './atom/LikeButton';

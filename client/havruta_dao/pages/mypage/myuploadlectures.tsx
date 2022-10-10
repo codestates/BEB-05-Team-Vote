@@ -41,7 +41,7 @@ export default function MyUploadLectures() {
                   span={6}
                   key={item.lecture_id}
                   onClick={() => {
-                    router.push(`/courses/details/${item.lecture_id}`);
+                    router.push(`/lectures/details/${item.lecture_id}`);
                   }}
                 >
                   <Space direction="vertical">
@@ -54,7 +54,6 @@ export default function MyUploadLectures() {
                         borderRadius: '8px',
                         cursor: 'pointer',
                       }}
-                      // onClick={() => router.push(`/courses/details/`)}
                       src={item.lecture_image}
                       alt={item.lecture_title}
                       preview={false}

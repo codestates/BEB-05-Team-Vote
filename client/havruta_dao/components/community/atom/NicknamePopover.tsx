@@ -1,7 +1,6 @@
 import React from 'react';
 import { message, Popconfirm, Typography } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
-import { NicknamePopover } from '../../../types/Post';
 
 const { Text, Paragraph } = Typography;
 
