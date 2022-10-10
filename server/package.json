@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": "app.ts",
   "scripts": {
-    "start": "node dist/app.js",
+    "start": "npx pm2 start ./dist/app.js --exp-backoff-restart-delay=100 --no-daemon",
     "build": "tsc -p .",
-    "dev": "nodemon --watch \"src/**/*.ts\" --exec \"ts-node\" src/app.ts",
+    "dev": "npx pm2 start src/app.ts --watch --no-daemon",
     "postinstall": "prisma generate",
     "test": "yarn mocha ./test/test.ts -r ts-node/register"
   },
@@ -33,6 +33,7 @@
     "dotenv": "^16.0.2",
     "express-session": "^1.17.3",
     "mocha": "^10.0.0",
-    "node-schedule": "^2.1.0"
+    "node-schedule": "^2.1.0",
+    "pm2": "^5.2.0"
   }
 }
