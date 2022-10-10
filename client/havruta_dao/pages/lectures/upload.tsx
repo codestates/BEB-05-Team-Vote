@@ -22,6 +22,7 @@ import { useSession } from 'next-auth/react';
 import ReactPlayer from 'react-player';
 import { noti } from '../../lib/notification';
 import UploadNotiModal from '../../components/lectures/UploadNotiModal';
+import TransferERC20Token from '../../lib/klaytn/transfer';
 
 const { TextArea } = Input;
 const { Paragraph, Title } = Typography;
@@ -43,63 +44,19 @@ export default function Upload() {
     lecture_price: 0,
   });
 
+  let uploadTokenPrice = 10;
+
   const onUpload = () => {
-    const walletState = window.klaytn.publicConfigStore.getState();
-    if (walletState.isUnlocked === false) {
-      setIsLoading(false);
-      window.klaytn.enable();
-      return noti(
-        'info',
-        '지갑이 잠겨있습니다.',
-        '강의를 생성하시려면 먼저 지갑의 잠금을 해제해주세요.'
-      );
-    }
-
-    const data = window.caver.klay.abi.encodeFunctionCall(
-      {
-        name: 'transfer',
-        type: 'function',
-        inputs: [
-          {
-            type: 'address',
-            name: 'recipient',
-          },
-          {
-            type: 'uint256',
-            name: 'amount',
-          },
-        ],
-      },
-      [
-        process.env.NEXT_PUBLIC_HADATOKEN,
-        window.caver.utils
-          .toBN(50)
-          .mul(window.caver.utils.toBN(Number(`1e18`)))
-          .toString(),
-      ]
-    );
-
-    window.caver.klay
-      .sendTransaction({
-        type: 'SMART_CONTRACT_EXECUTION',
-        from: loginInfo.user_address,
-        to: process.env.NEXT_PUBLIC_HADATOKEN,
-        data,
-        gas: '3000000',
-      })
-      .on('transactionHash', (transactionHash: any) => {
-        console.log('txHash', transactionHash);
-      })
-      .on('receipt', (receipt: any) => {
-        console.log('receipt', receipt);
-        saveUploadToDB();
-      })
-      .on('error', (error: any) => {
+    TransferERC20Token(
+      loginInfo.user_address,
+      process.env.NEXT_PUBLIC_HADATOKEN,
+      uploadTokenPrice,
+      () => saveUploadToDB(),
+      () => {
         setIsLoading(false);
-        console.log('error', error.message);
-        Sentry.captureException(error.message);
         cancelUploadOnWallet();
-      });
+      }
+    );
   };
 
   const saveUploadToDB = () => {
@@ -295,7 +252,7 @@ export default function Upload() {
                   <span>
                     강의 업로드하기&nbsp;
                     <CodepenOutlined />
-                    &nbsp; 50
+                    &nbsp; {uploadTokenPrice}
                   </span>
                 </Button>
               )}

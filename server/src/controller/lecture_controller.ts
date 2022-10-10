@@ -13,7 +13,7 @@ module.exports = {
       lecture_url,
       lecture_image,
       lecture_price,
-    } = req.body.course;
+    } = req.body.lecture;
 
     const postLectureHandler = async (
       user_id: Number,
@@ -100,6 +100,7 @@ module.exports = {
         },
         select: {
           lecture_id: true,
+          user: true,
           user_id: true,
           lecture_title: true,
           lecture_summary: true,

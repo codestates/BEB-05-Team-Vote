@@ -119,7 +119,9 @@ export default function MenuComponent() {
       key: 'userLogout',
       icon: <LogoutOutlined />,
       label: '로그아웃',
-      onClick: () => signOut(),
+      onClick: () => {
+        signOut();
+      },
     },
   ];
 

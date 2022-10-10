@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Head from 'next/head';
 import axios from 'axios';
 import * as Sentry from '@sentry/react';
 import { Row, Col, PageHeader, Space, Typography, Divider, Image, Button, Popconfirm } from 'antd';
@@ -12,6 +11,7 @@ import { GetServerSideProps } from 'next';
 import { useSWRConfig } from 'swr';
 import { HADAPassState } from '../../../states/HADAPassState';
 import { noti } from '../../../lib/notification';
+import TransferERC20Token from '../../../lib/klaytn/transfer';
 
 const { Title, Paragraph, Text } = Typography;
 
@@ -54,62 +54,16 @@ export default function Detail({
     if (lecture.lecture_price === 0) {
       saveSubscribeToDB();
     } else {
-      const walletState = window.klaytn.publicConfigStore.getState();
-      if (walletState.isUnlocked === false) {
-        setIsLoading(false);
-        window.klaytn.enable();
-        return noti(
-          'info',
-          '지갑이 잠겨있습니다.',
-          '이 강의를 수강하시려면 먼저 지갑의 잠금을 해제해주세요.'
-        );
-      }
-
-      const data = window.caver.klay.abi.encodeFunctionCall(
-        {
-          name: 'transfer',
-          type: 'function',
-          inputs: [
-            {
-              type: 'address',
-              name: 'recipient',
-            },
-            {
-              type: 'uint256',
-              name: 'amount',
-            },
-          ],
-        },
-        [
-          lecture.user.user_address,
-          window.caver.utils
-            .toBN(lecture.lecture_price)
-            .mul(window.caver.utils.toBN(Number(`1e18`)))
-            .toString(),
-        ]
-      );
-
-      window.caver.klay
-        .sendTransaction({
-          type: 'SMART_CONTRACT_EXECUTION',
-          from: loginInfo.user_address,
-          to: process.env.NEXT_PUBLIC_HADATOKEN,
-          data,
-          gas: '3000000',
-        })
-        .on('transactionHash', (transactionHash: any) => {
-          console.log('txHash', transactionHash);
-        })
-        .on('receipt', (receipt: any) => {
-          console.log('receipt', receipt);
-          saveSubscribeToDB();
-        })
-        .on('error', (error: any) => {
+      TransferERC20Token(
+        loginInfo.user_address,
+        lecture.user.user_address,
+        lecture.lecture_price,
+        () => saveSubscribeToDB(),
+        () => {
           setIsLoading(false);
-          console.log('error', error.message);
-          Sentry.captureException(error.message);
           cancelSubscribeOnWallet();
-        });
+        }
+      );
     }
   };
 
@@ -126,9 +80,12 @@ export default function Detail({
       }
     } catch (error) {
       setIsLoading(false);
-      // setIsSubscribe(false);
       Sentry.captureException(error);
     }
+  };
+
+  const cancelSubscribeOnWallet = () => {
+    noti('error', '수강 신청이 실패되었습니다.');
   };
 
   const changeLoginState = async () => {
@@ -144,10 +101,6 @@ export default function Detail({
       changeLoginState();
     }
   }, [session]);
-
-  const cancelSubscribeOnWallet = () => {
-    noti('error', '수강 신청이 실패되었습니다.');
-  };
 
   const onDelete = async (lecture_id: number) => {
     const res = await axios.delete(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture`, {
