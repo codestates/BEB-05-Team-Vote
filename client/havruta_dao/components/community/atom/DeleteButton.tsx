@@ -6,7 +6,6 @@ import { DeleteOutlined } from '@ant-design/icons';
 import { Popconfirm } from 'antd';
 import { noti } from '../../../lib/notification';
 import { loginInfoState } from '../../../states/loginInfoState';
-import { DeleteButton } from '../../../types/Post';
 import { useRouter } from 'next/router';
 
 function DeleteButton({ type, id }: DeleteButton) {

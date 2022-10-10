@@ -8,7 +8,7 @@ const { Title, Text } = Typography;
 function LecturesItem({ lecture }: { lecture: Lecture }) {
   const router = useRouter();
   return (
-    <Col span={8} key={lecture.lecture_id}>
+    <Col xs={12} lg={8} key={lecture.lecture_id}>
       <Image
         width={'100%'}
         height={'auto'}

@@ -154,7 +154,7 @@ export default function Detail({
             />
           </Space>
           <Row gutter={48}>
-            <Col span={16}>
+            <Col xs={24} lg={16}>
               <Image
                 width={'100%'}
                 src={lecture.lecture_image}
@@ -174,7 +174,7 @@ export default function Detail({
               </Paragraph>
               <Divider />
             </Col>
-            <Col span={8}>
+            <Col xs={24} lg={8}>
               <Title level={3}>{lecture.lecture_title}</Title>
               <Paragraph style={{ fontSize: '16px', fontWeight: 400 }}>
                 {lecture.lecture_summary}

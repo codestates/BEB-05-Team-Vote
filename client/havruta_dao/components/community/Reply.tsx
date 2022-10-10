@@ -10,7 +10,7 @@ const { Text } = Typography;
 
 export default function Reply({ comments }: { comments: any }) {
   const { data: session } = useSession();
-
+  console.log(comments);
   return (
     <Card style={{ width: '100%', marginTop: '-1px' }}>
       <Space direction="vertical" size={'large'} style={{ width: '100%' }}>
@@ -25,7 +25,7 @@ export default function Reply({ comments }: { comments: any }) {
         </Space>
         {comments.comment_content}
         <Space style={{ width: '100%', justifyContent: 'end' }}>
-          {comments.user_id === session?.user.user_id && (
+          {comments.user.user_id === session?.user.user_id && (
             <DeleteButton type="comment" id={comments.id} />
           )}
         </Space>

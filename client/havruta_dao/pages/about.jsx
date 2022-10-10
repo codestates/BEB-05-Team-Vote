@@ -2,7 +2,7 @@ import { useEffect, useRef, useMemo } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { Text } from '@react-three/drei';
 import { AsciiEffect } from 'three-stdlib';
-import { Col, Row, Typography, Divider, Timeline, Avatar, Button, Image } from 'antd';
+import { Col, Row, Typography, Divider, Timeline, Avatar, Button, Image, Space } from 'antd';
 // import Image from 'next/image';
 import roadmap from '../assets/images/roadmap.png';
 import { BookOutlined, GithubOutlined, SmileOutlined } from '@ant-design/icons';
@@ -15,7 +15,7 @@ export default function App() {
   return (
     <section>
       <Row gutter={[32, 32]}>
-        <Col span={24} style={{ marginBottom: '80px' }}>
+        <Col span={22} style={{ marginBottom: '80px' }}>
           <Canvas style={{ width: '100%', height: '50vh' }} onScroll={(e) => e.stopPropagation}>
             {/* <color attach="background" args={['rgba(0,0,0,0)']} /> */}
             <spotLight position={[15, 0, 5]} angle={0.1} penumbra={2} />
@@ -36,21 +36,21 @@ export default function App() {
         </Col>
 
         <Row gutter={[32, 32]} justify="center">
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Title style={{ color: '#bae637' }}>VISION</Title>
             <Paragraph style={{ fontSize: '20px', color: 'white' }}>
               경제적, 사회적 배경에 상관없이 누구나 잠재력을 발휘하고, 지속적으로 지식을 나눌 수
               있는 세상
             </Paragraph>
           </Col>
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Title style={{ color: '#bae637' }}>MISSION</Title>
             <Paragraph style={{ fontSize: '20px', color: 'white' }}>
               블록체인 기술 기반 토큰 이코노미를 활용하여 지속가능한 세계 최대의 선순환 지식공유
               학습 플랫폼을 구축합니다.
             </Paragraph>
           </Col>
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Title style={{ color: '#bae637' }}>DAO</Title>
             <Paragraph style={{ fontSize: '20px', color: 'white' }}>
               탈중앙화 자율 조직(decentralized autonomous organization). 물리적인 건물·법인이나
@@ -60,18 +60,18 @@ export default function App() {
         </Row>
         <Divider style={{ border: 'none', borderTop: '1px solid #434343' }} />
         <Row justify="center">
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Title style={{ color: '#bae637' }}>하브루타다오의 특징</Title>
             <Paragraph style={{ fontSize: '20px', color: 'white' }}>
               · 지식공유자는 수수료 없이 강의를 통해 수익을 창출할 수 있습니다.
             </Paragraph>
           </Col>
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Paragraph style={{ fontSize: '20px', color: 'white' }}>
               · 커뮤니티 활동-기여를 통해 토큰을 획득하세요. 이를 통해 강의를 수강할 수 있습니다.
             </Paragraph>
           </Col>
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Paragraph style={{ fontSize: '20px', color: 'white' }}>
               · 하브루타다오 강의 퀄리티를 유지를 위해 퀄리티가 낮은 강의는 지식공유자 회의-투표를
               통해 플랫폼에서 제거 할 수 있습니다.
@@ -80,7 +80,7 @@ export default function App() {
         </Row>
         <Divider style={{ border: 'none', borderTop: '1px solid #434343' }} />
         <Row gutter={[32, 72]} justify="center">
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Title style={{ marginRight: '40px', color: '#bae637' }}>토큰 이코노미</Title>
             <Title level={2} style={{ color: '#bae637' }}>
               지속가능한 생태계
@@ -101,11 +101,11 @@ export default function App() {
             <Image
               src="https://user-images.githubusercontent.com/35528411/192725895-f25a404b-82fd-47cb-9b31-63e3df00ae56.png"
               alt="하브루타다오 토큰보상"
-              width={'50%'}
+              width={'80%'}
               height={'auto'}
             />
           </Col>
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Title level={2} style={{ color: '#bae637' }}>
               토큰 보상량의 제한
             </Title>
@@ -121,11 +121,11 @@ export default function App() {
             <Image
               src="https://user-images.githubusercontent.com/35528411/192725899-ccb326a8-a8e7-4019-a924-92fee3a87d84.png"
               alt="하브루타다오 토큰보상량 제한"
-              width={'50%'}
+              width={'80%'}
               height={'auto'}
             />
           </Col>
-          <Col span={16}>
+          <Col xs={22} lg={16}>
             <Title level={2} style={{ color: '#bae637' }}>
               토큰 소비
             </Title>
@@ -158,7 +158,7 @@ export default function App() {
         <Divider style={{ border: 'none', borderTop: '1px solid #434343' }} />
         <Row style={{ margin: 'auto', width: '100%' }} justify="center">
           <Title style={{ marginBottom: '40px' }}>TIMELINE</Title>
-          <Col span={24}>
+          <Col xs={22} lg={24}>
             <Timeline mode="alternate" reverse={true}>
               <Timeline.Item>
                 <p style={{ fontWeight: 600, fontSize: '18px' }}>기능 업데이트</p>
@@ -238,61 +238,61 @@ export default function App() {
         <Divider style={{ border: 'none', borderTop: '1px solid #434343' }} />
         <Title>Team Vote Member</Title>
         <Row gutter={[32, 32]}>
-          <Col span={8} style={{ textAlign: 'center' }}>
+          <Col xs={12} lg={8} style={{ textAlign: 'center' }}>
             <Avatar
-              size={{ xxl: 160 }}
+              size={160}
               src="https://user-images.githubusercontent.com/35528411/192460366-e08c5b95-8cdd-47c9-b736-397d3de86bc0.png"
               style={{ marginBottom: '32px' }}
             />
             <Title level={3}>Jaden</Title>
-            <Paragraph style={{ fontSize: '20px', wordBreak: 'keep-all' }}>
+            <Paragraph style={{ fontSize: '1rem', wordBreak: 'keep-all' }}>
               프론트엔드 및 블록체인 엔지니어. 이번 프로젝트에서 PM을 담당했다. 명상을 즐기는 인간
               스택오버플로우라고 불리고 있다.
             </Paragraph>
           </Col>
-          <Col span={8} style={{ textAlign: 'center' }}>
+          <Col xs={12} lg={8} style={{ textAlign: 'center' }}>
             <Avatar
-              size={{ xxl: 160 }}
+              size={160}
               src="https://user-images.githubusercontent.com/35528411/192460364-de56f69a-c822-468d-ae37-33d672473c19.png"
               style={{ marginBottom: '32px' }}
             />
             <Title level={3}>El</Title>
-            <Paragraph style={{ fontSize: '20px', wordBreak: 'keep-all' }}>
+            <Paragraph style={{ fontSize: '1rem', wordBreak: 'keep-all' }}>
               프론트엔드 엔지니어. 하늘을 날다가 사이버 세상에 착륙했다. 갈색 푸들 &#39;라떼&#39;와
               함께 거주 중.
             </Paragraph>
           </Col>
-          <Col span={8} style={{ textAlign: 'center' }}>
+          <Col xs={12} lg={8} style={{ textAlign: 'center' }}>
             <Avatar
-              size={{ xxl: 160 }}
+              size={160}
               src="https://user-images.githubusercontent.com/35528411/192460315-d83cac40-ba07-4428-a063-368a39bbed8f.png"
               style={{ marginBottom: '32px' }}
             />
             <Title level={3}>Sam</Title>
-            <Paragraph style={{ fontSize: '20px', wordBreak: 'keep-all' }}>
+            <Paragraph style={{ fontSize: '1rem', wordBreak: 'keep-all' }}>
               백엔드 엔지니어. 술을 좋아하는 뱀파이어 개발자. 잠을 자지 않는다는 소문이 있다.
             </Paragraph>
           </Col>
-          <Col span={8} style={{ textAlign: 'center' }}>
+          <Col xs={12} lg={8} style={{ textAlign: 'center' }}>
             <Avatar
-              size={{ xxl: 160 }}
+              size={160}
               style={{ marginBottom: '32px', backgroundColor: 'none' }}
               src="https://user-images.githubusercontent.com/35528411/192460370-2c4393e2-f7fd-476a-a000-858924d9a204.png"
             />
             <Title level={3}>Joseph</Title>
-            <Paragraph style={{ fontSize: '20px', wordBreak: 'keep-all' }}>
+            <Paragraph style={{ fontSize: '1rem', wordBreak: 'keep-all' }}>
               백엔드 서브 엔지니어. 두 아이의 아버지. 항상 탈출하고 싶은 꿈만 꾸는 드리머. 아,
               제발...
             </Paragraph>
           </Col>
-          <Col span={8} style={{ textAlign: 'center' }}>
+          <Col xs={12} lg={8} style={{ textAlign: 'center' }}>
             <Avatar
-              size={{ xxl: 160 }}
+              size={160}
               style={{ marginBottom: '32px' }}
               src="https://user-images.githubusercontent.com/35528411/192460374-94cb3605-9288-4e54-b277-a3d128475d90.png"
             />
             <Title level={3}>Walter</Title>
-            <Paragraph style={{ fontSize: '20px', wordBreak: 'keep-all' }}>
+            <Paragraph style={{ fontSize: '1rem', wordBreak: 'keep-all' }}>
               디자이너이자 프론트엔드 엔지니어. 본인은 유니콘이라 주장하지만 다른 사람들은 그냥
               개자이너라고 부른다. 목마를 때 물 대신 커피를 마시는 중.
             </Paragraph>
@@ -300,22 +300,24 @@ export default function App() {
         </Row>
         <Divider style={{ border: 'none', borderTop: '1px solid #434343' }} />
         <Row>
-          <Col span={24}>
+          <Col span={22}>
             <Title style={{ marginBottom: '32px' }} level={1}>
               Links
             </Title>
-            <GithubOutlined
-              style={{ fontSize: '48px', marginRight: '24px' }}
-              onClick={() => window.open('https://github.com/codestates/BEB-05-Team-Vote')}
-            />
-            <BookOutlined
-              style={{ fontSize: '48px' }}
-              onClick={() =>
-                window.open(
-                  'https://endurable-dodo-552.notion.site/Havruta-DAO-White-Paper-d7fe0d07b63f49cf9ddea3e4cea9a4ff'
-                )
-              }
-            />
+            <Space align="center">
+              <GithubOutlined
+                style={{ fontSize: '48px', marginRight: '24px' }}
+                onClick={() => window.open('https://github.com/codestates/BEB-05-Team-Vote')}
+              />
+              <BookOutlined
+                style={{ fontSize: '48px' }}
+                onClick={() =>
+                  window.open(
+                    'https://endurable-dodo-552.notion.site/Havruta-DAO-White-Paper-d7fe0d07b63f49cf9ddea3e4cea9a4ff'
+                  )
+                }
+              />
+            </Space>
           </Col>
         </Row>
       </Row>

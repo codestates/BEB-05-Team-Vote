@@ -17,7 +17,7 @@ export default function SubscribeLectureComponent({ data }: any) {
               <Col
                 xxl={5}
                 lg={12}
-                sm={24}
+                xs={12}
                 key={item.id}
                 onClick={() => {
                   router.push(`/lectures/details/${item.lecture.lecture_id}`);

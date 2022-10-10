@@ -30,7 +30,6 @@ import MyLectureComponent from '../../components/mypage/MyLectureComponent';
 import { useRecoilState } from 'recoil';
 import { loginInfoState } from '../../states/loginInfoState';
 import axios from 'axios';
-import { PostInterface } from '..';
 import { timeForToday } from '../../lib/date';
 import * as Sentry from '@sentry/react';
 import { useSession } from 'next-auth/react';
@@ -81,8 +80,10 @@ export default function Mypage() {
   );
 
   useEffect(() => {
-    getBalanceToken();
-    getBalanceNFT();
+    if (session) {
+      getBalanceToken();
+      getBalanceNFT();
+    }
   }, []);
 
   const getBalanceToken = async () => {
@@ -278,7 +279,7 @@ export default function Mypage() {
           </Space>
 
           <Row gutter={[20, 24]}>
-            <Col xxl={12} sm={24}>
+            <Col xxl={12} xs={24}>
               <Space
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >
@@ -322,7 +323,7 @@ export default function Mypage() {
               <MyInfoComponent />
             </Col>
 
-            <Col xxl={12} sm={24}>
+            <Col xxl={12} xs={24}>
               <Space
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >
@@ -356,7 +357,7 @@ export default function Mypage() {
                   readOnly
                 />
                 <Row gutter={[8, 8]}>
-                  <Col xxl={12} sm={24}>
+                  <Col xxl={12} xs={24}>
                     <Button
                       style={{ whiteSpace: 'normal', width: '100%' }}
                       size="large"
@@ -367,7 +368,7 @@ export default function Mypage() {
                       HADA PASS 발행하기
                     </Button>
                   </Col>
-                  <Col xxl={12} sm={24}>
+                  <Col xxl={12} xs={24}>
                     <Button
                       style={{ whiteSpace: 'normal', width: '100%' }}
                       size="large"
@@ -385,7 +386,7 @@ export default function Mypage() {
           <Divider />
 
           <Row gutter={[20, 24]}>
-            <Col xxl={12} sm={24}>
+            <Col xxl={12} xs={24}>
               <Space
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >
@@ -487,7 +488,7 @@ export default function Mypage() {
                 )}
               </Space>
             </Col>
-            <Col xxl={12} sm={24}>
+            <Col xxl={12} xs={24}>
               <Space
                 style={{ justifyContent: 'space-between', width: '100%', marginBottom: '8px' }}
               >

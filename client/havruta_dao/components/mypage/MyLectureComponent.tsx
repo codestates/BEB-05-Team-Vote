@@ -16,7 +16,7 @@ export default function MyLectureComponent({ data }: any) {
               <Col
                 xxl={5}
                 lg={12}
-                sm={24}
+                xs={12}
                 key={item.lecture_id}
                 onClick={() => {
                   router.push(`/lectures/details/${item.lecture_id}`);
