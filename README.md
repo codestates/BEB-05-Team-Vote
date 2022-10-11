@@ -131,7 +131,7 @@ BEB-05-Team-Vote 디렉토리에서 아래 명령어를 통해 각각의 Applica
 NEXT_PUBLIC_GA_ID= 구글 애널리틱스 key
 NEXT_PUBLIC_SENTRY_DSN= 센트리 key
 NEXT_PUBLIC_CHANNEL_IO_KEY= 채널톡 key
-SECRET= solt값
+SECRET= salt값
 NEXTAUTH_URL= 배포 주소
 NEXT_PUBLIC_ENDPOINT= api 서버 엔드포인트
 NEXT_PUBLIC_HADATOKEN= 토큰 컨트랙트 CA
@@ -202,7 +202,7 @@ ERC-20 컨트랙트는 처음에 배치 컨트랙트의 CA를 설정하여 유�
 
 - HadaToken.sol
 
-```
+```solidity
 ... 중략
 
 function updateBatchContractAdress(address _adress) public onlyOwner  {
