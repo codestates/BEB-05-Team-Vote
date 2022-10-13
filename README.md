@@ -19,14 +19,14 @@
 
 [하브루타 DAO 웹사이트 바로가기](https://www.havruta.guru/)
 
-## 하브루타 DAO 시연 영상
-
-[![하브루타 DAO 시연 영상](http://img.youtube.com/vi/JYMnGRqSQsM/0.jpg)](https://youtu.be/JYMnGRqSQsM)
-* 이미지 클릭 시 유튜브로 이동
-
 ## 하브루타 DAO 발표 영상
 
 [![하브루타 DAO 발표 영상](http://img.youtube.com/vi/A3ZG5HiVyUU/0.jpg)](https://www.youtube.com/watch?v=A3ZG5HiVyUU)
+* 이미지 클릭 시 유튜브로 이동
+
+## 하브루타 DAO 시연 영상
+
+[![하브루타 DAO 시연 영상](http://img.youtube.com/vi/JYMnGRqSQsM/0.jpg)](https://youtu.be/JYMnGRqSQsM)
 * 이미지 클릭 시 유튜브로 이동
 
 # 하브루타 DAO의 토큰 이코노미
