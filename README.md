@@ -19,14 +19,14 @@
 
 [하브루타 DAO 웹사이트 바로가기](https://www.havruta.guru/)
 
-## 하브루타 DAO 시연 영상
-
-[![하브루타 DAO 시연 영상](http://img.youtube.com/vi/JYMnGRqSQsM/0.jpg)](https://youtu.be/JYMnGRqSQsM)
-* 이미지 클릭 시 유튜브로 이동
-
 ## 하브루타 DAO 발표 영상
 
 [![하브루타 DAO 발표 영상](http://img.youtube.com/vi/A3ZG5HiVyUU/0.jpg)](https://www.youtube.com/watch?v=A3ZG5HiVyUU)
+* 이미지 클릭 시 유튜브로 이동
+
+## 하브루타 DAO 시연 영상
+
+[![하브루타 DAO 시연 영상](http://img.youtube.com/vi/JYMnGRqSQsM/0.jpg)](https://youtu.be/JYMnGRqSQsM)
 * 이미지 클릭 시 유튜브로 이동
 
 # 하브루타 DAO의 토큰 이코노미
@@ -131,7 +131,7 @@ BEB-05-Team-Vote 디렉토리에서 아래 명령어를 통해 각각의 Applica
 NEXT_PUBLIC_GA_ID= 구글 애널리틱스 key
 NEXT_PUBLIC_SENTRY_DSN= 센트리 key
 NEXT_PUBLIC_CHANNEL_IO_KEY= 채널톡 key
-SECRET= solt값
+SECRET= salt값
 NEXTAUTH_URL= 배포 주소
 NEXT_PUBLIC_ENDPOINT= api 서버 엔드포인트
 NEXT_PUBLIC_HADATOKEN= 토큰 컨트랙트 CA
@@ -202,7 +202,7 @@ ERC-20 컨트랙트는 처음에 배치 컨트랙트의 CA를 설정하여 유�
 
 - HadaToken.sol
 
-```
+```solidity
 ... 중략
 
 function updateBatchContractAdress(address _adress) public onlyOwner  {

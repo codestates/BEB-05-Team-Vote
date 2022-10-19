@@ -1,13 +1,13 @@
 import { CommentOutlined, FireOutlined } from '@ant-design/icons';
 import { Col, PageHeader, Row } from 'antd';
 import type { NextPage } from 'next';
-import RcmdCourse from '../components/RcmdCourse';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import { useSession } from 'next-auth/react';
 import UploadPostNotLogined from '../components/community/UploadPostNotLogined';
 import UploadPostLogined from '../components/community/UploadPostLogined';
 import Post from '../components/community/Post';
+import RcmdLectures from '../components/RcmdLectures';
 
 const Home: NextPage = () => {
   const router = useRouter();
@@ -31,7 +31,7 @@ const Home: NextPage = () => {
         </Col>
         <Col xl={8} xs={0}>
           <PageHeader backIcon={<FireOutlined />} onBack={() => null} title="추천강의" />
-          <RcmdCourse />
+          <RcmdLectures />
         </Col>
       </Row>
     </div>
