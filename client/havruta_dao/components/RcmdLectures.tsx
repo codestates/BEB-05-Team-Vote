@@ -7,7 +7,7 @@ import styled from 'styled-components';
 
 const { Paragraph, Text } = Typography;
 
-export default function RcmdCourse() {
+export default function RcmdLectures() {
   const router = useRouter();
 
   const { data: courses } = useSWR(`${process.env.NEXT_PUBLIC_ENDPOINT}/lecture/limit?limit=5`);
@@ -23,7 +23,7 @@ export default function RcmdCourse() {
                   lg={24}
                   style={{ cursor: 'pointer' }}
                   key={course.lecture_id}
-                  onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
+                  onClick={() => router.push(`/lectures/details/${course.lecture_id}`)}
                 >
                   <Image
                     preview={false}
@@ -39,7 +39,7 @@ export default function RcmdCourse() {
                   xxl={12}
                   lg={24}
                   style={{ cursor: 'pointer' }}
-                  onClick={() => router.push(`/courses/details/${course.lecture_id}`)}
+                  onClick={() => router.push(`/lectures/details/${course.lecture_id}`)}
                 >
                   <Text
                     style={{ color: 'grey', fontSize: '14px' }}
