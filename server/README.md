@@ -25,6 +25,14 @@ vim .env
 // .env 파일 내용 입력(PORT, DATABASE_URL, TOKEN_CA, BATCH_CA, PASS_CA, DEPLOY_ADDRESS, DEPLOY_PRIVATEKEY)
 ```
 
+권한 추가
+```sh
+sudo chmod 666 /var/run/docker.sock
+```
+```sh
+chmod +x ./init-letsencrypt.sh
+```
+
 Docker Compose에 정의되어 있는 서비스 컨테이너를 백그라운드에서 띄우기
 
 ```
