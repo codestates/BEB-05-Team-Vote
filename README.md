@@ -15,10 +15,6 @@
 
 [하브루타 DAO 백서 바로가기](https://endurable-dodo-552.notion.site/Havruta-DAO-White-Paper-d7fe0d07b63f49cf9ddea3e4cea9a4ff)
 
-## 배포 주소
-
-[하브루타 DAO 웹사이트 바로가기](https://www.havruta.guru/)
-
 ## 하브루타 DAO 발표 영상
 
 [![하브루타 DAO 발표 영상](http://img.youtube.com/vi/A3ZG5HiVyUU/0.jpg)](https://www.youtube.com/watch?v=A3ZG5HiVyUU)
